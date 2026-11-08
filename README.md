@@ -213,3 +213,13 @@ Dias 1 a 19 pertencem ao segundo mês do ciclo salarial, e dias 20 a 31 ao prime
 Em Contas → Mais opções → Parar de repetir, escolha o primeiro mês sem a conta e confirme Encerrar repetição. O mesmo acesso existe em Editar repetição. A operação retira previsões pendentes a partir do mês escolhido, mantém os registros e permite Desfazer. Pagamentos anteriores, receitas recebidas e gastos vinculados permanecem. Uma reserva que já possua gastos vinculados é encerrada apenas quanto ao restante ainda previsto. Para retirar somente uma ocorrência, continua disponível Não ocorreu.
 
 Validação: `node scripts/due-recurrence-smoke.js index.html`. Testes abrangem calendários, anos bissextos, virada de ano, feriados locais, exceções, persistência, integridade financeira, mês de encerramento, histórico, despesas vinculadas e desfazer.
+
+## V20.1 — encontrar e editar valores a receber
+
+Contas passa a oferecer A receber como filtro principal, com receitas previstas e programações compartilhadas ainda pendentes na mesma lista. O filtro abre todos os meses e mantém busca por descrição, pessoa e valor. O botão Editar aparece por escrito; recebimentos já concluídos ficam no histórico. A visualização escolhida é preservada ao recarregar.
+
+Novas receitas previstas, incluindo as confirmadas a partir de sugestões do ChatGPT, abrem essa lista após o cadastro. Programações compartilhadas novas também chegam à lista. A página de reembolsos oferece um acesso para todos os valores a receber, além de botões de edição com texto. Os registros continuam em seus formatos originais; não há migração, cópia ou nova movimentação de saldo.
+
+A edição de uma programação compartilhada atualiza as parcelas pendentes e preserva os eventos de recebimento anteriores. Mudanças que deslocariam a identidade de uma parcela já recebida são recusadas antes de qualquer gravação. Mês inicial, valor e numeração passam por validação.
+
+Validação: `node scripts/receivable-edit-smoke.js index.html`. Cobre cadastro, descoberta, edição, persistência, dois tipos de recebíveis, projeções, integridade de identificadores e preservação do histórico financeiro.
