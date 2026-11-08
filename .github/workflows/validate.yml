@@ -28,3 +28,5 @@ jobs:
               for k in ('entries','invoices','movements','receivables','ledger','inbox','nubankLoans'):assert not obj[k], f'Private data in {k}'
               print(file,'syntax and privacy OK')
           PY
+      - name: Run synthetic simulation tests
+        run: node scripts/smoke.js review-v9.html
