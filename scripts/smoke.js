@@ -8,7 +8,8 @@ for(const key of ['entries','invoices','movements','receivables','ledger','nuban
 assert(html.includes('repeat(6,minmax(0,1fr))'),'Mobile bottom nav must have six columns');
 const needle='render();acceptShortcutLink();';
 assert(source.includes(needle));
-const hook='globalThis.__test={setData:(data)=>{s=data},scenarioProjection,renderSimulation,forecastFor,localToday,cycleForDate,nextPayday,upcomingBills,projected,uiCycleSelect};'+needle;
+const extra=source.includes('function localToday()')?',localToday,cycleForDate,nextPayday,upcomingBills,projected,uiCycleSelect':'';
+const hook='globalThis.__test={setData:(data)=>{s=data},scenarioProjection,renderSimulation,forecastFor'+extra+'};'+needle;
 const js=source.replace(needle,hook);
 const stub=()=>({innerHTML:'',value:'',classList:{add(){},remove(){}}});
 class FixedDate extends Date{constructor(...args){super(...(args.length?args:['2026-11-08T12:00:00-03:00']))}static now(){return new Date('2026-11-08T12:00:00-03:00').getTime()}}
