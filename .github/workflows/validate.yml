@@ -7,6 +7,7 @@ on:
       - "review-v11.html"
       - "scripts/smoke.js"
       - "scripts/ux-smoke.js"
+      - "scripts/accounting-smoke.js"
       - "index.html"
       - ".github/workflows/validate.yml"
   workflow_dispatch:
@@ -36,13 +37,14 @@ jobs:
         run: |
           node scripts/smoke.js index.html
           node scripts/ux-smoke.js index.html
+          node scripts/accounting-smoke.js index.html
           node scripts/smoke.js review-v10.html
           node scripts/smoke.js review-v11.html
       - name: Package source for independent review
-        run: zip -j Meu_Financeiro_V9_Para_Claude.zip index.html AVALIACAO_CLAUDE.md README.md
+        run: zip -j Meu_Financeiro_V13_Para_Claude.zip index.html AVALIACAO_CLAUDE.md README.md
       - name: Upload downloadable app
         uses: actions/upload-artifact@v4
         with:
-          name: Meu-Financeiro-V9-para-Claude
-          path: Meu_Financeiro_V9_Para_Claude.zip
+          name: Meu-Financeiro-V13-para-Claude
+          path: Meu_Financeiro_V13_Para_Claude.zip
           retention-days: 30

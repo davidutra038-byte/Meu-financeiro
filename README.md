@@ -59,3 +59,20 @@ O aplicativo elimina o fragmento do endereço ao recebê-lo e adiciona o conteú
 - Movimentações manuais de caixa podem ser corrigidas ou excluídas no histórico, com Desfazer. Receitas previstas aparecem no filtro Recebimentos.
 - Compras preservam o total da fatura informado pelo banco. Ao informar uma fatura antes sem total, seus detalhes já cadastrados são mantidos.
 - Testes sintéticos adicionais: `node scripts/ux-smoke.js index.html`.
+
+## Interface V13 — conferência e uso diário
+
+A atualização parte do aplicativo de produção e preserva seus seis módulos, dados locais, cálculos e importações.
+
+- Registros realizados passam a indicar se são uma movimentação nova ou se já estavam incluídos no saldo informado. Isso vale para despesas, faturas, salários, reembolsos, contratos, quitações e transferências do cofre.
+- `affectsCash: false` preserva o valor nominal no histórico e exclui somente o efeito no saldo da conta. Eventos antigos sem esse campo mantêm seu comportamento. A opção Efeito no saldo permite corrigir um lançamento existente sem duplicar eventos.
+- A lista principal reúne contas, faturas, compras e movimentos de caixa, com busca e filtros. Registros originais a conferir permanecem fora da projeção até uma decisão explícita.
+- Categoria é um campo principal e pode ser editada na lista. Cartão, referência, vencimento, parcela e orçamento permanecem visíveis ou acessíveis conforme o lançamento.
+- A edição preserva a competência original e permite manter datas ainda não confirmadas. Pagamentos exigem a data real.
+- Orçamentos, salário, notificações, importações e histórico continuam disponíveis em seções expansíveis. O planejamento mantém comparação de crédito, contratos, quitações e premissas.
+- Calendários de reembolsos e projeção do cofre acompanham a referência atual; a próxima parcela considera as parcelas já recebidas.
+- A navegação é preservada ao atualizar a página. A paleta usa azul petróleo, superfícies claras e laranja em destaques.
+
+O formato de backup permanece na versão 4. Use a interface atual para os novos tratamentos do saldo; backups anteriores continuam importáveis.
+
+Validação adicional: `node scripts/accounting-smoke.js index.html`. Uma comparação local com a base original também verifica preservação dos registros e das projeções, sem publicar os dados dessa base.

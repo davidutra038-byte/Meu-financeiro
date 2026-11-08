@@ -1,4 +1,4 @@
-# Meu Financeiro V9 — pacote para revisão independente
+# Meu Financeiro V13 — pacote para revisão independente
 
 **Aplicativo:** `index.html` — arquivo único HTML, CSS e JavaScript, sem dependências de backend.
 **Site:** https://davidutra038-byte.github.io/Meu-financeiro/
@@ -18,7 +18,7 @@ Controle financeiro pessoal para iPhone e computador: lançamentos, orçamento, 
 
 ## Fluxo Planejar
 
-A V9 apresenta em primeiro lugar o **simulador**, separado do registro de empréstimo realmente contratado:
+O aplicativo apresenta em primeiro lugar o **simulador**, separado do registro de empréstimo realmente contratado:
 
 1. Escolha a modalidade FUNCEF ou `Sem empréstimo`.
 2. Defina o primeiro desconto em folha.
@@ -50,3 +50,13 @@ Foi realizada validação automática da sintaxe do JavaScript, privacidade do e
 3. Não automatize pagamentos, contratações ou quitações por clicar no simulador.
 4. Não apresente projeções incompletas como saldos bancários certificados.
 5. Preferir correções incrementais em vez de refazer a aplicação do zero.
+
+## Atualização V13
+
+A interface de produção foi reorganizada sem substituir os módulos por um protótipo. Categoria, cartão, fatura, competência, pagamentos e efeito no saldo ficam explícitos.
+
+Eventos de caixa admitem `affectsCash: false`: o valor nominal permanece no histórico, mas não entra novamente no saldo de referência. Eventos legados sem a marca mantêm seu efeito original. A revisão do tratamento do saldo é uma ação explícita do usuário e não adiciona lançamentos compensatórios duplicados. A competência de registros anteriores é preservada, inclusive quando a data está pendente de conferência.
+
+A classificação visual preserva a natureza dos empréstimos separados, viagens opcionais e encargos de obra. O planejamento original mantém modalidades, descontos em folha, quitações, recebimentos parcelados e cofre. As novas opções se aplicam também a faturas, salários, recebimentos, quitações, liberação de crédito e transferências do cofre.
+
+Além dos testes existentes, execute `node scripts/accounting-smoke.js index.html`. A base privada usada para comparação local não está no repositório nem no pacote público.
