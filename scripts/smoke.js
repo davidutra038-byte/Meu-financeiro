@@ -9,7 +9,8 @@ assert(html.includes('repeat(6,minmax(0,1fr))'),'Mobile bottom nav must have six
 const needle='render();acceptShortcutLink();';
 assert(source.includes(needle));
 const extra=source.includes('function localToday()')?',localToday,cycleForDate,nextPayday,upcomingBills,projected,uiCycleSelect':'';
-const hook='globalThis.__test={setData:(data)=>{s=data},scenarioProjection,renderSimulation,forecastFor'+extra+'};'+needle;
+const extraV11=source.includes('function budgetIsSkipped(')?',renderActivity,budgetBase,budgetUsed,budgetRest,budgetIsSkipped,entryAmount,expenseIncluded,breakdownExpense':'';
+const hook='globalThis.__test={setData:(data)=>{s=data},scenarioProjection,renderSimulation,forecastFor'+extra+extraV11+'};'+needle;
 const js=source.replace(needle,hook);
 const stub=()=>({innerHTML:'',value:'',classList:{add(){},remove(){}}});
 class FixedDate extends Date{constructor(...args){super(...(args.length?args:['2026-11-08T12:00:00-03:00']))}static now(){return new Date('2026-11-08T12:00:00-03:00').getTime()}}
@@ -45,5 +46,41 @@ if(file.includes('v10')||file==='index.html'&&source.includes('mf-cash-panel')){
  assert.equal(context.__test.upcomingBills().total,0);
  assert(context.__test.renderSimulation().includes('Compare as propostas lado a lado'));
  assert(context.__test.uiCycleSelect().includes('Atual'));
+}
+if(file.includes('v11')||file==='index.html'&&source.includes('function budgetIsSkipped(')){
+ d.referenceCycle='2026-10';
+ d.settings.diversionMonthlyCents=150000;
+ d.settings.budgetOverrides={};
+ d.entries=[
+ {id:'passagem-1',month:'2026-10',type:'despesa',description:'Passagem',category:'Transporte',cents:13200,dueDate:'2026-11-12',status:'previsto',card:'',includeInProjection:true},
+ {id:'nubank-loan-1',month:'2026-10',type:'despesa',description:'Empréstimo Nubank',category:'Empréstimos',cents:18346,dueDate:'2026-11-12',status:'previsto',card:'Nubank',loanId:'nu-pequeno',includeInProjection:true}
+ ];
+ d.invoices=[{id:'nubank-inv',card:'Nubank',cycle:'2026-10',dueDate:'2026-11-13',amountCents:110000,paid:false}];
+ context.__test.setData(d);
+ assert.equal(context.__test.budgetBase('2026-10','passagem'),13200);
+ assert.equal(context.__test.budgetRest('2026-10','passagem'),13200);
+ assert.equal(context.__test.expenseIncluded(d.entries[1]),true,'Loan separate from card invoice');
+ assert.equal(context.__test.expenseIncluded(d.entries[0]),true);
+ let htmlView=context.__test.renderActivity();
+ assert(htmlView.includes('Editar valor'),'Budget edit button visible');
+ assert(htmlView.includes('Não utilizei'),'Unused action visible');
+ assert(htmlView.includes('Não ocorreu'),'Expense skip button visible');
+ d.settings.budgetOverrides={'2026-10':{passagem:0}};
+ assert.equal(context.__test.expenseIncluded(d.entries[0]),false,'Skipped budget removed from forecast');
+ assert.equal(context.__test.budgetIsSkipped('2026-10','passagem'),true);
+ htmlView=context.__test.renderActivity();
+ assert(htmlView.includes('Restaurar'),'Skipped budget can be restored');
+ d.settings.budgetOverrides={'2026-10':{passagem:13200}};
+ d.entries[0].status='pago';
+ d.ledger=[{id:'cash-entry-passagem-1',cents:-13200,budgetKey:'passagem',budgetCycle:'2026-10',date:'2026-11-08'}];
+ assert.equal(context.__test.budgetUsed('2026-10','passagem'),13200,'Paid expense counted once');
+ assert.equal(context.__test.budgetRest('2026-10','passagem'),0);
+ assert.equal(context.__test.expenseIncluded(d.entries[0]),false);
+ htmlView=context.__test.renderActivity();
+ assert(htmlView.includes('Reabrir'),'Paid expense can be reopened');
+ d.entries[0].status='nao_realizado';d.ledger=[];
+ assert.equal(context.__test.expenseIncluded(d.entries[0]),false);
+ htmlView=context.__test.renderActivity();
+ assert(htmlView.includes('Restaurar'),'Not used expense can be restored');
 }
 console.log('Smoke test passed:',file);
