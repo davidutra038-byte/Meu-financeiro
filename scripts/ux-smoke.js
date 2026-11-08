@@ -5,7 +5,7 @@ const seed=JSON.parse(source.match(/const SEED=(\{.*?\});/s)[1]);
 const alerts=[],stub=()=>({innerHTML:'',value:'',querySelector(){return null},querySelectorAll(){return []},classList:{add(){},remove(){}}});
 class Clock extends Date{constructor(...a){super(...(a.length?a:['2026-11-08T12:00:00-03:00']))}static now(){return new Date('2026-11-08T12:00:00-03:00').getTime()}}
 const context={window:{location:{hash:'',pathname:'/',search:''},addEventListener(){},scrollTo(){}},document:{querySelector(q){return q==='#entryError'?null:stub()},querySelectorAll(){return []},addEventListener(){},body:stub()},localStorage:{getItem(){return null},setItem(){}},Date:Clock,Intl,Math,console,alert(x){alerts.push(x)},setTimeout(){return 0},clearTimeout(){}};
-const hook='globalThis.test={set:(d,id="")=>{s=d;editTarget=id},get:()=>s,launchForm,saveCardPurchase,submitForm,cardLines,cardMonthlyTotal,liveCash,forecastFor,upcomingBills,budgetRest,budgetUsed,renderActivity,suggestedBillingCycle,localToday,validDate};';
+const hook='globalThis.test={set:(d,id="")=>{s=d;editTarget=id},get:()=>s,launchForm,saveCardPurchase,submitForm,cardLines,cardMonthlyTotal,liveCash,forecastFor,upcomingBills,budgetRest,budgetUsed,renderActivity,suggestedBillingCycle,localToday,validDate,getNotice:()=>noticeText};';
 vm.runInNewContext(source.replace('render();acceptShortcutLink();',hook+'render();acceptShortcutLink();'),context);
 const t=context.test,form=(v)=>({elements:{namedItem(k){return {value:v[k]??''}}}});
 const data=()=>({...JSON.parse(JSON.stringify(seed)),referenceCycle:'2026-10',cardViewCycle:'2026-11',cardClosings:{},invoiceClosingDates:{},salaryHistory:[],settings:{...seed.settings,diversionMonthlyCents:0,budgetOverrides:{}},vault:{...seed.vault,startCycle:'2030-01'}});
@@ -33,7 +33,7 @@ t.submitForm(form({invoiceTotal:'100,00',dueDate:'2027-01-15',estimated:'false'}
 assert.equal(d.entries.length,0,'Creating the bank invoice retains its previously registered purchases');
 assert(t.cardLines('2026-12','C6 Black').some(x=>x.id===futureId));
 assert.equal(t.cardMonthlyTotal('2026-12','C6 Black'),10000,'Bank total overrides known minimum once');
-t.set(d);let unchanged=JSON.stringify(d);t.submitForm(form({...buy,card:''}),'saveTransaction');assert.equal(JSON.stringify(d),unchanged,'Missing card cannot mutate state');assert(alerts.pop().includes('cartão'));
+t.set(d);let unchanged=JSON.stringify(d);t.submitForm(form({...buy,card:''}),'saveTransaction');assert.equal(JSON.stringify(d),unchanged,'Missing card cannot mutate state');assert(t.getNotice().includes('cartão'));
 t.submitForm(form({...buy,installment:'4/3'}),'saveTransaction');assert.equal(JSON.stringify(d),unchanged,'Invalid installment rejected');
 d.invoiceClosingDates={'C6 Black|2026-11':'2026-11-10'};assert.equal(t.suggestedBillingCycle('C6 Black','2026-11-08').cycle,'2026-11');
 assert.equal(t.suggestedBillingCycle('C6 Black','2026-11-11').known,false,'No unsupported closing inference');

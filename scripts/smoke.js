@@ -5,12 +5,12 @@ assert(scripts.length,'No app script');const source=scripts.at(-1)[1];new vm.Scr
 const seedText=html.match(/const SEED=(\{.*?\});\s*\(\(\)=>/s);assert(seedText,'No seed');const seed=JSON.parse(seedText[1]);
 assert.equal(seed.openingCents,0);assert.equal(seed.salaryNetCents,0);
 for(const key of ['entries','invoices','movements','receivables','ledger','nubankLoans'])assert.equal(seed[key].length,0,'Personal data in '+key);
-assert(html.includes('repeat(6,minmax(0,1fr))'),'Mobile bottom nav must have six columns');
+if(source.includes('interface V14'))assert(html.includes('grid-template-columns:repeat(4,minmax(0,1fr))'),'Mobile bottom nav has four primary sections');else assert(html.includes('repeat(6,minmax(0,1fr))'),'Legacy mobile navigation is preserved');
 const needle='render();acceptShortcutLink();';
 assert(source.includes(needle));
 const extra=source.includes('function localToday()')?',localToday,cycleForDate,nextPayday,upcomingBills,projected,uiCycleSelect':'';
 const extraV11=source.includes('function budgetIsSkipped(')?',renderActivity,budgetBase,budgetUsed,budgetRest,budgetIsSkipped,entryAmount,expenseIncluded,breakdownExpense,submitForm,setTarget:(id)=>{editTarget=id},getData:()=>s':'';
-const hook='globalThis.__test={setData:(data)=>{s=data},scenarioProjection,renderSimulation,forecastFor'+extra+extraV11+'};'+needle;
+const hook='globalThis.__test={setData:(data)=>{s=data;activityFilter="all"},scenarioProjection,renderSimulation,forecastFor'+extra+extraV11+'};'+needle;
 const js=source.replace(needle,hook);
 const stub=()=>({innerHTML:'',value:'',classList:{add(){},remove(){}}});
 class FixedDate extends Date{constructor(...args){super(...(args.length?args:['2026-11-08T12:00:00-03:00']))}static now(){return new Date('2026-11-08T12:00:00-03:00').getTime()}}
@@ -110,3 +110,4 @@ if(file.includes('v11')||file==='index.html'&&source.includes('function budgetIs
  assert.equal(d.entries[0].status,'previsto');
 }
 console.log('Smoke test passed:',file);
+

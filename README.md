@@ -84,3 +84,18 @@ Validação adicional: `node scripts/accounting-smoke.js index.html`. Uma compar
 - Uma previsão não pode ser vinculada a si mesma. Vínculos novos são validados para o ciclo correto, e identificadores existentes são preservados ao renomear uma previsão.
 - O ciclo salarial e a referência da fatura usam listas legíveis no celular.
 - Testes cobrem fontes personalizadas, troca de ciclo, edições e o abatimento sem duplicar a despesa na projeção.
+
+## Interface V14 — hoje, futuro e apartamento
+
+- A navegação principal usa Hoje, Contas, Cartões e Plano. Guardado e A receber continuam disponíveis dentro de Plano e por atalhos em Hoje.
+- Hoje mostra o saldo registrado, compromissos nos próximos sete dias (incluindo atrasados e reservas atuais sem data), menor caixa previsto em 90 dias e o progresso do apartamento.
+- A nova projeção por datas reserva compromissos sem vencimento no início de seu mês de salário, ou hoje se ele já começou. Saídas são consideradas antes de entradas do mesmo dia. Reembolsos, 13º e outras receitas sem dia confirmado não aumentam esse gráfico; as projeções mensais continuam exibindo as premissas cadastradas.
+- Projeções mensais e simulações passam a descontar os compromissos ainda abertos de referências anteriores. Ao simular uma quitação, as parcelas correspondentes deixam de ser contadas uma segunda vez.
+- Lançamentos novos começam pelo valor e por uma escolha entre despesa paga, conta a pagar, compra no cartão e receita. Data local, categoria sugerida editável, cartão, fatura, previsão vinculada e parcela permanecem disponíveis.
+- Paguei abre uma janela curta com data e tratamento do saldo. Pagamentos já incluídos no saldo inicial preservam o caixa. No pagamento do restante de uma previsão, o valor original é mantido.
+- Faturas mostram total bancário, soma líquida dos detalhes e diferença. Valores conferem indica apenas igualdade numérica; detalhamento incompleto não é prova de duplicidade. Empréstimos separados da fatura continuam separados.
+- A interface inclui modo escuro, preferência persistente de tema, fontes maiores, foco visível e controles principais com área mínima de toque de 44 px.
+- Backup protegido usa janela própria de senha, confirmação, aviso de perda de acesso sem senha, compartilhamento de arquivo quando suportado e alternativa de download. O lembrete aparece dentro do aplicativo após sete dias da última geração/partilha registrada; não é uma notificação do sistema.
+
+Compatibilidade: mesma chave de armazenamento local, formato de dados versão 4 e formato AES-GCM de backup. Nenhum dado pessoal está incorporado ao HTML público. Teste adicional: `node scripts/daily-cash-smoke.js index.html`, incluindo criptografia real e leitura do backup.
+
