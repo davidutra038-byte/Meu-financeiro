@@ -27,6 +27,103 @@
 .insight-rank{display:flex;align-items:center;border-bottom:1px solid var(--line)}
 .insight-rank .insight-row{flex:1;border:0}.rank-n{padding-left:8px;font-size:11px;font-weight:800;color:var(--sub);min-width:25px}
 @media(max-width:650px){.insight-side{align-items:flex-end;flex-direction:column;gap:5px}.btn-classify{padding:7px 9px}.item-actions{flex-wrap:wrap;justify-content:flex-end}.item-actions>.amount{width:100%;text-align:right}.insight-summary{align-items:flex-start;flex-wrap:wrap}.insight-toolbar select{max-width:100%}}
+
+/* iPhone-first accessibility and cash-scenario interface */
+.sim-shell{border:1px solid #d8e2ee;background:#fff;border-radius:20px;padding:clamp(16px,2.5vw,26px);box-shadow:var(--shadow)}
+.sim-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:20px}
+.sim-heading h2{font-size:clamp(20px,2.6vw,26px);line-height:1.15;margin:6px 0 8px;letter-spacing:-.5px}
+.sim-heading p,.sim-results-head p{color:var(--sub);line-height:1.5;margin:0;max-width:690px}
+.sim-eyebrow{font-size:11px;color:var(--brand);font-weight:750;letter-spacing:.3px}
+.sim-pill{border-radius:99px;background:#e7f5ed;color:#196046;font-weight:800;padding:8px 12px;font-size:11px;white-space:nowrap}
+.sim-controls{display:grid;grid-template-columns:minmax(0,1.8fr) minmax(170px,1fr);gap:12px;align-items:end}
+.sim-controls select,.sim-controls input,.sim-results-head select{min-height:46px;border-radius:12px}
+.sim-subheading{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:20px 0 10px}
+.sim-subheading span{color:var(--sub);font-size:12px}
+.sim-toggles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.sim-toggle{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:12px;padding:12px;min-height:65px;cursor:pointer;margin:0}
+.sim-toggle:has(input:checked){border-color:#6eafd2;background:#f1f9ff}
+.sim-toggle input{width:19px;height:19px;flex:0 0 auto}
+.sim-toggle-copy{flex:1;min-width:0;display:grid;gap:2px}
+.sim-toggle-copy strong{font-size:13px;line-height:1.3}
+.sim-toggle-copy small{font-size:11px;color:var(--sub);line-height:1.35;font-weight:400}
+.sim-toggle b{font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.sim-cash-grid{margin:18px 0;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:12px}
+.sim-cash-hero{display:grid;gap:8px;padding:21px;border-radius:16px;color:#fff;background:linear-gradient(135deg,#13365b,#1c6283)}
+.sim-cash-hero>span{font-size:12px;color:#d5e9f3;font-weight:700}
+.sim-cash-hero>strong{font-size:clamp(27px,3vw,36px);letter-spacing:-.8px;line-height:1.15;font-variant-numeric:tabular-nums}
+.sim-cash-hero .negative{color:#ffbbb8}
+.sim-cash-hero small{font-size:12px;line-height:1.4;color:#d8e9f3}
+.sim-cash-math{padding:14px 17px;border-radius:16px;background:#f4f7fb}
+.sim-money-line{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid #dce7f0;font-size:13px}
+.sim-money-line strong{white-space:nowrap;font-variant-numeric:tabular-nums}
+.sim-cash-math-foot{font-size:11px;color:var(--sub);line-height:1.4;margin-top:10px}
+.sim-alert{color:#8b392e;background:#fff2ec;padding:10px 11px;border-radius:9px;font-size:12px;line-height:1.4;margin:8px 0}
+.sim-results-head{display:flex;justify-content:space-between;align-items:end;gap:14px;margin:24px 0 13px}
+.sim-results-head h3{font-size:17px;margin:0 0 7px}
+.sim-results-head>div:last-child{min-width:126px}
+.sim-compare{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.sim-stat{border:1px solid var(--line);border-radius:13px;padding:14px;background:#fafbfd;display:grid;gap:7px}
+.sim-stat span{font-size:11px;color:var(--sub);font-weight:700}
+.sim-stat b{font-size:clamp(18px,2.2vw,24px);letter-spacing:-.5px;font-variant-numeric:tabular-nums}
+.sim-stat-accent{background:#edf6fd;border-color:#add6ef}
+.sim-flow{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:16px;margin-top:18px}
+.sim-flow h4{font-size:13px;margin:0 0 13px}
+.sim-graph,.sim-months{border:1px solid var(--line);border-radius:14px;padding:15px;min-width:0}
+.sim-spark-row{display:grid;grid-template-columns:75px minmax(50px,1fr) auto;align-items:center;gap:10px;margin:12px 0;font-size:11px}
+.sim-spark-row strong{font-size:11px;font-variant-numeric:tabular-nums;text-align:right}
+.sim-spark-track{height:9px;border-radius:10px;background:#ebf1f6;overflow:hidden}
+.sim-spark-fill{height:100%;background:#217aa2;border-radius:10px}
+.sim-spark-fill.sim-bad{background:#b85d60}
+.sim-month{border-bottom:1px solid var(--line);padding:0 1px}
+.sim-month:last-child{border-bottom:0}
+.sim-month summary{display:flex;align-items:center;gap:8px;padding:12px 0;cursor:pointer;list-style:none}
+.sim-month summary::-webkit-details-marker{display:none}
+.sim-month summary>span:first-child{flex:1;display:grid;gap:3px}
+.sim-month summary small{font-size:11px;color:var(--sub);font-weight:400}
+.sim-month summary>strong{font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.sim-expander{color:var(--brand);font-size:18px}
+.sim-breakdown{padding:10px 12px 13px;border-radius:10px;background:#f5f8fc;margin:0 0 9px}
+.sim-breakdown>div{display:flex;justify-content:space-between;gap:8px;padding:6px 0;font-size:12px}
+.sim-breakdown>div b{white-space:nowrap}
+.sim-disclaimer{font-size:11px;color:var(--sub);line-height:1.55;border-top:1px solid var(--line);padding-top:14px;margin:20px 0 0}
+.sim-actual{margin-top:4px}
+.sim-actual>summary{cursor:pointer;display:flex;flex-wrap:wrap;align-items:center;gap:7px;justify-content:space-between;min-height:48px}
+.sim-actual>summary small{font-size:11px;color:var(--sub)}
+.sim-actual .grid{margin-top:18px}
+@media(max-width:760px){
+ .app{padding-bottom:calc(82px + env(safe-area-inset-bottom))}
+ .mobilebar{grid-template-columns:repeat(6,minmax(0,1fr));padding:7px 2px max(6px,env(safe-area-inset-bottom));gap:0}
+ .mobilebar button{min-width:0;min-height:48px;gap:3px;padding:6px 0;font-size:10px}
+ .mobilebar button svg{width:20px;height:20px}
+ .mobilebar button span{font-size:9px;white-space:nowrap;letter-spacing:-.3px}
+ .main{padding-bottom:26px}
+ button,.iconbtn{min-height:40px}
+ select,input[type=text],input[type=number],input[type=date],input[type=month],textarea{font-size:16px}
+ .sim-shell{border-radius:16px;padding:15px}
+ .sim-heading{gap:8px}
+ .sim-heading h2{font-size:22px}
+ .sim-pill{font-size:10px;padding:6px 9px}
+ .sim-controls,.sim-cash-grid,.sim-flow,.sim-compare{grid-template-columns:minmax(0,1fr)}
+ .sim-toggles{grid-template-columns:minmax(0,1fr)}
+ .sim-toggle{min-height:58px}
+ .sim-cash-hero{padding:20px}
+ .sim-results-head{align-items:stretch;flex-wrap:wrap}
+ .sim-results-head>div:last-child{width:100%}
+ .sim-graph,.sim-months{padding:12px}
+ .sim-compare{gap:8px}
+ .sim-stat b{font-size:20px}
+ .sim-spark-row{grid-template-columns:62px minmax(30px,1fr) auto;gap:6px}
+ .sim-spark-row strong{font-size:10px}
+ .card-selector{-webkit-overflow-scrolling:touch}
+ .tabstrip,.insight-tabs{scrollbar-width:none}
+}
+@media(max-width:360px){
+ .mobilebar button span{font-size:8px}
+ .sim-heading .sim-pill{display:none}
+ .sim-toggle b{font-size:12px}
+ .sim-cash-hero>strong{font-size:27px}
+}
+
 </style></head><body><div id="app"></div><script>const SEED={"version":4,"schema":"meu-financeiro-offline-v4","name":"Meu Financeiro — privado","openedAt":"","openingCents":0,"salaryNetCents":0,"oldFuncefInstallmentCents":0,"oldFuncefEnd":"2028-02","lastSaved":null,"referenceCycle":"2026-11","entries":[],"invoices":[],"movements":[],"receivables":[],"loanOptions":[{"id":"nenhum","label":"Sem empréstimo","netCents":0,"installmentCents":0,"months":0,"totalCents":0}],"nubankLoans":[],"losango":{"payoffCents":0,"offerDate":"","paid":true},"loan":{"status":"none","option":"nenhum","netCents":0,"paymentCents":0,"durationMonths":0,"releaseDate":"","startCycle":"2026-12","description":""},"ledger":[],"vault":{"goalCents":0,"targetCycle":"2028-03","estimatedAnnualRatePct":0,"monthlyPlannedCents":0,"startCycle":"2027-01","movements":[]},"settings":{"includeTravel":false,"diversionMonthlyCents":0,"bonusCents":0,"bonusStatus":"estimativa","includeVacation":false,"projectionCycles":12,"obraGrowthPct":0,"budgetOverrides":{}},"sourceNotes":[],"salaryHistory":[],"inbox":[],"whatIf":{"option":"nenhum","payLosango":false,"payNubankSmall":false,"payNubankLarge":false,"payCards":false,"startCycle":"2026-12"}};
 
 (()=>{
@@ -164,16 +261,44 @@ function budgetUsed(cycle,key){let spent=sumBy(s.ledger.filter(x=>x.budgetKey===
  return spent;}
 function budgetRest(cycle,key){return Math.max(0,budgetBase(cycle,key)-budgetUsed(cycle,key))}
 function salaryEstimate(cycle){const oldEnd=asMonth(s.oldFuncefEnd),t=asMonth(cycle);if(s.loan.status==='active'&&t>=asMonth(s.loan.startCycle)){const n=t-asMonth(s.loan.startCycle);return s.salaryNetCents+s.oldFuncefInstallmentCents-(n<s.loan.durationMonths?s.loan.paymentCents:0)}return t>oldEnd?s.salaryNetCents+s.oldFuncefInstallmentCents:s.salaryNetCents}
-function scenarioProjection(){const o=s.whatIf;const chosen=s.loanOptions.find(x=>x.id===o.option)||s.loanOptions[0];let balance=liveCash()+chosen.netCents-(o.payLosango?s.losango.payoffCents:0)-(o.payNubankSmall?(s.nubankLoans.find(x=>x.id==='nu-pequeno')?.payoffCents||0):0)-(o.payNubankLarge?(s.nubankLoans.find(x=>x.id==='nu-grande')?.payoffCents||0):0)-(o.payCards?cardTotalForCycle('2026-11'):0);let output=[];
- for(let n=0;n<6;n++){let cyc=cycShift('2026-11',n),base=forecastFor(cyc);let income=base.income,expenses=base.expenses;
- if(asMonth(cyc)>=asMonth(o.startCycle)){const delta=s.salaryNetCents+s.oldFuncefInstallmentCents-chosen.installmentCents-salaryEstimate(cyc);income+=delta;}
- if(o.payLosango&&!s.losango.paid)expenses-=sumBy(s.entries.filter(e=>e.month===cyc&&e.description==='Losango'&&expenseIncluded(e)));
- if(o.payNubankSmall){expenses-=sumBy(s.entries.filter(e=>e.month===cyc&&e.loanId==='nu-pequeno'&&expenseIncluded(e)))}
- if(o.payNubankLarge){expenses-=sumBy(s.entries.filter(e=>e.month===cyc&&e.loanId==='nu-grande'&&expenseIncluded(e)))}
- if(o.payCards&&cyc==='2026-11')expenses-=totalInvoices(cyc);
- balance+=income-expenses-base.transfer;output.push({cycle:cyc,balance,income,expenses});}return output;
+function scenarioProjection(){
+ const o=s.whatIf||{},options=s.loanOptions||[],option=options.find(x=>x.id===o.option)||options[0]||{id:'nenhum',netCents:0,installmentCents:0,months:0};
+ const takingLoan=option.id!=='nenhum',loanNet=takingLoan?Math.max(0,option.netCents||0):0;
+ const dueLosango=o.payLosango&&!s.losango.paid?Math.max(0,s.losango.payoffCents||0):0;
+ const small=s.nubankLoans.find(x=>x.id==='nu-pequeno'),large=s.nubankLoans.find(x=>x.id==='nu-grande');
+ const dueSmall=o.payNubankSmall&&small&&!small.paid?Math.max(0,small.payoffCents||0):0;
+ const dueLarge=o.payNubankLarge&&large&&!large.paid?Math.max(0,large.payoffCents||0):0;
+ const firstCycle='2026-11',dueCards=o.payCards?Math.max(0,cardTotalForCycle(firstCycle)):0;
+ const upfront=dueLosango+dueSmall+dueLarge+dueCards;
+ const currentCash=liveCash(),instant=currentCash+loanNet-upfront;
+ let balance=instant,baseline=currentCash,rows=[];
+ const horizon=Math.min(48,Math.max(6,Number(o.horizon)||12)),firstPayroll=o.startCycle||'2026-12';
+ for(let n=0;n<horizon;n++){
+  const cycle=cycShift(firstCycle,n),f=forecastFor(cycle);
+  baseline+=f.income-f.expenses-f.transfer;
+  let income=f.income,expenses=f.expenses,avoided=0,salaryDelta=0;
+  const canAvoid=e=>e.month===cycle&&expenseIncluded(e);
+  if(dueLosango)avoided+=sumBy(s.entries.filter(e=>canAvoid(e)&&e.description==='Losango'),e=>e.cents);
+  if(dueSmall)avoided+=sumBy(s.entries.filter(e=>canAvoid(e)&&e.loanId==='nu-pequeno'),e=>e.cents);
+  if(dueLarge)avoided+=sumBy(s.entries.filter(e=>canAvoid(e)&&e.loanId==='nu-grande'),e=>e.cents);
+  if(dueCards&&cycle===firstCycle){
+   avoided+=totalInvoices(firstCycle);
+   avoided+=sumBy(s.entries.filter(e=>canAvoid(e)&&!!e.card),e=>e.cents);
+  }
+  expenses=Math.max(0,expenses-avoided);
+  if(takingLoan&&asMonth(cycle)>=asMonth(firstPayroll)&&!salaryRecord(cycle)){
+   const nth=asMonth(cycle)-asMonth(firstPayroll);
+   const newPayment=nth<option.months?option.installmentCents:0;
+   const afterPayroll=s.salaryNetCents+s.oldFuncefInstallmentCents-newPayment;
+   salaryDelta=afterPayroll-salaryEstimate(cycle);
+   income+=salaryDelta;
+  }
+  balance+=income-expenses-f.transfer;
+  rows.push({cycle,income,expenses,transfer:f.transfer,avoided,salaryDelta,baseline,balance,vsBaseline:balance-baseline});
+ }
+ rows.meta={currentCash,loanNet,upfront,instant,losango:dueLosango,small:dueSmall,large:dueLarge,cards:dueCards,option,takingLoan,horizon,firstPayroll,originalNextCycle:rows[0]?rows[0].baseline:currentCash,simulatedNextCycle:rows[0]?rows[0].balance:instant};
+ return rows;
 }
-
 function renderHome(){if(s.entries.length===0&&s.invoices.length===0&&s.ledger.length===0){return `<div class="section card pad" style="max-width:620px;margin:auto"><div class="section-heading"><h2>Seu controle financeiro começa aqui</h2></div><p>Este aplicativo está vazio para proteger sua privacidade. Seus dados não estão incluídos no arquivo publicado.</p><p class="caption">Importe seu backup pessoal pelo botão abaixo para começar. O conteúdo será guardado apenas neste navegador, sem envio a um banco de dados.</p><button class="btn btn-primary" data-act="import">${ic('upload')} Importar meus dados</button><p class="caption">Faça backups protegidos por senha regularmente. O armazenamento local deste navegador não é criptografado pelo aplicativo.</p></div>`;}const cycle=s.referenceCycle||'2026-11',f=forecastFor(cycle),forecast=projected(8),invoices=s.invoices.filter(x=>!x.paid).sort((a,b)=>a.dueDate.localeCompare(b.dueDate)),balance=liveCash();const got=nextReceivableTotal(cycle,true),pending=s.receivables.filter(x=>!x.dateConfirmed).length;
  return `<div class="head-flex" style="margin-bottom:14px"><div class="chips"><span class="chip">${ic('calendar')} Ciclo salarial · dia 20</span><span class="chip dim">Base em 07/11/2026</span></div><div class="select-wrap">${uiCycleSelect()}</div></div>
  <div class="grid g2"><div class="hero"><h2>Dinheiro disponível em caixa</h2><div class="big-number">${m(balance)}</div><div class="small">O valor que você tem, descontadas somente movimentações registradas após a abertura.</div><div class="hero-footer"><span class="small">${s.loan.status==='active'?'Empréstimo contratado registrado':s.loan.status==='pending'?'Contratação pendente de liberação':'Nenhum empréstimo novo registrado'}</span><button data-act="open" data-modal="cash">Ajustar caixa</button></div></div><div class="card pad"><div class="head-flex"><div><div class="metric-label">Saldo futuro • ${cycleLabel(cycle)}</div><div class="metric-value ${forecast.find(x=>x.cycle===cycle)?.balance<0?'negative':''}">${m(forecast.find(x=>x.cycle===cycle)?.balance??balance)}</div></div><div class="metric-icon">${ic('trend')}</div></div><div class="metric-note">Projeção após receitas e despesas previstas. Não é dinheiro disponível hoje.</div><div class="line" style="margin:16px 0 11px"></div><div class="row between"><span class="small">A receber de terceiros</span><strong class="positive">+ ${m(got)}</strong></div><div class="row between" style="margin-top:7px"><span class="small">Faturas do ciclo</span><strong>${m(totalInvoices(cycle))}</strong></div></div></div>
@@ -236,12 +361,60 @@ function renderVault(){const v=s.vault,balance=vaultBalance(),goal=v.goalCents,p
  return `<div class="grid g2"><div class="hero"><h2>Saldo separado para o apartamento</h2><div class="big-number">${m(balance)}</div><div class="small">Aportes reais + rendimentos efetivamente creditados – retiradas.</div><div class="hero-footer"><span class="small">Meta ${m(goal)}</span><button data-act="open" data-modal="vaultMove">${ic('plus')} Movimentar</button></div></div><div class="card pad"><div class="section-heading"><h2>Minha meta</h2><button class="iconbtn" data-act="open" data-modal="vaultSettings" aria-label="Configurar cofre">${ic('edit')}</button></div><div class="row between"><div><div class="metric-label">Progresso</div><div class="metric-value">${pct.toFixed(1).replace('.',',')}%</div></div><div class="metric-icon">${ic('target')}</div></div><div class="progress" style="margin-top:18px"><div class="progress-inner" style="width:${pct}%"></div></div><div class="row between" style="margin-top:12px"><span class="small">Faltam ${m(Math.max(0,goal-balance))}</span><span class="small">Objetivo ${m(goal)} · ${cycleLabel(v.targetCycle||'2028-03')}</span></div><p class="caption" style="margin:14px 0 0">Para alcançar a meta no prazo, seriam necessários aproximadamente <b>${m(required)} por mês</b>, sem contar rendimento.</p></div></div>
  <div class="section grid g3"><div class="card pad"><div class="metric-label">Rendimento creditado</div><div class="metric-value smallval positive">${m(actualYield)}</div><div class="metric-note">Só considera valores que você registrou.</div></div><div class="card pad"><div class="metric-label">Taxa anual estimada</div><div class="metric-value smallval">${fmt(v.estimatedAnnualRatePct)}%</div><div class="metric-note">Hipótese editável, não uma rentabilidade garantida.</div></div><div class="card pad"><div class="metric-label">Rendimento projetado · 12 meses</div><div class="metric-value smallval">${m(est)}</div><div class="metric-note">Bruto, com taxa constante e aportes planejados; sem IR e IOF.</div></div></div>
  <div class="section split"><div class="card pad"><div class="section-heading"><h2>Projeção do cofre</h2><button class="btn btn-sm" data-act="open" data-modal="vaultSettings">Ajustar taxa e aportes</button></div>${barChart(proj.slice(0,6).map(p=>({cycle:p.cycle,balance:p.total})))}<p class="caption">Aporte automático planejado: ${m(v.monthlyPlannedCents)} por ciclo, a partir de ${cycleLabel(v.startCycle)}. O aporte planejado reduz a projeção de caixa, mas só muda o saldo real do cofre após registrar uma transferência.</p></div><div class="card pad"><div class="section-heading"><h2>Movimentações do cofre</h2><button class="btn btn-sm" data-act="open" data-modal="vaultMove">${ic('plus')} Nova</button></div>${v.movements.length?`<div class="list">${v.movements.slice().reverse().map(e=>`<div class="item"><div class="item-left"><div class="item-avatar">${ic(e.type==='yield'?'trend':'vault')}</div><div><div class="item-label">${e.type==='deposit'?'Aporte':e.type==='withdraw'?'Resgate':'Rendimento creditado'}</div><div class="item-sub">${fmtDate(e.date)} ${e.note?'· '+h(e.note):''}</div></div></div><strong class="${e.cents>=0?'positive':'negative'}">${m(e.cents)}</strong></div>`).join('')}</div>`:`<div class="empty"><div class="empty-icon">${ic('vault')}</div>Seu cofre começa com R$ 0 até registrar um aporte. O saldo do caixa não é uma poupança automaticamente.</div>`}</div></div>`}
-function renderPlan(){let proj=projected(s.settings.projectionCycles),opt=s.loanOptions.find(x=>x.id===s.loan.option)||s.loanOptions[0];let budget=forecastFor('2026-11');return `<div class="grid g2"><div class="card pad"><div class="section-heading"><h2>Empréstimo FUNCEF</h2><span class="chip ${s.loan.status==='active'?'ok':s.loan.status==='pending'?'warn':'dim'}">${s.loan.status==='active'?'Liberado e registrado':s.loan.status==='pending'?'Contratado, ainda não liberado':'Sem novo contrato'}</span></div>${s.loan.status==='none'?`<p class="small">As propostas abaixo são apenas consulta. <b>Nenhum valor entra no saldo</b> até você registrar a liberação do empréstimo.</p><div style="margin:13px 0">${loanSelect('planLoan')}</div><div class="details"><div class="detail-row"><span>Valor líquido estimado</span><span>${m(opt.netCents)}</span></div><div class="detail-row"><span>Parcela inicial</span><span>${m(opt.installmentCents)}</span></div><div class="detail-row"><span>Prazo</span><span>${opt.months} meses</span></div></div>`:`<div class="details"><div class="detail-row"><span>Modalidade</span><span>${h(s.loan.description||'Contrato informado')}</span></div><div class="detail-row"><span>Dinheiro líquido</span><span>${m(s.loan.netCents)}</span></div><div class="detail-row"><span>Parcela em folha</span><span>${m(s.loan.paymentCents)}</span></div><div class="detail-row"><span>Primeiro desconto</span><span>${cycleLabel(s.loan.startCycle)}</span></div></div>`}<div class="row" style="margin-top:15px;flex-wrap:wrap"><button class="btn btn-primary" data-act="open" data-modal="loan">${ic('file')} ${s.loan.status==='none'?'Registrar contratação':'Editar contrato'}</button></div>${s.loan.status==='pending'?`<p class="caption">Aguardando depósito: saldo e salário ainda não mudaram.</p>`:''}</div><div class="card pad"><div class="section-heading"><h2>Controle de dívidas</h2></div><div class="details"><div class="detail-row"><span>Losango · quitação oferecida 23/11</span><span>${m(s.losango.payoffCents)}</span></div><div class="detail-row"><span>Empréstimos Nubank · quitação atual</span><span>${m(sumBy(s.nubankLoans.filter(x=>!x.paid),x=>x.payoffCents))}</span></div><div class="detail-row"><span>Nubank · prestação mensal somada</span><span>${m(sumBy(s.nubankLoans.filter(x=>!x.paid),x=>x.monthlyCents))}</span></div></div><div class="row" style="margin-top:15px;gap:8px;flex-wrap:wrap"><button class="btn btn-sm ${s.losango.paid?'':'btn-primary'}" data-act="askPayLosango" ${s.losango.paid?'disabled':''}>${s.losango.paid?'Losango quitada':'Registrar quitação Losango'}</button>${s.nubankLoans.filter(x=>!x.paid).map(x=>`<button class="btn btn-sm" data-act="askPayNubank" data-id="${x.id}">Quitar ${m(x.monthlyCents)}/mês</button>`).join('')}</div></div></div>
+function renderSimulation(){
+ const rows=scenarioProjection(),mta=rows.meta,o=s.whatIf||{},current=s.loan.status==='active';
+ const optionChoices=s.loanOptions.map(x=>'<option value="'+h(x.id)+'" '+(o.option===x.id?'selected':'')+'>'+h(x.label)+'</option>').join('');
+ const horizonChoices=[6,12,24,36,48].map(n=>'<option value="'+n+'" '+(Number(o.horizon||12)===n?'selected':'')+'>'+n+' ciclos</option>').join('');
+ const paySwitch=(field,checked,title,price,extra)=>'<label class="sim-toggle"><input type="checkbox" data-field="'+field+'" '+(checked?'checked':'')+'/><span class="sim-toggle-copy"><strong>'+h(title)+'</strong><small>'+h(extra)+'</small></span><b>'+m(price)+'</b></label>';
+ const amounts=[
+  ['Caixa hoje (real)',m(mta.currentCash),''],
+  ['Crédito líquido hipotético','+ '+m(mta.loanNet),''],
+  ['Quitar dívidas e faturas','− '+m(mta.upfront),''],
+ ];
+ const cashLines=amounts.map(x=>'<div class="sim-money-line"><span>'+x[0]+'</span><strong>'+x[1]+'</strong></div>').join('');
+ const maximum=Math.max(1,...rows.slice(0,8).map(x=>Math.abs(x.balance)),...rows.slice(0,8).map(x=>Math.abs(x.baseline)));
+ const graphic=rows.slice(0,8).map(x=>{
+  const val=Math.min(100,Math.max(2,Math.round(Math.abs(x.balance)/maximum*100)));
+  return '<div class="sim-spark-row"><span>'+h(cycleLabel(x.cycle))+'</span><div class="sim-spark-track"><div class="sim-spark-fill '+(x.balance<0?'sim-bad':'')+'" style="width:'+val+'%"></div></div><strong class="'+(x.balance<0?'negative':'')+'">'+m(x.balance)+'</strong></div>';
+ }).join('');
+ const detailRows=rows.map((x,k)=>{
+  const tag=x.balance<0?'negative':'positive',delta=x.vsBaseline;
+  return '<details class="sim-month"><summary><span><b>'+h(cycleLabel(x.cycle))+'</b><small>Sem empréstimo: '+m(x.baseline)+'</small></span><strong class="'+tag+'">'+m(x.balance)+'</strong><span class="sim-expander" aria-hidden="true">⌄</span></summary>'+
+  '<div class="sim-breakdown">'+
+  '<div><span>Entradas previstas</span><b>'+m(x.income)+'</b></div>'+
+  '<div><span>Saídas previstas</span><b>− '+m(x.expenses)+'</b></div>'+
+  '<div><span>Aporte planejado ao cofre</span><b>− '+m(x.transfer)+'</b></div>'+
+  '<div><span>Diferença vs. cenário atual</span><b class="'+(delta<0?'negative':'positive')+'">'+(delta>0?'+ ':'')+m(delta)+'</b></div>'+
+  (x.salaryDelta?'<p class="caption">Mudança do salário líquido pelo novo desconto: '+m(x.salaryDelta)+'</p>':'')+
+  (x.avoided?'<p class="caption">Parcelas/faturas retiradas deste ciclo por antecipação simulada: '+m(x.avoided)+'</p>':'')+
+  '</div></details>';
+ }).join('');
+ return '<section class="sim-shell" id="simulacao" aria-label="Simulador financeiro">'+
+  '<div class="sim-heading"><div><span class="sim-eyebrow">Planejamento · sem alterar seus dados</span><h2>Quanto vou ter em caixa?</h2><p>Teste a liberação de um empréstimo e as dívidas que você pretende quitar. Compare o que sobra agora e nos próximos ciclos.</p></div><span class="sim-pill">Simulação</span></div>'+
+  (current?'<p class="sim-alert">Já existe empréstimo ativo registrado. Esta ferramenta não calcula automaticamente sua quitação para refinanciá-lo; confira antes de simular outro contrato.</p>':'')+
+  '<div class="sim-controls">'+
+   '<div><label for="whatIfLoan">Empréstimo hipotético</label><select id="whatIfLoan" data-field="whatIfLoan">'+optionChoices+'</select></div>'+
+   '<div><label for="whatIfStart">Primeiro desconto no salário</label><input id="whatIfStart" type="month" data-field="whatIfStart" value="'+h(o.startCycle||'2026-12')+'"/></div>'+
+  '</div>'+
+  '<div class="sim-subheading"><b>Quais contas pretende quitar com esse dinheiro?</b><span>Marque ou desmarque para comparar</span></div>'+
+  '<div class="sim-toggles">'+
+    paySwitch('whatIfLosango',o.payLosango,'Losango',s.losango.paid?0:s.losango.payoffCents,s.losango.paid?'Quitação já registrada':'Oferta à vista, confirmar data de validade')+
+    s.nubankLoans.map(x=>paySwitch(x.id==='nu-pequeno'?'whatIfNubankSmall':'whatIfNubankLarge',x.id==='nu-pequeno'?o.payNubankSmall:o.payNubankLarge,'Nubank · '+m(x.monthlyCents)+'/mês',x.paid?0:x.payoffCents,x.paid?'Já quitado':'Liquidação antecipada estimada')).join('')+
+    paySwitch('whatIfCards',o.payCards,'Faturas desta referência',cardTotalForCycle('2026-11'),'Antecipar somente contas conhecidas de NOV/DEZ, não todas as parcelas futuras')+
+  '</div>'+
+  '<div class="sim-cash-grid"><div class="sim-cash-hero"><span>Caixa hipotético após receber e quitar</span><strong class="'+(mta.instant<0?'negative':'')+'">'+m(mta.instant)+'</strong><small>Saldo antes dos próximos salários e vencimentos. Inclui o caixa real de hoje.</small>'+
+    (mta.instant<0?'<p class="sim-alert">Faltaria dinheiro para executar todas as quitações selecionadas.</p>':'')+'</div>'+
+   '<div class="sim-cash-math">'+cashLines+'<div class="sim-cash-math-foot">Se nenhuma dívida for marcada, o dinheiro permanece no caixa. Não é renda adicional do salário.</div></div></div>'+
+  '<div class="sim-results-head"><div><h3>Como fica seu fluxo de caixa?</h3><p>Saldo acumulado projetado após receitas, contas, cartões, empréstimos e aportes ao cofre.</p></div><div><label for="whatIfHorizon">Período</label><select id="whatIfHorizon" data-field="whatIfHorizon">'+horizonChoices+'</select></div></div>'+
+  '<div class="sim-compare"><div class="sim-stat"><span>Próximo ciclo · sem contratar</span><b>'+m(mta.originalNextCycle)+'</b></div><div class="sim-stat sim-stat-accent"><span>Próximo ciclo · com a simulação</span><b class="'+(mta.simulatedNextCycle<0?'negative':'')+'">'+m(mta.simulatedNextCycle)+'</b></div></div>'+
+  '<div class="sim-flow"><div class="sim-graph"><h4>Primeiros 8 ciclos</h4>'+graphic+'</div><div class="sim-months"><h4>Ver entradas e saídas de cada ciclo</h4>'+detailRows+'</div></div>'+
+  '<p class="sim-disclaimer">A liberação e as quitações são simuladas imediatamente a partir do caixa atual; as datas exatas de cada movimentação não são projetadas dia a dia. As faturas futuras só incluem compromissos conhecidos. Valores variáveis (INPC, obra, novos gastos e 13º estimado) podem mudar. <strong>Nada será registrado como real</strong> nesta tela.</p>'+
+  '</section>';
+}
+function renderPlan(){let proj=projected(s.settings.projectionCycles),opt=s.loanOptions.find(x=>x.id===s.loan.option)||s.loanOptions[0];let budget=forecastFor('2026-11');return `<div class="section">${renderSimulation()}</div><details class="section card pad sim-actual"><summary><b>Empréstimos e quitações efetivamente realizados</b><small>Registrar operações reais somente depois de confirmadas</small></summary><div class="grid g2"><div class="card pad"><div class="section-heading"><h2>Empréstimo FUNCEF</h2><span class="chip ${s.loan.status==='active'?'ok':s.loan.status==='pending'?'warn':'dim'}">${s.loan.status==='active'?'Liberado e registrado':s.loan.status==='pending'?'Contratado, ainda não liberado':'Sem novo contrato'}</span></div>${s.loan.status==='none'?`<p class="small">As propostas abaixo são apenas consulta. <b>Nenhum valor entra no saldo</b> até você registrar a liberação do empréstimo.</p><div style="margin:13px 0">${loanSelect('planLoan')}</div><div class="details"><div class="detail-row"><span>Valor líquido estimado</span><span>${m(opt.netCents)}</span></div><div class="detail-row"><span>Parcela inicial</span><span>${m(opt.installmentCents)}</span></div><div class="detail-row"><span>Prazo</span><span>${opt.months} meses</span></div></div>`:`<div class="details"><div class="detail-row"><span>Modalidade</span><span>${h(s.loan.description||'Contrato informado')}</span></div><div class="detail-row"><span>Dinheiro líquido</span><span>${m(s.loan.netCents)}</span></div><div class="detail-row"><span>Parcela em folha</span><span>${m(s.loan.paymentCents)}</span></div><div class="detail-row"><span>Primeiro desconto</span><span>${cycleLabel(s.loan.startCycle)}</span></div></div>`}<div class="row" style="margin-top:15px;flex-wrap:wrap"><button class="btn btn-primary" data-act="open" data-modal="loan">${ic('file')} ${s.loan.status==='none'?'Registrar contratação':'Editar contrato'}</button></div>${s.loan.status==='pending'?`<p class="caption">Aguardando depósito: saldo e salário ainda não mudaram.</p>`:''}</div><div class="card pad"><div class="section-heading"><h2>Controle de dívidas</h2></div><div class="details"><div class="detail-row"><span>Losango · quitação oferecida 23/11</span><span>${m(s.losango.payoffCents)}</span></div><div class="detail-row"><span>Empréstimos Nubank · quitação atual</span><span>${m(sumBy(s.nubankLoans.filter(x=>!x.paid),x=>x.payoffCents))}</span></div><div class="detail-row"><span>Nubank · prestação mensal somada</span><span>${m(sumBy(s.nubankLoans.filter(x=>!x.paid),x=>x.monthlyCents))}</span></div></div><div class="row" style="margin-top:15px;gap:8px;flex-wrap:wrap"><button class="btn btn-sm ${s.losango.paid?'':'btn-primary'}" data-act="askPayLosango" ${s.losango.paid?'disabled':''}>${s.losango.paid?'Losango quitada':'Registrar quitação Losango'}</button>${s.nubankLoans.filter(x=>!x.paid).map(x=>`<button class="btn btn-sm" data-act="askPayNubank" data-id="${x.id}">Quitar ${m(x.monthlyCents)}/mês</button>`).join('')}</div></div></div></details>
  <div class="section"><div class="card pad"><div class="section-heading"><h2>Preferências de projeção</h2><div class="row" style="flex-wrap:wrap"><button class="btn btn-sm" data-act="import">${ic('upload')} Importar backup</button><button class="btn btn-sm" data-act="open" data-modal="settings">${ic('edit')} Ajustar parâmetros</button></div></div><div class="grid g4"><div class="pill-stat"><div class="smallcaps">Salário-base</div><strong>${m(s.salaryNetCents)}</strong></div><div class="pill-stat"><div class="smallcaps">13º estimado</div><strong>${m(s.settings.bonusCents)}</strong></div><div class="pill-stat"><div class="smallcaps">Lazer mensal previsto</div><strong>${m(s.settings.diversionMonthlyCents)}</strong></div><div class="pill-stat"><div class="smallcaps">Viagens</div><strong>${s.settings.includeTravel?'Incluídas':'Adiadas'}</strong></div></div></div></div>
- <div class="section card pad whatif"><div class="section-heading"><div><h2>Simular empréstimo e quitações</h2><p class="caption">Teste livre: nenhuma escolha abaixo altera o caixa, quita dívidas ou oficializa contrato.</p></div><span class="chip">Modo simulação</span></div>
- <div class="grid g2"><div><label for="whatIfLoan">Empréstimo hipotético</label><select id="whatIfLoan" data-field="whatIfLoan">${s.loanOptions.filter(x=>x.id!=='nenhum').map(x=>`<option value="${x.id}" ${s.whatIf.option===x.id?'selected':''}>${h(x.label)}</option>`).join('')}</select></div><div><label for="whatIfStart">Primeiro desconto em folha</label><input id="whatIfStart" type="month" data-field="whatIfStart" value="${s.whatIf.startCycle}"/></div></div>
- <div class="whatif-checks"><label><input type="checkbox" data-field="whatIfLosango" ${s.whatIf.payLosango?'checked':''}/> Quitar Losango (${m(s.losango.payoffCents)})</label><label><input type="checkbox" data-field="whatIfNubankSmall" ${s.whatIf.payNubankSmall?'checked':''}/> Quitar Nubank menor</label><label><input type="checkbox" data-field="whatIfNubankLarge" ${s.whatIf.payNubankLarge?'checked':''}/> Quitar Nubank maior</label><label><input type="checkbox" data-field="whatIfCards" ${s.whatIf.payCards?'checked':''}/> Antecipar faturas conhecidas</label></div>
- <div class="tablewrap"><table class="table"><thead><tr><th>Período</th><th>Saldo hipotético</th></tr></thead><tbody>${scenarioProjection().map(x=>`<tr><td>${cycleLabel(x.cycle)}</td><td class="${x.balance<0?'negative':'positive'}"><b>${m(x.balance)}</b></td></tr>`).join('')}</tbody></table></div><p class="caption">Usa os valores atuais e hipóteses da planilha; não inclui novas compras nem alteração real de saldo. Ao contratar, use “Registrar contratação” na seção acima.</p></div>\n<div class="section"><div class="card pad"><div class="section-heading"><h2>Saldo projetado por ciclo</h2><span class="chip">${s.settings.projectionCycles} ciclos</span></div>${barChart(proj.slice(0,8))}<div class="tablewrap" style="margin-top:12px"><table class="table"><thead><tr><th>Ciclo</th><th>Entradas*</th><th>Saídas*</th><th>Aportes ao cofre</th><th>Saldo final</th></tr></thead><tbody>${proj.map(f=>`<tr><td><b>${cycleLabel(f.cycle)} ${f.cycle.slice(0,4)}</b></td><td class="positive">${m(f.income)}</td><td>${m(f.expenses)}</td><td>${m(f.transfer)}</td><td><b class="${f.balance<0?'negative':''}">${m(f.balance)}</b></td></tr>`).join('')}</tbody></table></div><p class="caption">* Entradas incluem salários e somente reembolsos com datas confirmadas; saídas incluem lançamentos previstos e faturas informadas, sem somar os detalhes duas vezes. A previsão NÃO inclui novos gastos não registrados, juros de obra futuros desconhecidos, reajuste INPC variável nem o financiamento imobiliário futuro.</p></div></div>`}
+
+<div class="section"><div class="card pad"><div class="section-heading"><h2>Saldo projetado por ciclo</h2><span class="chip">${s.settings.projectionCycles} ciclos</span></div>${barChart(proj.slice(0,8))}<div class="tablewrap" style="margin-top:12px"><table class="table"><thead><tr><th>Ciclo</th><th>Entradas*</th><th>Saídas*</th><th>Aportes ao cofre</th><th>Saldo final</th></tr></thead><tbody>${proj.map(f=>`<tr><td><b>${cycleLabel(f.cycle)} ${f.cycle.slice(0,4)}</b></td><td class="positive">${m(f.income)}</td><td>${m(f.expenses)}</td><td>${m(f.transfer)}</td><td><b class="${f.balance<0?'negative':''}">${m(f.balance)}</b></td></tr>`).join('')}</tbody></table></div><p class="caption">* Entradas incluem salários e somente reembolsos com datas confirmadas; saídas incluem lançamentos previstos e faturas informadas, sem somar os detalhes duas vezes. A previsão NÃO inclui novos gastos não registrados, juros de obra futuros desconhecidos, reajuste INPC variável nem o financiamento imobiliário futuro.</p></div></div>`}
 function loanSelect(id){return `<select id="${id}" data-field="loanOption">${s.loanOptions.filter(x=>x.id!=='nenhum').map(x=>`<option value="${x.id}" ${s.loan.option===x.id?'selected':''}>${h(x.label)}</option>`).join('')}</select>`}
 function notificationLines(text){return text.split(/\r?\n/).map(x=>x.trim()).filter(x=>x.length>10).slice(0,250).map(x=>{
  let parts=x.split('|'),date=new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,10),app='',body=x;
@@ -480,6 +653,7 @@ if(act==='open'){showModal(b.dataset.modal,id);return}if(act==='closeModal'){clo
 function onChange(e){const el=e.target;
  if(el.dataset.field==='cardScope'){cardScope=el.value;render();return}
  if(el.dataset.field==='insightCard'){insightCard=el.value;render();return}
+ if(el.dataset.field==='whatIfHorizon'){s.whatIf.horizon=Number(el.value);save();render();return}
  if(el.dataset.field==='whatIfLoan'){s.whatIf.option=el.value;save();render();return}
  if(el.dataset.field==='whatIfStart'){s.whatIf.startCycle=el.value;save();render();return}
  if(['whatIfLosango','whatIfNubankSmall','whatIfNubankLarge','whatIfCards'].includes(el.dataset.field)){
