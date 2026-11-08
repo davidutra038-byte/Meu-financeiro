@@ -118,3 +118,15 @@ As sugestões visuais foram incorporadas à interface existente, preservando cat
 A soma nominal de uma proposta personalizada é prestação × quantidade. Modalidades variáveis permanecem estimativas, sem projetar INPC futuro. O menor saldo das comparações mensais considera a posição imediata e o fim dos meses; a visão diária de Hoje verifica as datas dos próximos 90 dias.
 
 Validação: `node scripts/planning-smoke.js index.html`, além dos testes de dados, simulação, lançamentos, caixa por datas e criptografia já executados no fluxo de validação. O HTML público continua sem dados financeiros pessoais e o backup continua na versão 4.
+
+
+## V16 — categorias e uso diário
+
+- Finalidade separada de forma de pagamento; categorias legadas são padronizadas na leitura, sem regravar o histórico. Classificações confirmadas manualmente são preservadas.
+- Compras em linhas compactas, edição ao tocar, busca na fatura e análises sob demanda.
+- Hoje com menos repetição e teste de gasto à vista, considerando contas, aportes, folga mínima, datas de 90 dias e fechamentos de 12 meses. O resultado depende das premissas cadastradas.
+- Revisão local de metas, entrega/mudança, receitas extras, vencimentos, cotações e encargo de obra. Datas desconhecidas não são preenchidas automaticamente.
+- Cotações de quitação editáveis, com data de consulta e validade distintas; atualizar cotação não registra pagamento.
+- Não há migração destrutiva ou alteração automática de saldo, pagamentos, contratos, metas ou dados pessoais. Registros e anotações continuam locais e fazem parte do backup protegido.
+
+Validação: executar os cinco testes existentes e `node scripts/review-smoke.js index.html`.
