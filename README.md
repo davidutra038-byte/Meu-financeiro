@@ -178,3 +178,16 @@ Contas prioriza A pagar, Pagas e recebidas e A conferir; outras visualizações 
 Contas → Trazer do ChatGPT → Escolher arquivo do ChatGPT (.json) lê pacotes MEU-FINANCEIRO-CHAT-V1 de até 100 itens e 500 KB. A leitura ocorre localmente; itens válidos entram em A conferir, sem substituir a base ou movimentar o caixa. IDs estáveis impedem reenvios do mesmo item. Blocos inválidos ou backups completos não são aceitos nessa entrada. Copiar e colar continua disponível em opção expansível.
 
 Para usar no celular, compartilhe CONVERSA_CHATGPT.md com a nova conversa, anote os gastos e peça o arquivo quando desejar. Não há geração diária automática nem sincronização com o navegador. O teste chat-entry-smoke.js cobre também seleção de arquivo, reenvio, tamanho máximo e formatos incompatíveis.
+
+
+## V19 — revisão das faturas e padronização
+
+Pagamentos e refinanciamentos anteriores deixam a composição atual quando os demais lançamentos somam exatamente o total da fatura. Exclusões são respeitadas nas compras, créditos, orçamento e conferência. Estornos atuais permanecem. Não há remoção por coincidência de valor, data ou estabelecimento.
+
+Categorias antigas são normalizadas pela finalidade, preservando classificações manuais, viagens opcionais, empréstimos separados e valores de caixa. Parcelas futuras sem categoria herdam uma classificação inequívoca do mesmo cartão e estabelecimento. Previsões mensais recebem vínculos estáveis, sem criar cobranças ou reativar meses resolvidos.
+
+O fechamento exato é preservado. Sem uma data exata, o dia habitual é exibido como previsão anterior ao vencimento, com ajuste para o último dia do mês. Datas inexistentes e fechamentos posteriores ao vencimento são recusados.
+
+Em **Dados e backup → Aplicar revisão do ChatGPT**, um arquivo `MEU-FINANCEIRO-REVIEW-V1` confirma somente faturas cujo identificador, cartão, competência e total ainda coincidam. Faturas alteradas depois da revisão são preservadas, com aviso. Aplicar novamente não duplica registros. A revisão mantém lançamentos novos e não restaura uma base antiga. Totais estimados só passam a confirmados mediante esse arquivo ou edição explícita; igualdade numérica não confirma uma estimativa automaticamente.
+
+Validação: `node scripts/financial-review-smoke.js index.html`; opcionalmente, passe o caminho de um backup privado para comparar caixa, 48 meses, projeção por data e composição de todas as faturas. Dados privados e arquivos de revisão nunca são publicados neste repositório.

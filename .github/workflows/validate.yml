@@ -11,6 +11,7 @@ on:
       - "scripts/daily-cash-smoke.js"
       - "scripts/planning-smoke.js"
       - "scripts/review-smoke.js"
+      - "scripts/financial-review-smoke.js"
       - "index.html"
       - ".github/workflows/validate.yml"
   workflow_dispatch:
@@ -44,6 +45,9 @@ jobs:
           node scripts/daily-cash-smoke.js index.html
           node scripts/planning-smoke.js index.html
           node scripts/review-smoke.js index.html
+          node scripts/financial-review-smoke.js index.html
+          node scripts/invoice-smoke.js index.html
+          node scripts/chat-entry-smoke.js index.html
           node scripts/smoke.js review-v10.html
           node scripts/smoke.js review-v11.html
       - name: Package source for independent review
@@ -54,4 +58,5 @@ jobs:
           name: Meu-Financeiro-V16-para-Claude
           path: Meu_Financeiro_V16_Para_Claude.zip
           retention-days: 30
+
 
