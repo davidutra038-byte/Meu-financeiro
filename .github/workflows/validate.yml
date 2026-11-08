@@ -4,6 +4,7 @@ on:
     paths:
       - "review-v9.html"
       - "review-v10.html"
+      - "review-v11.html"
       - "scripts/smoke.js"
       - "index.html"
       - ".github/workflows/validate.yml"
@@ -17,7 +18,7 @@ jobs:
         run: |
           python3 - <<'PY'
           import pathlib,json,re,subprocess
-          for file in ('review-v9.html','review-v10.html','index.html'):
+          for file in ('review-v9.html','review-v10.html','review-v11.html','index.html'):
               page=pathlib.Path(file).read_text()
               m=re.search(r'<script[^>]*>(.*?)</script>',page,re.S)
               assert m, 'No inline JS in '+file
@@ -34,6 +35,7 @@ jobs:
         run: |
           node scripts/smoke.js index.html
           node scripts/smoke.js review-v10.html
+          node scripts/smoke.js review-v11.html
       - name: Package source for independent review
         run: zip -j Meu_Financeiro_V9_Para_Claude.zip index.html AVALIACAO_CLAUDE.md README.md
       - name: Upload downloadable app
