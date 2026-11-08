@@ -1,0 +1,30 @@
+name: Validate Meu Financeiro
+on:
+  push:
+    paths:
+      - "review-v9.html"
+      - "index.html"
+      - ".github/workflows/validate.yml"
+  workflow_dispatch:
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check JS syntax and privacy
+        run: |
+          python3 - <<'PY'
+          import pathlib,json,re,subprocess
+          for file in ('review-v9.html','index.html'):
+              page=pathlib.Path(file).read_text()
+              m=re.search(r'<script[^>]*>(.*?)</script>',page,re.S)
+              assert m, 'No inline JS in '+file
+              pathlib.Path('/tmp/app.js').write_text(m.group(1))
+              subprocess.run(['node','--check','/tmp/app.js'],check=True)
+              seed=re.search(r'const SEED=(\{.*?\});\s*\(\(\)=>',page,re.S)
+              assert seed,'No seed found'
+              obj=json.loads(seed.group(1))
+              assert obj['openingCents']==0 and obj['salaryNetCents']==0
+              for k in ('entries','invoices','movements','receivables','ledger','inbox','nubankLoans'):assert not obj[k], f'Private data in {k}'
+              print(file,'syntax and privacy OK')
+          PY
