@@ -1,8 +1,8 @@
 const fs=require('fs'),vm=require('vm'),assert=require('assert');
 const file=process.argv[2]||'review-v9.html',html=fs.readFileSync(file,'utf8');
-const scripts=[...html.matchAll(/<script[^>]*>([\\s\\S]*?)<\\/script>/g)];
+const scripts=[...html.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/g)];
 assert(scripts.length,'No app script');const source=scripts.at(-1)[1];new vm.Script(source);
-const seedText=html.match(/const SEED=(\\{.*?\\});\\s*\\(\\(\\)=>/s);assert(seedText,'No seed');const seed=JSON.parse(seedText[1]);
+const seedText=html.match(/const SEED=(\{.*?\});\s*\(\(\)=>/s);assert(seedText,'No seed');const seed=JSON.parse(seedText[1]);
 assert.equal(seed.openingCents,0);assert.equal(seed.salaryNetCents,0);
 for(const key of ['entries','invoices','movements','receivables','ledger','nubankLoans'])assert.equal(seed[key].length,0,'Personal data in '+key);
 assert(html.includes('repeat(6,minmax(0,1fr))'),'Mobile bottom nav must have six columns');
