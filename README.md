@@ -99,3 +99,22 @@ Validação adicional: `node scripts/accounting-smoke.js index.html`. Uma compar
 
 Compatibilidade: mesma chave de armazenamento local, formato de dados versão 4 e formato AES-GCM de backup. Nenhum dado pessoal está incorporado ao HTML público. Teste adicional: `node scripts/daily-cash-smoke.js index.html`, incluindo criptografia real e leitura do backup.
 
+
+## Interface V15 — mês a mês, repetições e comparação visual
+
+As sugestões visuais foram incorporadas à interface existente, preservando categoria, cartão, referência da fatura, tratamento de pagamentos anteriores, recebíveis e meta do apartamento.
+
+- Plano permite olhar 12, 24, 36 ou 48 meses de salário, com gráfico de saldo acumulado e barras de entradas e saídas previstas. As datas e os valores completos aparecem ao abrir um mês.
+- A visão mensal separa resultado do mês, saldo acumulado, contas por categoria, receitas e aportes. Faturas, empréstimos separados e encargo de obra são identificados sem somar os detalhes do cartão uma segunda vez.
+- A projeção do dinheiro guardado é apresentada separadamente do caixa. Aportes já feitos no mês não são adicionados novamente à projeção do cofre.
+- Nova previsão mensal cria de uma a 60 ocorrências. Edições podem atingir somente um mês, o mês selecionado e os seguintes, ou todos os meses ainda previstos. Datas com dias inexistentes são ajustadas ao fim do mês.
+- Pagamentos, recebimentos e registros marcados como não utilizados são preservados ao editar uma sequência. Para dados antigos sem identificador de repetição, a interface sugere um grupo somente quando nome, categoria e pagamento coincidem, sem ocorrências duplicadas no mesmo mês; a prévia informa quantos itens serão afetados.
+- Valores abaixo de gastos já vinculados, duplicidades e alterações em previsões cobertas por uma fatura bancária são validados antes da gravação. Alterações em sequência podem ser revertidas com Desfazer.
+- O quadro de parcelamentos informa valores conhecidos, término estimado e qualidade do calendário. Só apresenta alívio mensal quando a sequência cadastrada está completa e consistente. Detalhes cobertos por fatura não geram outra dívida no quadro.
+- A comparação inclui gráfico por proposta, resumo da opção selecionada e uma proposta FUNCEF personalizada para simulação. O líquido deve já descontar a quitação FUNCEF anterior; a prestação substitui o desconto anterior no modelo de refinanciamento.
+- O teste de aumento do encargo de obra usa uma hipótese isolada da premissa salva. Percentuais digitados são aplicados pelo botão Aplicar hipótese; atalhos também estão disponíveis. Nenhum teste registra crédito, quitação ou transferência real.
+- Gráficos usam rótulos legíveis no celular; déficits pequenos não são arredondados para menos zero. Dezembro/janeiro identifica os dois anos. O botão flutuante de lançamento ficou compacto.
+
+A soma nominal de uma proposta personalizada é prestação × quantidade. Modalidades variáveis permanecem estimativas, sem projetar INPC futuro. O menor saldo das comparações mensais considera a posição imediata e o fim dos meses; a visão diária de Hoje verifica as datas dos próximos 90 dias.
+
+Validação: `node scripts/planning-smoke.js index.html`, além dos testes de dados, simulação, lançamentos, caixa por datas e criptografia já executados no fluxo de validação. O HTML público continua sem dados financeiros pessoais e o backup continua na versão 4.
