@@ -166,6 +166,23 @@
 .mf-compare-table th{color:#526b86;background:#f4f7fb;font-size:11px}
 .mf-highlight-row{background:#e8f3fc}
 @media(max-width:760px){.mf-loan-comparison{padding:10px;margin-top:14px}.mf-compare-scroller{margin:0 -2px}}
+
+.mf-budget-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.mf-budget-actions .btn{min-height:44px;font-size:12px}
+.mf-expense-row{align-items:center}
+.mf-expense-row .item-left{min-width:0}
+.mf-expense-row .item-label{overflow-wrap:anywhere}
+.mf-expense-row .item-actions{flex-wrap:wrap;justify-content:flex-end;gap:6px}
+.mf-expense-row .btn{min-height:44px;white-space:nowrap}
+.mf-status-paid{color:#1a6547;font-weight:750}
+.mf-status-skipped{color:#7a5360;font-weight:750}
+.mf-status-planned{color:#596a7d}
+@media(max-width:760px){
+ .mf-budget-actions .btn{flex:1;min-width:110px}
+ .mf-expense-row{align-items:flex-start;flex-wrap:wrap;gap:9px}
+ .mf-expense-row .item-actions{width:100%;justify-content:flex-start;padding-left:0}
+ .mf-expense-row .btn{flex:0 0 auto}
+}
 </style></head><body><div id="app"></div><script>const SEED={"version":4,"schema":"meu-financeiro-offline-v4","name":"Meu Financeiro — privado","openedAt":"","openingCents":0,"salaryNetCents":0,"oldFuncefInstallmentCents":0,"oldFuncefEnd":"2028-02","lastSaved":null,"referenceCycle":"2026-11","entries":[],"invoices":[],"movements":[],"receivables":[],"loanOptions":[{"id":"nenhum","label":"Sem empréstimo","netCents":0,"installmentCents":0,"months":0,"totalCents":0}],"nubankLoans":[],"losango":{"payoffCents":0,"offerDate":"","paid":true},"loan":{"status":"none","option":"nenhum","netCents":0,"paymentCents":0,"durationMonths":0,"releaseDate":"","startCycle":"2026-12","description":""},"ledger":[],"vault":{"goalCents":0,"targetCycle":"2028-03","estimatedAnnualRatePct":0,"monthlyPlannedCents":0,"startCycle":"2027-01","movements":[]},"settings":{"includeTravel":false,"diversionMonthlyCents":0,"bonusCents":0,"bonusStatus":"estimativa","includeVacation":false,"projectionCycles":12,"obraGrowthPct":0,"budgetOverrides":{}},"sourceNotes":[],"salaryHistory":[],"inbox":[],"whatIf":{"option":"nenhum","payLosango":false,"payNubankSmall":false,"payNubankLarge":false,"payCards":false,"startCycle":"2026-12"}};
 
 (()=>{
@@ -214,6 +231,7 @@ function upcomingBills(){
  for(const e of s.entries.filter(x=>x.dueDate && x.dueDate<=until && expenseIncluded(x))){
   const key=budgetKeyFor(e);
   const amount=key?budgetRest(e.month,key):e.cents;
+  if(amount<=0)continue;
   if(e.budgetKey && !e.card)continue;
   rows.push({id:e.id,name:e.description,cents:amount,date:e.dueDate,kind:'entry'});
  }
@@ -241,8 +259,9 @@ function getReceivableEvents(cycle){const out=[];for(const r of s.receivables){i
 function nextReceivableTotal(cycle,onlyConfirmed=true){let total=0;for(const r of s.receivables){if(!r.firstCycle)continue;if(onlyConfirmed&&!r.dateConfirmed)continue;let k=Number(cycle.slice(0,4))*12+Number(cycle.slice(5));let start=Number(r.firstCycle.slice(0,4))*12+Number(r.firstCycle.slice(5));const idx=k-start;if(idx<0||idx>=r.totalInstallments-r.currentInstallment+1||(r.paidCycles||[]).includes(cycle))continue;total+=r.amountCents}return total}
 const asMonth=(k)=>Number(k.slice(0,4))*12+Number(k.slice(5));
 function monthlyNetSalary(cycle){return salaryRecord(cycle)?0:salaryEstimate(cycle)}
-function expenseIncluded(e){if(e.status==='pago'||e.status==='excluido'||e.includeInProjection===false)return false;if(e.card && /^fatura-/i.test(e.id))return false; // invoice is a unique payables register
- if(e.card && s.invoices.some(i=>i.card===e.card&&i.cycle===e.month))return false; // card carnê/parcelas already covered by bank invoice
+function expenseIncluded(e){if(['pago','excluido','nao_realizado'].includes(e.status)||e.includeInProjection===false)return false;
+ const budget=budgetKeyFor(e);if(budget && budgetBase(e.month,budget)===0)return false;if(e.card && /^fatura-/i.test(e.id))return false; // invoice is a unique payables register
+ if(e.card && !e.loanId && e.category!=='Empréstimos' && s.invoices.some(i=>i.card===e.card&&i.cycle===e.month))return false; // compras de cartão cobertas pela fatura; empréstimos cobrados separadamente permanecem
  if(e.category==='Empréstimos' && e.description==='Losango'&&s.losango.paid)return false;
  if(e.loanId && s.nubankLoans.find(l=>l.id===e.loanId)?.paid)return false;
  if(e.category==='Viagens'&&!s.settings.includeTravel)return false;
@@ -252,8 +271,10 @@ function forecastFor(cycle){let income=monthlyNetSalary(cycle),expenses=0,breakd
  if(s.settings.includeVacation){for(const e of s.entries.filter(x=>x.month===cycle&&x.type==='receita'&&x.description?.startsWith('Férias')))income+=e.cents}
  income+=sumBy(s.entries.filter(e=>e.month===cycle&&e.type==='receita'&&e.id?.startsWith('manual-')&&e.status==='previsto'));
  let receivable=nextReceivableTotal(cycle,true);income+=receivable;
+ const countedBudgetKeys=new Set();
  for(const e of s.entries.filter(x=>x.month===cycle&&expenseIncluded(x))){
-   let key=budgetKeyFor(e),amt=key?budgetRest(cycle,key):e.cents;if(e.budgetKey && !e.card)amt=0;
+   let key=budgetKeyFor(e);if(key&&countedBudgetKeys.has(key))continue;if(key)countedBudgetKeys.add(key);
+   let amt=key?budgetRest(cycle,key):e.cents;if(e.budgetKey && !e.card)amt=0;
    if(e.category==='Habitação' && e.id?.startsWith('obra-') && cycle!=='2026-11'){const n=Math.max(0,asMonth(cycle)-asMonth('2026-11'));amt=Math.round(amt*Math.pow(1+s.settings.obraGrowthPct/100,n));}
    if(e.category==='Empréstimos'&&e.description==='Losango'&&s.losango.paid)continue;
    expenses+=amt;breakdown.push({name:e.description,cents:amt,id:e.id})
@@ -268,7 +289,12 @@ function projected(cycles=12){let bal=liveCash(),out=[];const first=nextPayday()
  for(let i=0;i<cycles;i++){let cycle=cycShift(first,i),f=forecastFor(cycle);bal+=f.income-f.expenses-f.transfer;out.push({...f,balance:bal})}
  return out}
 function currentEntries(cycle){return s.entries.filter(e=>e.month===cycle&&e.type==='despesa'&&expenseIncluded(e))}
-function breakdownExpense(cycle){let a=currentEntries(cycle).map(x=>({...x,cents:x.category==='Lazer'&&x.description==='Diversão'?s.settings.diversionMonthlyCents:x.cents}));for(const i of s.invoices.filter(x=>x.cycle===cycle&&!x.paid))a.push({id:i.id,description:'Fatura '+i.card,cents:currentInvoice(i),category:'Faturas de cartão'});return a.sort((a,b)=>b.cents-a.cents)}
+function breakdownExpense(cycle){
+ const countedBudgets=new Set();
+ let a=currentEntries(cycle).map(x=>{const key=budgetKeyFor(x);if(key){if(countedBudgets.has(key))return null;countedBudgets.add(key)}return {...x,cents:entryAmount(x)}}).filter(x=>x&&x.cents>0);
+ for(const i of s.invoices.filter(x=>x.cycle===cycle&&!x.paid))a.push({id:i.id,description:'Fatura '+i.card,cents:currentInvoice(i),category:'Faturas de cartão'});
+ return a.sort((a,b)=>b.cents-a.cents)
+}
 const BUDGETS=[['diversao','Diversão'],['passagem','Passagem'],['internet','Internet (Vivo)'],['cabelo','Cabelo'],['claro','Claro']];
 function budgetOptions(){return [['','Não abater de orçamento'],...BUDGETS.map(x=>[x[0],x[1]])]}
 function budgetKeyFor(e){const n=String(e.description||'').toLowerCase().trim();return BUDGETS.find(x=>x[1].toLowerCase()===n)?.[0]||''}
@@ -325,12 +351,17 @@ function cardLineHTML(x){const isFuture=x.kind==='entry', action=isFuture?'editE
 function salaryHoliday(d){const [y,mm,dd]=d.split('-').map(Number);const fixed=[ '01-01','04-21','05-01','09-07','10-12','11-02','11-15','11-20','12-25'];return fixed.includes(`${String(mm).padStart(2,'0')}-${String(dd).padStart(2,'0')}`);}
 function salaryPayDate(cycle){let [y,mm]=cycle.split('-').map(Number);let d=new Date(Date.UTC(y,mm-1,20));for(let z=0;z<7;z++){const iso=d.toISOString().slice(0,10);if(![0,6].includes(d.getUTCDay())&&!salaryHoliday(iso))return iso;d.setUTCDate(d.getUTCDate()+1);}return d.toISOString().slice(0,10)}
 function salaryRecord(cycle){return s.salaryHistory.find(x=>x.cycle===cycle)}
-function budgetBase(cycle,key){const e=s.entries.find(x=>x.month===cycle&&budgetKeyFor(x)===key&&x.type==='despesa'&&x.status!=='excluido');const explicit=s.settings.budgetOverrides[cycle]?.[key];return explicit!==undefined?explicit:key==='diversao'?s.settings.diversionMonthlyCents:(e?.cents||0)}
+function budgetBase(cycle,key){const e=s.entries.find(x=>x.month===cycle&&budgetKeyFor(x)===key&&x.type==='despesa'&&x.status!=='excluido');const explicit=s.settings.budgetOverrides[cycle]?.[key];return explicit!==undefined?explicit:e?.status==='nao_realizado'?0:key==='diversao'?s.settings.diversionMonthlyCents:(e?.cents||0)}
 function budgetUsed(cycle,key){let spent=sumBy(s.ledger.filter(x=>x.budgetKey===key&&x.budgetCycle===cycle&&x.cents<0),x=>-x.cents);
  for(const inv of s.invoices.filter(x=>x.cycle===cycle))spent+=sumBy(activeMovements(inv.id).filter(x=>x.budgetKey===key&&x.cents>0));
- spent+=sumBy(s.entries.filter(x=>x.month===cycle&&x.budgetKey===key&&x.status!=='excluido'&&((x.card&&!invoiceForCard(cycle,x.card))||(!x.card&&x.id?.startsWith('manual-')&&x.type==='despesa'))));
+ spent+=sumBy(s.entries.filter(x=>x.month===cycle&&x.budgetKey===key&&!['excluido','nao_realizado','pago'].includes(x.status)&&((x.card&&!invoiceForCard(cycle,x.card))||(!x.card&&x.id?.startsWith('manual-')&&x.type==='despesa'))));
  return spent;}
 function budgetRest(cycle,key){return Math.max(0,budgetBase(cycle,key)-budgetUsed(cycle,key))}
+function budgetEntry(cycle,key){return s.entries.find(e=>e.month===cycle&&e.type==='despesa'&&budgetKeyFor(e)===key&&e.status!=='excluido')}
+function budgetIsSkipped(cycle,key){return (s.settings.budgetOverrides[cycle]?.[key]===0||budgetEntry(cycle,key)?.status==='nao_realizado') && budgetUsed(cycle,key)===0}
+function budgetDefault(cycle,key){const e=budgetEntry(cycle,key);return key==='diversao'?s.settings.diversionMonthlyCents:(e?.cents||0)}
+function entryAmount(e){const key=budgetKeyFor(e);return key?budgetRest(e.month,key):e.cents}
+
 function salaryEstimate(cycle){const oldEnd=asMonth(s.oldFuncefEnd),t=asMonth(cycle);if(s.loan.status==='active'&&t>=asMonth(s.loan.startCycle)){const n=t-asMonth(s.loan.startCycle);return s.salaryNetCents+s.oldFuncefInstallmentCents-(n<s.loan.durationMonths?s.loan.paymentCents:0)}return t>oldEnd?s.salaryNetCents+s.oldFuncefInstallmentCents:s.salaryNetCents}
 function scenarioProjection(loanId=null){
  const o=s.whatIf||{},options=s.loanOptions||[],option=options.find(x=>x.id===(loanId||o.option))||options[0]||{id:'nenhum',netCents:0,installmentCents:0,months:0};
@@ -510,7 +541,7 @@ function renderSimulation(){
     (mta.instant<0?'<p class="sim-alert">Faltaria dinheiro para executar todas as quitações selecionadas.</p>':'')+'</div>'+
    '<div class="sim-cash-math">'+cashLines+'<div class="sim-cash-math-foot">Se nenhuma dívida for marcada, o dinheiro permanece no caixa. Não é renda adicional do salário.</div></div></div>'+
   (s.losango?.offerDate && s.whatIf?.payLosango && !s.losango.paid?'<p class="sim-alert">A proposta de quitação da Losango é datada de '+fmtDate(s.losango.offerDate)+(localToday()>s.losango.offerDate?' e já venceu. Solicite nova cotação antes de contratar.':'. A liberação do FUNCEF precisa ocorrer a tempo.')+'</p>':'')+
-  (s.nubankLoans.length && invoiceForCard(nextPayday().cycle,'Nubank')?'<p class="sim-alert">Conferência pendente: existem prestações de empréstimos Nubank de '+m(sumBy(s.nubankLoans.filter(x=>!x.paid),x=>x.monthlyCents))+'/mês registradas separadamente, além da fatura Nubank. Confirme se já estão incluídas na fatura para evitar duplicidade. Nenhum valor foi alterado automaticamente.</p>':'')+
+  '<p class="caption" style="margin:8px 0 12px">Empréstimos pessoais cobrados fora da fatura de cartão são compromissos separados. A quitação simulada não modifica seus lançamentos reais.</p>'+
   scenarioComparison()+
   '<div class="sim-results-head"><div><h3>Como fica seu fluxo de caixa?</h3><p>Saldo acumulado projetado após receitas, contas, cartões, empréstimos e aportes ao cofre.</p></div><div><label for="whatIfHorizon">Período</label><select id="whatIfHorizon" data-field="whatIfHorizon">'+horizonChoices+'</select></div></div>'+
   '<div class="sim-compare"><div class="sim-stat"><span>Próximo ciclo · sem contratar</span><b>'+m(mta.originalNextCycle)+'</b></div><div class="sim-stat sim-stat-accent"><span>Próximo ciclo · com a simulação</span><b class="'+(mta.simulatedNextCycle<0?'negative':'')+'">'+m(mta.simulatedNextCycle)+'</b></div></div>'+
@@ -537,15 +568,20 @@ function renderInbox(){const pending=s.inbox.filter(x=>x.status==='pending'),oth
 }
 function hEsc(value){return h(String(value??''))}
 function renderActivity(){const cycle=s.referenceCycle,rec=salaryRecord(cycle),entries=breakdownExpense(cycle),ledger=s.ledger.filter(x=>x.date&&cycleForDate(x.date)===cycle).slice().reverse(),cats=BUDGETS.map(([key,name])=>({key,name,base:budgetBase(cycle,key),used:budgetUsed(cycle,key),remaining:budgetRest(cycle,key)})),futureCards=billCards().filter(c=>cardLines(cycle,c).length||invoiceForCard(cycle,c));
- const list=(activityFilter==='cards'?entries.filter(x=>x.category==='Faturas de cartão'||x.card):activityFilter==='income'?[]:entries.filter(x=>activityFilter==='all'||activityFilter==='unpaid'));
+ const planned=s.entries.filter(e=>e.month===cycle&&e.type==='despesa'&&(!e.card||e.loanId||e.category==='Empréstimos')&&e.status!=='excluido')
+   .map(e=>({...e,displayCents:e.status==='pago'?e.cents:entryAmount(e)}));
+ const registeredInvoices=s.invoices.filter(i=>i.cycle===cycle).map(i=>({id:i.id,category:'Faturas de cartão',description:'Fatura '+i.card,cents:currentInvoice(i),displayCents:currentInvoice(i),status:i.paid?'pago':'previsto',invoice:true,dueDate:i.dueDate}));
+ const allRows=[...planned,...registeredInvoices].sort((a,b)=>{const ad=a.dueDate||'9999-12-31',bd=b.dueDate||'9999-12-31';return ad.localeCompare(bd)||a.description.localeCompare(b.description)});
+ const isRowSkipped=x=>x.status==='nao_realizado'||(!!budgetKeyFor(x)&&budgetIsSkipped(cycle,budgetKeyFor(x)));
+ const list=(activityFilter==='income'?[]:activityFilter==='cards'?registeredInvoices:activityFilter==='unpaid'?allRows.filter(x=>x.status==='previsto'&&!isRowSkipped(x)&&x.displayCents>0):activityFilter==='paid'?allRows.filter(x=>x.status==='pago'):activityFilter==='skipped'?allRows.filter(isRowSkipped):allRows);
  return `<div class="section-heading"><div><h2>Movimentações · ${cycleLabel(cycle)}</h2><p class="caption">Contas previstas e pagamentos efetivos separados, por ciclo.</p></div>${uiCycleSelect()}</div>
  <div class="grid g2"><div class="card pad"><div class="section-heading"><h2>Salário do mês</h2><span class="chip ${rec?'ok':'warn'}">${rec?'Confirmado':'A confirmar'}</span></div><div class="metric-value smallval">${m(rec?.cents??salaryEstimate(cycle))}</div><p class="caption">Data prevista: ${fmtDate(salaryPayDate(cycle))}. ${rec?`Recebido em ${fmtDate(rec.date)}.`:'Valor ainda estimado; confirme quando entrar na conta.'}</p><button class="btn ${rec?'':'btn-primary'}" data-act="open" data-modal="salary">${ic('check')} ${rec?'Corrigir salário':'Confirmar salário recebido'}</button></div>
  <div class="card pad"><div class="section-heading"><h2>Registrar lançamento</h2></div><p class="caption">Escolha se a movimentação deve consumir um orçamento existente, como diversão, passagem, internet, cabelo ou Claro.</p><button class="btn btn-primary" data-act="open" data-modal="expense">${ic('plus')} Nova despesa / receita</button></div></div>
- <div class="section card pad"><div class="section-heading"><h2>Orçamentos do ciclo</h2><span class="chip dim">Sem duplicar despesas</span></div><div class="grid g3">${cats.map(b=>`<div class="budget-tile"><div class="row between"><strong>${h(b.name)}</strong><span class="small">${m(b.remaining)} restante</span></div><div class="progress-track"><div class="progress-bar" style="width:${b.base?Math.min(100,100*b.used/b.base):0}%"></div></div><div class="caption">${m(b.used)} utilizado / ${m(b.base)} previsto</div></div>`).join('')}</div><p class="caption">Só abato um orçamento quando você indicar essa opção no lançamento. Despesas pagas pelo cartão continuam dentro da fatura, sem contar uma segunda vez.</p></div>
+ <div class="section card pad"><div class="section-heading"><h2>Orçamentos do ciclo</h2><span class="chip dim">Sem duplicar despesas</span></div><div class="grid g3">${cats.map(b=>`<div class="budget-tile mf-budget-tile"><div class="row between"><strong>${h(b.name)}</strong><span class="small">${budgetIsSkipped(cycle,b.key)?'Não utilizado':m(b.remaining)+' restante'}</span></div><div class="progress-track"><div class="progress-bar" style="width:${b.base?Math.min(100,100*b.used/b.base):0}%"></div></div><div class="caption">${m(b.used)} utilizado / ${m(b.base)} previsto</div><div class="mf-budget-actions"><button class="btn btn-sm" type="button" data-act="open" data-modal="budget" data-id="${h(b.key)}">Editar valor</button><button class="btn btn-sm ${budgetIsSkipped(cycle,b.key)?'':'btn-ghost'}" type="button" data-act="${budgetIsSkipped(cycle,b.key)?'restoreBudget':'skipBudget'}" data-id="${h(b.key)}" ${b.used>0&&!budgetIsSkipped(cycle,b.key)?'disabled title="Há despesas registradas neste orçamento"':''}>${budgetIsSkipped(cycle,b.key)?'Restaurar':'Não utilizei'}</button></div></div>`).join('')}</div><p class="caption">Orçamento é uma previsão de gastos, não um pagamento. Use <b>Não utilizei</b> para retirar do planejamento desta referência sem mexer no caixa. Compras de cartão continuam dentro da fatura, sem duplicação.</p></div>
  <div class="section card pad"><div class="section-heading"><h2>Caixa de entrada</h2><span class="chip">Somente no aparelho</span></div>${renderInbox()}</div>
- <div class="section card pad"><div class="section-heading"><h2>Contas e faturas</h2><div class="row" style="flex-wrap:wrap;gap:5px">${[['all','Tudo'],['unpaid','A pagar'],['cards','Cartões'],['income','Recebimentos']].map(([key,label])=>`<button class="btn btn-sm ${activityFilter===key?'btn-primary':''}" data-act="activityFilter" data-id="${key}">${label}</button>`).join('')}</div></div>
+ <div class="section card pad"><div class="section-heading"><h2>Contas e faturas</h2><div class="row" style="flex-wrap:wrap;gap:5px">${[['all','Tudo'],['unpaid','A pagar'],['paid','Pagas'],['skipped','Não utilizadas'],['cards','Cartões'],['income','Recebimentos']].map(([key,label])=>`<button class="btn btn-sm ${activityFilter===key?'btn-primary':''}" data-act="activityFilter" data-id="${key}">${label}</button>`).join('')}</div></div>
  ${activityFilter==='income'?`<p class="caption">Salário: ${rec?'confirmado':'estimado'}; reembolsos futuros: ${m(nextReceivableTotal(cycle))}.</p><button class="btn btn-sm" data-act="nav" data-page="receivables">Ver reembolsos detalhados</button>`:
- `<div class="list">${list.map(x=>`<div class="item"><div class="item-left"><div class="item-avatar">${ic(x.category==='Faturas de cartão'?'card':'list')}</div><div><div class="item-label">${h(x.description)}</div><div class="item-sub">${h(x.category)}${x.budgetKey?' · orçamento '+h(x.budgetKey):''}</div></div></div><div class="item-actions"><strong class="amount">${m(x.cents)}</strong>${x.category==='Faturas de cartão'?`<button class="iconbtn" data-act="card" data-id="${x.id}">${ic('arrow')}</button>`:`<button class="iconbtn" data-act="editEntry" data-id="${x.id}" title="Editar">${ic('edit')}</button><button class="iconbtn danger" data-act="deleteEntry" data-id="${x.id}" title="Excluir previsão">${ic('trash')}</button><button class="iconbtn" data-act="askPayEntry" data-id="${x.id}" title="Confirmar pagamento">${ic('check')}</button>`}</div></div>`).join('')||'<div class="empty">Nenhuma conta prevista nesta referência.</div>'}</div>`}
+ `<div class="list">${list.map(x=>`<div class="item mf-expense-row"><div class="item-left"><div class="item-avatar">${ic(x.invoice?'card':'list')}</div><div><div class="item-label">${h(x.description)}</div><div class="item-sub">${h(x.category)}${x.budgetKey?' · orçamento '+h(x.budgetKey):''} · <b class="${x.status==='pago'?'mf-status-paid':isRowSkipped(x)?'mf-status-skipped':'mf-status-planned'}">${x.status==='pago'?'Paga':isRowSkipped(x)?'Não utilizada':'A pagar'}</b>${x.dueDate?' · '+fmtDate(x.dueDate):''}</div></div></div><div class="item-actions"><strong class="amount">${m(x.displayCents)}</strong>${x.invoice?`<button class="btn btn-sm" data-act="card" data-id="${x.id}">Abrir fatura</button>`:budgetKeyFor(x)?`<button class="btn btn-sm" data-act="open" data-modal="budget" data-id="${h(budgetKeyFor(x))}">Editar</button>${x.status==='nao_realizado'?`<button class="btn btn-sm" data-act="restoreEntry" data-id="${h(x.id)}">Restaurar</button>`:isRowSkipped(x)?`<button class="btn btn-sm" data-act="restoreBudget" data-id="${h(budgetKeyFor(x))}">Restaurar</button>`:x.status==='pago'?`<button class="btn btn-sm" data-act="reopenEntry" data-id="${h(x.id)}">Reabrir</button>`:`<button class="btn btn-sm" data-act="skipBudget" data-id="${h(budgetKeyFor(x))}" ${budgetUsed(cycle,budgetKeyFor(x))>0?'disabled':''}>Não utilizei</button>`}`:`<button class="btn btn-sm" data-act="editEntry" data-id="${h(x.id)}" title="Editar valor ou situação">Editar</button>${x.status==='pago'?`<button class="btn btn-sm" data-act="reopenEntry" data-id="${h(x.id)}">Reabrir</button>`:x.status==='nao_realizado'?`<button class="btn btn-sm" data-act="restoreEntry" data-id="${h(x.id)}">Restaurar</button>`:`<button class="btn btn-sm" data-act="askPayEntry" data-id="${h(x.id)}">Pago</button><button class="btn btn-sm" data-act="skipEntry" data-id="${h(x.id)}">Não ocorreu</button>`}`}</div></div>`).join('')||'<div class="empty">Nenhum lançamento nesta situação.</div>'}</div>`}
  <div class="subheading" style="margin-top:18px">Detalhamento por cartão e mês</div><div class="accordion-stack">${futureCards.map(c=>{const l=cardLines(cycle,c);return `<details class="finance-details"><summary><span>${h(c)} <small>· ${l.length} lançamentos</small></span><b>${m(cardMonthlyTotal(cycle,c))}</b></summary><div class="list">${l.length?l.map(cardLineHTML).join(''):'<p class="caption">Fatura informada; detalhes não cadastrados.</p>'}</div></details>`}).join('')||'<p class="caption">Nenhum cartão cadastrado nesse ciclo.</p>'}</div></div>
  <div class="section card pad"><div class="section-heading"><h2>Movimentações já realizadas</h2><button class="btn btn-sm" data-act="open" data-modal="cash">Conferir caixa</button></div><div class="list">${ledger.map(e=>`<div class="item"><div><div class="item-label">${h(e.description||e.category||'Movimentação')}</div><div class="item-sub">${fmtDate(e.date)} · ${h(e.category||'Caixa')}${e.budgetKey?' · orçamento '+h(e.budgetKey):''}</div></div><strong class="amount ${e.cents>=0?'positive':'negative'}">${m(e.cents)}</strong></div>`).join('')||'<div class="empty">Sem movimentações efetivas registradas neste ciclo.</div>'}</div></div>`;
 }
@@ -555,7 +591,15 @@ const categories=['Alimentação e lazer','Compras e vestuário','Transporte','S
 function showModal(name,id=''){modalName=name;editTarget=id;renderModal()}
 function closeModal(){modalName='';editTarget='';const host=$('#modalHost');if(host)host.innerHTML=''}
 function renderModal(){const host=$('#modalHost');if(!host||!modalName)return;let title='',body='',footer='',submit='';let v=null;
- if(modalName==='closing'){
+ if(modalName==='budget'){
+  const cycle=s.referenceCycle,key=editTarget,label=BUDGETS.find(x=>x[0]===key)?.[1];
+  if(!label){closeModal();return}
+  title='Editar orçamento · '+label;submit='saveBudget';
+  const base=budgetBase(cycle,key),used=budgetUsed(cycle,key);
+  body=`<p class="caption">Altere o valor previsto apenas para ${cycleLabel(cycle)}. Isso não registra pagamento e não modifica a fatura dos cartões.</p>
+  <div class="form-grid">${field('Valor previsto neste ciclo (R$)','budgetAmount',fmt(base/100),'text','inputmode="decimal" required')}</div>
+  <p class="caption">Já utilizado: <b>${m(used)}</b>. Para indicar que não utilizou, informe R$ 0,00, desde que não existam despesas registradas neste orçamento.</p>`;
+ }else if(modalName==='closing'){
   const card=editTarget||selectedCard,cycle=s.cardViewCycle||s.referenceCycle,actual=s.invoiceClosingDates[card+'|'+cycle]||'';
   title='Fechamento do cartão · '+card;submit='saveClosing';
   body=`<p class="caption">Defina o dia habitual do fechamento e, se desejar, a data exata para a referência ${cycleLabel(cycle)}. Não será aplicada uma data presumida às faturas passadas.</p><div class="form-grid">${field('Dia habitual do fechamento (1 a 31)','closingDay',s.cardClosings[card]||'','number','min="1" max="31"')}${field('Data de fechamento desta fatura','closingDate',actual,'date')}</div><p class="caption">O dia habitual serve de referência. O fechamento exato pode variar conforme fins de semana e regras do banco.</p>`;
@@ -590,7 +634,7 @@ function renderModal(){const host=$('#modalHost');if(!host||!modalName)return;le
  }else if(modalName==='settings'){
   title='Premissas das projeções';submit='saveSettings';body=`<div class="form-grid">${field('Salário líquido atual (R$)','salaryNet',fmt(s.salaryNetCents/100),'text','required inputmode="decimal"')}${field('13º estimado (R$)','bonus',fmt(s.settings.bonusCents/100),'text','inputmode="decimal"')}${field('Diversão mensal prevista (R$)','diversion',fmt(s.settings.diversionMonthlyCents/100),'text','inputmode="decimal"')}${field('Quantidade de ciclos a projetar','cycles',s.settings.projectionCycles,'number','min="3" max="24"')}${field('Variação mensal hipotética do encargo de obra (%)','obraGrowth',fmt(s.settings.obraGrowthPct),'text','inputmode="decimal"')}<div class="full"><label style="display:flex;align-items:center;gap:8px"><input type="checkbox" name="includeTravel" ${s.settings.includeTravel?'checked':''}> Incluir viagens planejadas da planilha antiga (estimativas, não despesas obrigatórias)</label></div><div class="full"><label style="display:flex;align-items:center;gap:8px"><input type="checkbox" name="includeVacation" ${s.settings.includeVacation?'checked':''}> Incluir receita estimada de férias do Excel</label></div></div><p class="caption">A evolução da obra não cresce necessariamente pela mesma porcentagem todo mês. Um percentual aqui é apenas teste de estresse.</p>`;
  }else if(modalName==='expense'){
-  v=s.entries.find(x=>x.id===editTarget);title=v?'Editar previsão':'Novo lançamento';submit='saveExpense';body=`<div class="form-grid">${selectField('Tipo','type',[['despesa','Despesa'],['receita','Receita']],v?.type||'despesa')}${selectField('Situação','status',[['realizado','Já aconteceu (altera caixa)'],['previsto','Para pagar/receber futuramente']],v?'previsto':'previsto')}${field('Descrição','description',v?.description||'','text','required')}${field('Valor em R$','amount',v?fmt(v.cents/100):'','text','required inputmode="decimal"')}${field('Data','date',v?.dueDate||((v?.month||s.referenceCycle)+'-25'),'date','required')}${selectField('Categoria','category',[['Habitação','Habitação'],['Energia','Energia'],['Água','Água'],['Gás','Gás'],['Alimentação','Alimentação'],['Saúde','Saúde'],['Lazer','Lazer'],['Transporte','Transporte'],['Receitas','Receitas'],['Outros','Outros']],v?.category||'Outros')}${selectField('Abater do orçamento existente?','budgetKey',budgetOptions(),v?.budgetKey||'')}</div><p class="caption">Movimentações já realizadas atualizam o caixa. Contas futuras são projetadas no ciclo da data escolhida.</p>`;
+  v=s.entries.find(x=>x.id===editTarget);title=v?'Editar previsão':'Novo lançamento';submit='saveExpense';body=`<div class="form-grid">${selectField('Tipo','type',[['despesa','Despesa'],['receita','Receita']],v?.type||'despesa')}${selectField('Situação','status',v?[['previsto','Ainda não paga / prevista'],['nao_realizado','Não ocorreu nesta referência'],['pago','Paga (registrada no caixa)']]:[['previsto','Para pagar/receber futuramente'],['realizado','Já aconteceu (altera caixa)']],v?.status||'previsto')}${field('Descrição','description',v?.description||'','text','required')}${field('Valor em R$','amount',v?fmt(v.cents/100):'','text','required inputmode="decimal"')}${field('Data','date',v?.dueDate||((v?.month||s.referenceCycle)+'-25'),'date','required')}${selectField('Categoria','category',[['Habitação','Habitação'],['Energia','Energia'],['Água','Água'],['Gás','Gás'],['Alimentação','Alimentação'],['Saúde','Saúde'],['Lazer','Lazer'],['Transporte','Transporte'],['Receitas','Receitas'],['Outros','Outros']],v?.category||'Outros')}${selectField('Abater do orçamento existente?','budgetKey',budgetOptions(),v?.budgetKey||'')}</div><p class="caption">Movimentações já realizadas atualizam o caixa. Contas futuras são projetadas no ciclo da data escolhida.</p>`;
  }else if(modalName==='confirm'){
   title=confirmAction?.title||'Confirmar';body=`<p style="line-height:1.65;margin-top:0">${h(confirmAction?.message||'Deseja continuar?')}</p>${confirmAction?.extra||''}`;submit='confirm';
  }
@@ -604,7 +648,16 @@ function checked(form,k){return !!form.elements.namedItem(k)?.checked}
 function validateMoney(value){if(!String(value).trim())throw Error('Informe um valor válido.');let c=cents(value);if(!Number.isFinite(c))throw Error('Valor inválido.');return c}
 function submitForm(form,name){
  try{
-  if(name==='saveClosing'){
+  if(name==='saveBudget'){
+   const cycle=s.referenceCycle,key=editTarget,exists=BUDGETS.some(x=>x[0]===key),amount=validateMoney(formVal(form,'budgetAmount')),used=budgetUsed(cycle,key);
+   if(!exists)throw Error('Orçamento inválido.');
+   if(amount<0)throw Error('O valor não pode ser negativo.');
+   if(amount<used)throw Error('O valor previsto não pode ser inferior ao que já foi utilizado. Revise os lançamentos primeiro.');
+   snapshot();s.settings.budgetOverrides[cycle] ||= {};s.settings.budgetOverrides[cycle][key]=amount;
+   if(amount>0&&budgetEntry(cycle,key)?.status==='nao_realizado')budgetEntry(cycle,key).status='previsto';
+   if(s.settings.budgetPaused?.[cycle])delete s.settings.budgetPaused[cycle][key];
+   closeModal();commit(amount===0?'Orçamento marcado como não utilizado nesta referência.':'Orçamento atualizado apenas nesta referência.');
+  }else if(name==='saveClosing'){
    const card=editTarget||selectedCard,cycle=s.cardViewCycle||s.referenceCycle,day=formVal(form,'closingDay'),date=formVal(form,'closingDate');
    if(day&&(Number(day)<1||Number(day)>31||!Number.isInteger(Number(day))))throw Error('Informe um dia entre 1 e 31.');
    if(date&&!/^\d{4}-\d{2}-\d{2}$/.test(date))throw Error('Data de fechamento inválida.');
@@ -674,12 +727,21 @@ function submitForm(form,name){
   }else if(name==='saveSettings'){
    const salary=validateMoney(formVal(form,'salaryNet')),bonus=validateMoney(formVal(form,'bonus')),diversion=validateMoney(formVal(form,'diversion')),cycles=Number(formVal(form,'cycles')),growth=Number(String(formVal(form,'obraGrowth')).replace(',','.'));if(salary<=0||bonus<0||diversion<0||cycles<3||cycles>24||!Number.isFinite(growth)||growth< -50||growth>100)throw Error('Confira os parâmetros informados.');snapshot();s.salaryNetCents=salary;Object.assign(s.settings,{bonusCents:bonus,diversionMonthlyCents:diversion,includeTravel:checked(form,'includeTravel'),includeVacation:checked(form,'includeVacation'),obraGrowthPct:growth,projectionCycles:cycles});closeModal();commit('Projeção recalculada com as novas premissas.');
   }else if(name==='saveExpense'){
-   const old=s.entries.find(e=>e.id===editTarget),type=formVal(form,'type'),status=formVal(form,'status'),amount=validateMoney(formVal(form,'amount')),date=formVal(form,'date'),descr=formVal(form,'description').trim(),category=formVal(form,'category'),budgetKey=formVal(form,'budgetKey');if(amount<=0||!descr)throw Error('Informe descrição e valor positivo.');
+   const old=s.entries.find(e=>e.id===editTarget),type=formVal(form,'type'),status=formVal(form,'status'),amount=validateMoney(formVal(form,'amount')),date=formVal(form,'date'),descr=formVal(form,'description').trim(),category=formVal(form,'category'),budgetKey=formVal(form,'budgetKey');
+   if(amount<=0||!descr||!date)throw Error('Informe descrição, data e valor positivo.');
+   if(old&&!['previsto','pago','nao_realizado'].includes(status))throw Error('Situação inválida.');
+   const linked=old?s.ledger.find(x=>x.id==='cash-entry-'+old.id):null,wasPaid=old?.status==='pago';
+   if(old?.status==='pago'&&!linked&&(status!=='pago'||amount!==old.cents||type!==old.type))throw Error('Este pagamento não possui movimentação individual vinculada. Não posso revertê-lo sem identificar o ajuste do caixa.');
    snapshot();
-   if(old){Object.assign(old,{month:cycleForDate(date),type,category,description:descr,cents:amount,status:'previsto',dueDate:date,budgetKey});}
-   else if(status==='realizado'){s.ledger.push({id:'cash-manual-'+V(),date,cents:type==='despesa'?-amount:amount,category,description:descr,budgetKey:type==='despesa'?budgetKey:'',budgetCycle:cycleForDate(date)})}
+   if(old){
+    Object.assign(old,{month:cycleForDate(date),type,category,description:descr,cents:amount,status,dueDate:date,budgetKey});
+    if(linked){
+     if(status==='pago')Object.assign(linked,{date,cents:type==='despesa'?-amount:amount,category,description:descr,budgetKey:type==='despesa'?(budgetKey||budgetKeyFor(old)):'',budgetCycle:cycleForDate(date)});
+     else s.ledger=s.ledger.filter(x=>x.id!=='cash-entry-'+old.id);
+    }else if(status==='pago'&&!wasPaid)s.ledger.push({id:'cash-entry-'+old.id,date,cents:type==='despesa'?-amount:amount,category,description:descr,budgetKey:type==='despesa'?(budgetKey||budgetKeyFor(old)):'',budgetCycle:cycleForDate(date)});
+   }else if(status==='realizado'){s.ledger.push({id:'cash-manual-'+V(),date,cents:type==='despesa'?-amount:amount,category,description:descr,budgetKey:type==='despesa'?budgetKey:'',budgetCycle:cycleForDate(date)})}
    else{s.entries.push({id:'manual-'+V(),month:cycleForDate(date),type,category,description:descr,cents:amount,status:'previsto',includeInProjection:true,budgetKey,source:'Inclusão manual',dueDate:date,card:''})}
-   closeModal();commit('Lançamento registrado.');
+   closeModal();commit('Lançamento e situação atualizados.');
   }else if(name==='confirm'){
    if(confirmAction?.yes){const cb=confirmAction.yes;confirmAction=null;cb();closeModal()}else closeModal();
   }
@@ -725,7 +787,50 @@ function importDelta(raw){
 function importBackup(raw){try{let obj=JSON.parse(raw);if(!obj ||typeof obj!=='object'||!Array.isArray(obj.entries))throw Error('Formato de backup inválido.');if(obj.version!==4){if(!Array.isArray(obj.invoices)||!Array.isArray(obj.invoiceMovements))throw Error('Formato anterior incompleto.');let next=clone(SEED);next.entries=obj.entries;next.invoices=obj.invoices.map(i=>({...i,paid:false,manualDeltaCents:0}));next.movements=obj.invoiceMovements.map((t,j)=>({...t,id:'mov-legacy-'+j,deleted:false,category:t.category||'Outros / a classificar'}));obj=next;}
  obj.inbox ||= [];obj.salaryHistory ||= [];obj.cardViewCycle ||= '2026-11';obj.cardClosings ||= {};obj.invoiceClosingDates ||= {};obj.whatIf ||= {option:'45-fixo',payLosango:true,payNubankSmall:false,payNubankLarge:false,payCards:false,startCycle:'2026-12'};obj.settings ||= {};obj.settings.budgetOverrides ||= {}; if(!obj.settings.referenceCycleManual)obj.referenceCycle=activeCycle(); if(!Array.isArray(obj.receivables)||!Array.isArray(obj.movements)||!obj.vault||!obj.loan)throw Error('Backup incompleto.');ask('Importar backup','A importação substituirá o estado atual deste navegador. Exporte uma cópia primeiro, caso tenha alterações não salvas.',()=>{snapshot();s=clone(obj);closeModal();commit('Backup importado com sucesso.');});
  }catch(e){alert('Não foi possível importar: '+e.message)}}
-function payEntry(id){const e=s.entries.find(x=>x.id===id);if(!e||e.status==='pago')return;const val=e.category==='Lazer'&&e.description==='Diversão'?s.settings.diversionMonthlyCents:e.cents;ask('Registrar pagamento',`Confirmar pagamento de ${e.description} no valor de ${m(val)}? O valor será descontado do caixa atual e sairá da projeção.`,()=>{snapshot();e.status='pago';s.ledger.push({id:'cash-entry-'+e.id,date:localToday(),cents:-val,category:e.category,description:e.description});commit('Conta marcada como paga.')})}
+function payEntry(id){
+ const e=s.entries.find(x=>x.id===id);if(!e||e.status==='pago'||e.status==='excluido'||e.status==='nao_realizado')return;
+ if(s.ledger.some(x=>x.id==='cash-entry-'+e.id))return alert('Já existe um pagamento vinculado a esta despesa. Verifique o histórico antes de registrá-lo novamente.');
+ const val=entryAmount(e);if(val<=0)return alert('Esta despesa não tem saldo previsto. Reative ou ajuste a previsão primeiro.');
+ ask('Registrar pagamento',`Você realmente pagou ${m(val)} de ${e.description}? O valor será retirado do caixa. Se não utilizou a despesa, escolha "Não ocorreu".`,()=>{
+  snapshot();e.status='pago';s.ledger.push({id:'cash-entry-'+e.id,date:localToday(),cents:-val,category:e.category,description:e.description,budgetKey:e.budgetKey||budgetKeyFor(e),budgetCycle:e.month});commit('Pagamento registrado no caixa.');
+ })
+}
+function skipEntry(id){
+ const e=s.entries.find(x=>x.id===id);if(!e||e.status==='pago'||e.status==='excluido')return;
+ ask('Despesa não realizada',`Confirmar que "${e.description}" não ocorreu nesta referência? Ela deixa de entrar nas contas previstas e o caixa não muda.`,()=>{
+  snapshot();e.status='nao_realizado';commit('Despesa retirada da previsão, sem alterar o caixa.');
+ });
+}
+function restoreEntry(id){
+ const e=s.entries.find(x=>x.id===id);if(!e||e.status!=='nao_realizado')return;
+ snapshot();e.status='previsto';commit('Despesa restaurada como prevista.');
+}
+function reopenEntry(id){
+ const e=s.entries.find(x=>x.id===id);if(!e||e.status!=='pago')return;
+ if(!s.ledger.some(x=>x.id==='cash-entry-'+id))return alert('Este pagamento não tem uma movimentação vinculada para reverter com segurança.');
+ ask('Desfazer pagamento',`Reabrir "${e.description}" como não paga e devolver ao caixa o valor registrado? Faça isso somente se o pagamento tiver sido marcado por engano.`,()=>{
+  snapshot();s.ledger=s.ledger.filter(x=>x.id!=='cash-entry-'+id);e.status='previsto';commit('Pagamento desfeito e despesa reaberta.');
+ });
+}
+function skipBudget(key){
+ const cycle=s.referenceCycle;if(!BUDGETS.some(x=>x[0]===key))return;
+ if(budgetUsed(cycle,key)>0)return alert('Este orçamento já tem despesas utilizadas. Você pode editar o previsto até o valor efetivamente gasto.');
+ ask('Não utilizado neste ciclo',`Não reservar ${m(budgetBase(cycle,key))} para ${BUDGETS.find(x=>x[0]===key)[1]} em ${cycleLabel(cycle)}? Nenhum dinheiro será retirado do caixa.`,()=>{
+  snapshot();s.settings.budgetOverrides[cycle]||={};s.settings.budgetPaused||={};s.settings.budgetPaused[cycle]||={};
+  s.settings.budgetPaused[cycle][key]=budgetBase(cycle,key);s.settings.budgetOverrides[cycle][key]=0;
+  commit('Orçamento marcado como não utilizado somente nesta referência.');
+ });
+}
+function restoreBudget(key){
+ const cycle=s.referenceCycle;if(!BUDGETS.some(x=>x[0]===key))return;
+ snapshot();
+ const prev=s.settings.budgetPaused?.[cycle]?.[key];
+ if(prev!==undefined)s.settings.budgetOverrides[cycle][key]=prev;
+ else if(s.settings.budgetOverrides[cycle])delete s.settings.budgetOverrides[cycle][key];
+ if(s.settings.budgetPaused?.[cycle])delete s.settings.budgetPaused[cycle][key];
+ const original=budgetEntry(cycle,key);if(original?.status==='nao_realizado')original.status='previsto';
+ commit('Orçamento restaurado nesta referência.');
+}
 function deleteTransaction(id){const t=s.movements.find(x=>x.id===id);if(!t)return;const inv=s.invoices.find(i=>i.id===t.invoice);
  ask('Remover item do detalhamento',`Excluir “${t.description}” (${m(t.cents)}) do detalhamento? O total da fatura informado pelo banco permanecerá igual.`,()=>{snapshot();t.deleted=true;commit('Lançamento removido do detalhamento; fatura preservada.');toast('Lançamento removido.',true)});
 }
@@ -744,7 +849,7 @@ function onClick(e){const b=e.target.closest('[data-act]');if(!b)return;const ac
  if(act==='insightTab'){insightView=id;render();return}
  if(act==='editCategory'){showModal('quickCategory',id);return}
  if(act==='activityFilter'){activityFilter=id;render();return}
- if(act==='editEntry'){const e=s.entries.find(x=>x.id===id);if(e){if(e.card){showModal('transaction',id)}else showModal('expense',id)}return}
+ if(act==='editEntry'){const e=s.entries.find(x=>x.id===id);if(e){if(e.card&&!e.loanId&&e.category!=='Empréstimos'){showModal('transaction',id)}else showModal('expense',id)}return}
  if(act==='deleteEntry'){deleteEntry(id);return}
 if(act==='open'){showModal(b.dataset.modal,id);return}if(act==='closeModal'){closeModal();return}if(act==='card'){const iv=s.invoices.find(x=>x.id===id);if(iv){selectedCard=iv.card;s.cardViewCycle=iv.cycle}else{selectedCard=id}setPage('cards');return}if(act==='scrollToConsolidated'){document.querySelector('#consolidado')?.scrollIntoView({behavior:'smooth'});return}
  if(act==='export'){exportSecureBackup();return}if(act==='exportAnalysis'){if(!window.confirm('Esta exportação NÃO terá senha e conterá seu histórico financeiro. Gere apenas para enviar privadamente nesta conversa, nunca publique no GitHub. Continuar?'))return;exportBackup();return}
@@ -756,7 +861,13 @@ if(act==='open'){showModal(b.dataset.modal,id);return}if(act==='closeModal'){clo
  if(act==='undo'){if(lastUndo){s=lastUndo;lastUndo=null;commit('Última alteração desfeita.')}return}
  if(act==='deleteTx'){deleteTransaction(id);return}if(act==='deleteReceivable'){deleteReceivable(id);return}
  if(act==='askPayInvoice'){payInvoice(id);return}if(act==='unpayInvoice'){reopenInvoice(id);return}
- if(act==='askPayEntry'){payEntry(id);return}if(act==='askPayLosango'){payoffLosango();return}if(act==='askPayNubank'){payoffNubank(id);return}
+ if(act==='askPayEntry'){payEntry(id);return}
+ if(act==='skipEntry'){skipEntry(id);return}
+ if(act==='restoreEntry'){restoreEntry(id);return}
+ if(act==='reopenEntry'){reopenEntry(id);return}
+ if(act==='skipBudget'){skipBudget(id);return}
+ if(act==='restoreBudget'){restoreBudget(id);return}
+ if(act==='askPayLosango'){payoffLosango();return}if(act==='askPayNubank'){payoffNubank(id);return}
 }
 function onChange(e){const el=e.target;
  if(el.dataset.field==='cardScope'){cardScope=el.value;render();return}
