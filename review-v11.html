@@ -166,6 +166,23 @@
 .mf-compare-table th{color:#526b86;background:#f4f7fb;font-size:11px}
 .mf-highlight-row{background:#e8f3fc}
 @media(max-width:760px){.mf-loan-comparison{padding:10px;margin-top:14px}.mf-compare-scroller{margin:0 -2px}}
+
+.mf-budget-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.mf-budget-actions .btn{min-height:38px;font-size:12px}
+.mf-expense-row{align-items:center}
+.mf-expense-row .item-left{min-width:0}
+.mf-expense-row .item-label{overflow-wrap:anywhere}
+.mf-expense-row .item-actions{flex-wrap:wrap;justify-content:flex-end;gap:6px}
+.mf-expense-row .btn{min-height:38px;white-space:nowrap}
+.mf-status-paid{color:#1a6547;font-weight:750}
+.mf-status-skipped{color:#7a5360;font-weight:750}
+.mf-status-planned{color:#596a7d}
+@media(max-width:760px){
+ .mf-budget-actions .btn{flex:1;min-width:110px}
+ .mf-expense-row{align-items:flex-start;flex-wrap:wrap;gap:9px}
+ .mf-expense-row .item-actions{width:100%;justify-content:flex-start;padding-left:0}
+ .mf-expense-row .btn{flex:0 0 auto}
+}
 </style></head><body><div id="app"></div><script>const SEED={"version":4,"schema":"meu-financeiro-offline-v4","name":"Meu Financeiro — privado","openedAt":"","openingCents":0,"salaryNetCents":0,"oldFuncefInstallmentCents":0,"oldFuncefEnd":"2028-02","lastSaved":null,"referenceCycle":"2026-11","entries":[],"invoices":[],"movements":[],"receivables":[],"loanOptions":[{"id":"nenhum","label":"Sem empréstimo","netCents":0,"installmentCents":0,"months":0,"totalCents":0}],"nubankLoans":[],"losango":{"payoffCents":0,"offerDate":"","paid":true},"loan":{"status":"none","option":"nenhum","netCents":0,"paymentCents":0,"durationMonths":0,"releaseDate":"","startCycle":"2026-12","description":""},"ledger":[],"vault":{"goalCents":0,"targetCycle":"2028-03","estimatedAnnualRatePct":0,"monthlyPlannedCents":0,"startCycle":"2027-01","movements":[]},"settings":{"includeTravel":false,"diversionMonthlyCents":0,"bonusCents":0,"bonusStatus":"estimativa","includeVacation":false,"projectionCycles":12,"obraGrowthPct":0,"budgetOverrides":{}},"sourceNotes":[],"salaryHistory":[],"inbox":[],"whatIf":{"option":"nenhum","payLosango":false,"payNubankSmall":false,"payNubankLarge":false,"payCards":false,"startCycle":"2026-12"}};
 
 (()=>{
@@ -551,15 +568,20 @@ function renderInbox(){const pending=s.inbox.filter(x=>x.status==='pending'),oth
 }
 function hEsc(value){return h(String(value??''))}
 function renderActivity(){const cycle=s.referenceCycle,rec=salaryRecord(cycle),entries=breakdownExpense(cycle),ledger=s.ledger.filter(x=>x.date&&cycleForDate(x.date)===cycle).slice().reverse(),cats=BUDGETS.map(([key,name])=>({key,name,base:budgetBase(cycle,key),used:budgetUsed(cycle,key),remaining:budgetRest(cycle,key)})),futureCards=billCards().filter(c=>cardLines(cycle,c).length||invoiceForCard(cycle,c));
- const list=(activityFilter==='cards'?entries.filter(x=>x.category==='Faturas de cartão'||x.card):activityFilter==='income'?[]:entries.filter(x=>activityFilter==='all'||activityFilter==='unpaid'));
+ const planned=s.entries.filter(e=>e.month===cycle&&e.type==='despesa'&&(!e.card||e.loanId||e.category==='Empréstimos')&&e.status!=='excluido')
+   .map(e=>({...e,displayCents:e.status==='pago'?e.cents:entryAmount(e)}));
+ const registeredInvoices=s.invoices.filter(i=>i.cycle===cycle).map(i=>({id:i.id,category:'Faturas de cartão',description:'Fatura '+i.card,cents:currentInvoice(i),displayCents:currentInvoice(i),status:i.paid?'pago':'previsto',invoice:true,dueDate:i.dueDate}));
+ const allRows=[...planned,...registeredInvoices].sort((a,b)=>{const ad=a.dueDate||'9999-12-31',bd=b.dueDate||'9999-12-31';return ad.localeCompare(bd)||a.description.localeCompare(b.description)});
+ const isRowSkipped=x=>x.status==='nao_realizado'||(!!budgetKeyFor(x)&&budgetIsSkipped(cycle,budgetKeyFor(x)));
+ const list=(activityFilter==='income'?[]:activityFilter==='cards'?registeredInvoices:activityFilter==='unpaid'?allRows.filter(x=>x.status==='previsto'&&!isRowSkipped(x)&&x.displayCents>0):activityFilter==='paid'?allRows.filter(x=>x.status==='pago'):activityFilter==='skipped'?allRows.filter(isRowSkipped):allRows);
  return `<div class="section-heading"><div><h2>Movimentações · ${cycleLabel(cycle)}</h2><p class="caption">Contas previstas e pagamentos efetivos separados, por ciclo.</p></div>${uiCycleSelect()}</div>
  <div class="grid g2"><div class="card pad"><div class="section-heading"><h2>Salário do mês</h2><span class="chip ${rec?'ok':'warn'}">${rec?'Confirmado':'A confirmar'}</span></div><div class="metric-value smallval">${m(rec?.cents??salaryEstimate(cycle))}</div><p class="caption">Data prevista: ${fmtDate(salaryPayDate(cycle))}. ${rec?`Recebido em ${fmtDate(rec.date)}.`:'Valor ainda estimado; confirme quando entrar na conta.'}</p><button class="btn ${rec?'':'btn-primary'}" data-act="open" data-modal="salary">${ic('check')} ${rec?'Corrigir salário':'Confirmar salário recebido'}</button></div>
  <div class="card pad"><div class="section-heading"><h2>Registrar lançamento</h2></div><p class="caption">Escolha se a movimentação deve consumir um orçamento existente, como diversão, passagem, internet, cabelo ou Claro.</p><button class="btn btn-primary" data-act="open" data-modal="expense">${ic('plus')} Nova despesa / receita</button></div></div>
- <div class="section card pad"><div class="section-heading"><h2>Orçamentos do ciclo</h2><span class="chip dim">Sem duplicar despesas</span></div><div class="grid g3">${cats.map(b=>`<div class="budget-tile"><div class="row between"><strong>${h(b.name)}</strong><span class="small">${m(b.remaining)} restante</span></div><div class="progress-track"><div class="progress-bar" style="width:${b.base?Math.min(100,100*b.used/b.base):0}%"></div></div><div class="caption">${m(b.used)} utilizado / ${m(b.base)} previsto</div></div>`).join('')}</div><p class="caption">Só abato um orçamento quando você indicar essa opção no lançamento. Despesas pagas pelo cartão continuam dentro da fatura, sem contar uma segunda vez.</p></div>
+ <div class="section card pad"><div class="section-heading"><h2>Orçamentos do ciclo</h2><span class="chip dim">Sem duplicar despesas</span></div><div class="grid g3">${cats.map(b=>`<div class="budget-tile mf-budget-tile"><div class="row between"><strong>${h(b.name)}</strong><span class="small">${budgetIsSkipped(cycle,b.key)?'Não utilizado':m(b.remaining)+' restante'}</span></div><div class="progress-track"><div class="progress-bar" style="width:${b.base?Math.min(100,100*b.used/b.base):0}%"></div></div><div class="caption">${m(b.used)} utilizado / ${m(b.base)} previsto</div><div class="mf-budget-actions"><button class="btn btn-sm" type="button" data-act="open" data-modal="budget" data-id="${h(b.key)}">Editar valor</button><button class="btn btn-sm ${budgetIsSkipped(cycle,b.key)?'':'btn-ghost'}" type="button" data-act="${budgetIsSkipped(cycle,b.key)?'restoreBudget':'skipBudget'}" data-id="${h(b.key)}" ${b.used>0&&!budgetIsSkipped(cycle,b.key)?'disabled title="Há despesas registradas neste orçamento"':''}>${budgetIsSkipped(cycle,b.key)?'Restaurar':'Não utilizei'}</button></div></div>`).join('')}</div><p class="caption">Orçamento é uma previsão de gastos, não um pagamento. Use <b>Não utilizei</b> para retirar do planejamento desta referência sem mexer no caixa. Compras de cartão continuam dentro da fatura, sem duplicação.</p></div>
  <div class="section card pad"><div class="section-heading"><h2>Caixa de entrada</h2><span class="chip">Somente no aparelho</span></div>${renderInbox()}</div>
- <div class="section card pad"><div class="section-heading"><h2>Contas e faturas</h2><div class="row" style="flex-wrap:wrap;gap:5px">${[['all','Tudo'],['unpaid','A pagar'],['cards','Cartões'],['income','Recebimentos']].map(([key,label])=>`<button class="btn btn-sm ${activityFilter===key?'btn-primary':''}" data-act="activityFilter" data-id="${key}">${label}</button>`).join('')}</div></div>
+ <div class="section card pad"><div class="section-heading"><h2>Contas e faturas</h2><div class="row" style="flex-wrap:wrap;gap:5px">${[['all','Tudo'],['unpaid','A pagar'],['paid','Pagas'],['skipped','Não utilizadas'],['cards','Cartões'],['income','Recebimentos']].map(([key,label])=>`<button class="btn btn-sm ${activityFilter===key?'btn-primary':''}" data-act="activityFilter" data-id="${key}">${label}</button>`).join('')}</div></div>
  ${activityFilter==='income'?`<p class="caption">Salário: ${rec?'confirmado':'estimado'}; reembolsos futuros: ${m(nextReceivableTotal(cycle))}.</p><button class="btn btn-sm" data-act="nav" data-page="receivables">Ver reembolsos detalhados</button>`:
- `<div class="list">${list.map(x=>`<div class="item"><div class="item-left"><div class="item-avatar">${ic(x.category==='Faturas de cartão'?'card':'list')}</div><div><div class="item-label">${h(x.description)}</div><div class="item-sub">${h(x.category)}${x.budgetKey?' · orçamento '+h(x.budgetKey):''}</div></div></div><div class="item-actions"><strong class="amount">${m(x.cents)}</strong>${x.category==='Faturas de cartão'?`<button class="iconbtn" data-act="card" data-id="${x.id}">${ic('arrow')}</button>`:`<button class="iconbtn" data-act="editEntry" data-id="${x.id}" title="Editar">${ic('edit')}</button><button class="iconbtn danger" data-act="deleteEntry" data-id="${x.id}" title="Excluir previsão">${ic('trash')}</button><button class="iconbtn" data-act="askPayEntry" data-id="${x.id}" title="Confirmar pagamento">${ic('check')}</button>`}</div></div>`).join('')||'<div class="empty">Nenhuma conta prevista nesta referência.</div>'}</div>`}
+ `<div class="list">${list.map(x=>`<div class="item mf-expense-row"><div class="item-left"><div class="item-avatar">${ic(x.invoice?'card':'list')}</div><div><div class="item-label">${h(x.description)}</div><div class="item-sub">${h(x.category)}${x.budgetKey?' · orçamento '+h(x.budgetKey):''} · <b class="${x.status==='pago'?'mf-status-paid':isRowSkipped(x)?'mf-status-skipped':'mf-status-planned'}">${x.status==='pago'?'Paga':isRowSkipped(x)?'Não utilizada':'A pagar'}</b>${x.dueDate?' · '+fmtDate(x.dueDate):''}</div></div></div><div class="item-actions"><strong class="amount">${m(x.displayCents)}</strong>${x.invoice?`<button class="btn btn-sm" data-act="card" data-id="${x.id}">Abrir fatura</button>`:budgetKeyFor(x)?`<button class="btn btn-sm" data-act="open" data-modal="budget" data-id="${h(budgetKeyFor(x))}">Editar</button>${isRowSkipped(x)?`<button class="btn btn-sm" data-act="restoreBudget" data-id="${h(budgetKeyFor(x))}">Restaurar</button>`:x.status==='pago'?'<span class="caption">Pagamento registrado</span>':`<button class="btn btn-sm" data-act="skipBudget" data-id="${h(budgetKeyFor(x))}" ${budgetUsed(cycle,budgetKeyFor(x))>0?'disabled':''}>Não utilizei</button>`}`:`<button class="btn btn-sm" data-act="editEntry" data-id="${h(x.id)}" title="Editar valor ou situação">Editar</button>${x.status==='pago'?`<button class="btn btn-sm" data-act="reopenEntry" data-id="${h(x.id)}">Reabrir</button>`:x.status==='nao_realizado'?`<button class="btn btn-sm" data-act="restoreEntry" data-id="${h(x.id)}">Restaurar</button>`:`<button class="btn btn-sm" data-act="askPayEntry" data-id="${h(x.id)}">Pago</button><button class="btn btn-sm" data-act="skipEntry" data-id="${h(x.id)}">Não ocorreu</button>`}`}</div></div>`).join('')||'<div class="empty">Nenhum lançamento nesta situação.</div>'}</div>`}
  <div class="subheading" style="margin-top:18px">Detalhamento por cartão e mês</div><div class="accordion-stack">${futureCards.map(c=>{const l=cardLines(cycle,c);return `<details class="finance-details"><summary><span>${h(c)} <small>· ${l.length} lançamentos</small></span><b>${m(cardMonthlyTotal(cycle,c))}</b></summary><div class="list">${l.length?l.map(cardLineHTML).join(''):'<p class="caption">Fatura informada; detalhes não cadastrados.</p>'}</div></details>`}).join('')||'<p class="caption">Nenhum cartão cadastrado nesse ciclo.</p>'}</div></div>
  <div class="section card pad"><div class="section-heading"><h2>Movimentações já realizadas</h2><button class="btn btn-sm" data-act="open" data-modal="cash">Conferir caixa</button></div><div class="list">${ledger.map(e=>`<div class="item"><div><div class="item-label">${h(e.description||e.category||'Movimentação')}</div><div class="item-sub">${fmtDate(e.date)} · ${h(e.category||'Caixa')}${e.budgetKey?' · orçamento '+h(e.budgetKey):''}</div></div><strong class="amount ${e.cents>=0?'positive':'negative'}">${m(e.cents)}</strong></div>`).join('')||'<div class="empty">Sem movimentações efetivas registradas neste ciclo.</div>'}</div></div>`;
 }
@@ -569,7 +591,15 @@ const categories=['Alimentação e lazer','Compras e vestuário','Transporte','S
 function showModal(name,id=''){modalName=name;editTarget=id;renderModal()}
 function closeModal(){modalName='';editTarget='';const host=$('#modalHost');if(host)host.innerHTML=''}
 function renderModal(){const host=$('#modalHost');if(!host||!modalName)return;let title='',body='',footer='',submit='';let v=null;
- if(modalName==='closing'){
+ if(modalName==='budget'){
+  const cycle=s.referenceCycle,key=editTarget,label=BUDGETS.find(x=>x[0]===key)?.[1];
+  if(!label){closeModal();return}
+  title='Editar orçamento · '+label;submit='saveBudget';
+  const base=budgetBase(cycle,key),used=budgetUsed(cycle,key);
+  body=`<p class="caption">Altere o valor previsto apenas para ${cycleLabel(cycle)}. Isso não registra pagamento e não modifica a fatura dos cartões.</p>
+  <div class="form-grid">${field('Valor previsto neste ciclo (R$)','budgetAmount',fmt(base/100),'text','inputmode="decimal" required')}</div>
+  <p class="caption">Já utilizado: <b>${m(used)}</b>. Para indicar que não utilizou, informe R$ 0,00, desde que não existam despesas registradas neste orçamento.</p>`;
+ }else if(modalName==='closing'){
   const card=editTarget||selectedCard,cycle=s.cardViewCycle||s.referenceCycle,actual=s.invoiceClosingDates[card+'|'+cycle]||'';
   title='Fechamento do cartão · '+card;submit='saveClosing';
   body=`<p class="caption">Defina o dia habitual do fechamento e, se desejar, a data exata para a referência ${cycleLabel(cycle)}. Não será aplicada uma data presumida às faturas passadas.</p><div class="form-grid">${field('Dia habitual do fechamento (1 a 31)','closingDay',s.cardClosings[card]||'','number','min="1" max="31"')}${field('Data de fechamento desta fatura','closingDate',actual,'date')}</div><p class="caption">O dia habitual serve de referência. O fechamento exato pode variar conforme fins de semana e regras do banco.</p>`;
@@ -618,7 +648,15 @@ function checked(form,k){return !!form.elements.namedItem(k)?.checked}
 function validateMoney(value){if(!String(value).trim())throw Error('Informe um valor válido.');let c=cents(value);if(!Number.isFinite(c))throw Error('Valor inválido.');return c}
 function submitForm(form,name){
  try{
-  if(name==='saveClosing'){
+  if(name==='saveBudget'){
+   const cycle=s.referenceCycle,key=editTarget,exists=BUDGETS.some(x=>x[0]===key),amount=validateMoney(formVal(form,'budgetAmount')),used=budgetUsed(cycle,key);
+   if(!exists)throw Error('Orçamento inválido.');
+   if(amount<0)throw Error('O valor não pode ser negativo.');
+   if(amount<used)throw Error('O valor previsto não pode ser inferior ao que já foi utilizado. Revise os lançamentos primeiro.');
+   snapshot();s.settings.budgetOverrides[cycle] ||= {};s.settings.budgetOverrides[cycle][key]=amount;
+   if(s.settings.budgetPaused?.[cycle])delete s.settings.budgetPaused[cycle][key];
+   closeModal();commit(amount===0?'Orçamento marcado como não utilizado nesta referência.':'Orçamento atualizado apenas nesta referência.');
+  }else if(name==='saveClosing'){
    const card=editTarget||selectedCard,cycle=s.cardViewCycle||s.referenceCycle,day=formVal(form,'closingDay'),date=formVal(form,'closingDate');
    if(day&&(Number(day)<1||Number(day)>31||!Number.isInteger(Number(day))))throw Error('Informe um dia entre 1 e 31.');
    if(date&&!/^\d{4}-\d{2}-\d{2}$/.test(date))throw Error('Data de fechamento inválida.');
