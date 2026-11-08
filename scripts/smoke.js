@@ -9,7 +9,7 @@ assert(html.includes('repeat(6,minmax(0,1fr))'),'Mobile bottom nav must have six
 const needle='render();acceptShortcutLink();';
 assert(source.includes(needle));
 const extra=source.includes('function localToday()')?',localToday,cycleForDate,nextPayday,upcomingBills,projected,uiCycleSelect':'';
-const extraV11=source.includes('function budgetIsSkipped(')?',renderActivity,budgetBase,budgetUsed,budgetRest,budgetIsSkipped,entryAmount,expenseIncluded,breakdownExpense':'';
+const extraV11=source.includes('function budgetIsSkipped(')?',renderActivity,budgetBase,budgetUsed,budgetRest,budgetIsSkipped,entryAmount,expenseIncluded,breakdownExpense,submitForm,setTarget:(id)=>{editTarget=id},getData:()=>s':'';
 const hook='globalThis.__test={setData:(data)=>{s=data},scenarioProjection,renderSimulation,forecastFor'+extra+extraV11+'};'+needle;
 const js=source.replace(needle,hook);
 const stub=()=>({innerHTML:'',value:'',classList:{add(){},remove(){}}});
@@ -82,5 +82,31 @@ if(file.includes('v11')||file==='index.html'&&source.includes('function budgetIs
  assert.equal(context.__test.expenseIncluded(d.entries[0]),false);
  htmlView=context.__test.renderActivity();
  assert(htmlView.includes('Restaurar'),'Not used expense can be restored');
+}
+if(file.includes('v11')||file==='index.html'&&source.includes('function budgetIsSkipped(')){
+ const fakeForm=(values)=>({elements:{namedItem:(key)=>({value:values[key]??''})}});
+ d.referenceCycle='2026-10';d.settings.budgetOverrides={};
+ d.entries=[{id:'test-luz',month:'2026-10',type:'despesa',description:'Conta de energia',cents:9000,dueDate:'2026-11-12',status:'previsto',category:'Energia',includeInProjection:true,card:'',budgetKey:''}];
+ d.invoices=[];d.ledger=[];
+ context.__test.setData(d);
+ context.__test.setTarget('passagem');
+ context.__test.submitForm(fakeForm({budgetAmount:'80,00'}),'saveBudget');
+ assert.equal(d.settings.budgetOverrides['2026-10'].passagem,8000,'Editing budget persists override');
+ context.__test.setTarget('test-luz');
+ let expense={type:'despesa',status:'nao_realizado',amount:'90,00',date:'2026-11-08',description:'Conta de energia',category:'Energia',budgetKey:''};
+ context.__test.submitForm(fakeForm(expense),'saveExpense');
+ assert.equal(d.entries[0].status,'nao_realizado','Unused bill must not become paid');
+ assert.equal(d.ledger.length,0,'Unused bill cannot change cash');
+ expense.status='pago';
+ context.__test.submitForm(fakeForm(expense),'saveExpense');
+ assert.equal(d.entries[0].status,'pago');
+ assert.equal(d.ledger.length,1);
+ assert.equal(d.ledger[0].cents,-9000);
+ context.__test.submitForm(fakeForm(expense),'saveExpense');
+ assert.equal(d.ledger.length,1,'Editing paid item must not add duplicate cash movement');
+ expense.status='previsto';
+ context.__test.submitForm(fakeForm(expense),'saveExpense');
+ assert.equal(d.ledger.length,0,'Reopened paid item must reverse linked cash movement');
+ assert.equal(d.entries[0].status,'previsto');
 }
 console.log('Smoke test passed:',file);
