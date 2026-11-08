@@ -634,7 +634,7 @@ function renderModal(){const host=$('#modalHost');if(!host||!modalName)return;le
  }else if(modalName==='settings'){
   title='Premissas das projeções';submit='saveSettings';body=`<div class="form-grid">${field('Salário líquido atual (R$)','salaryNet',fmt(s.salaryNetCents/100),'text','required inputmode="decimal"')}${field('13º estimado (R$)','bonus',fmt(s.settings.bonusCents/100),'text','inputmode="decimal"')}${field('Diversão mensal prevista (R$)','diversion',fmt(s.settings.diversionMonthlyCents/100),'text','inputmode="decimal"')}${field('Quantidade de ciclos a projetar','cycles',s.settings.projectionCycles,'number','min="3" max="24"')}${field('Variação mensal hipotética do encargo de obra (%)','obraGrowth',fmt(s.settings.obraGrowthPct),'text','inputmode="decimal"')}<div class="full"><label style="display:flex;align-items:center;gap:8px"><input type="checkbox" name="includeTravel" ${s.settings.includeTravel?'checked':''}> Incluir viagens planejadas da planilha antiga (estimativas, não despesas obrigatórias)</label></div><div class="full"><label style="display:flex;align-items:center;gap:8px"><input type="checkbox" name="includeVacation" ${s.settings.includeVacation?'checked':''}> Incluir receita estimada de férias do Excel</label></div></div><p class="caption">A evolução da obra não cresce necessariamente pela mesma porcentagem todo mês. Um percentual aqui é apenas teste de estresse.</p>`;
  }else if(modalName==='expense'){
-  v=s.entries.find(x=>x.id===editTarget);title=v?'Editar previsão':'Novo lançamento';submit='saveExpense';body=`<div class="form-grid">${selectField('Tipo','type',[['despesa','Despesa'],['receita','Receita']],v?.type||'despesa')}${selectField('Situação','status',[['realizado','Já aconteceu (altera caixa)'],['previsto','Para pagar/receber futuramente']],v?'previsto':'previsto')}${field('Descrição','description',v?.description||'','text','required')}${field('Valor em R$','amount',v?fmt(v.cents/100):'','text','required inputmode="decimal"')}${field('Data','date',v?.dueDate||((v?.month||s.referenceCycle)+'-25'),'date','required')}${selectField('Categoria','category',[['Habitação','Habitação'],['Energia','Energia'],['Água','Água'],['Gás','Gás'],['Alimentação','Alimentação'],['Saúde','Saúde'],['Lazer','Lazer'],['Transporte','Transporte'],['Receitas','Receitas'],['Outros','Outros']],v?.category||'Outros')}${selectField('Abater do orçamento existente?','budgetKey',budgetOptions(),v?.budgetKey||'')}</div><p class="caption">Movimentações já realizadas atualizam o caixa. Contas futuras são projetadas no ciclo da data escolhida.</p>`;
+  v=s.entries.find(x=>x.id===editTarget);title=v?'Editar previsão':'Novo lançamento';submit='saveExpense';body=`<div class="form-grid">${selectField('Tipo','type',[['despesa','Despesa'],['receita','Receita']],v?.type||'despesa')}${selectField('Situação','status',v?[['previsto','Ainda não paga / prevista'],['nao_realizado','Não ocorreu nesta referência'],['pago','Paga (registrada no caixa)']]:[['previsto','Para pagar/receber futuramente'],['realizado','Já aconteceu (altera caixa)']],v?.status||'previsto')}${field('Descrição','description',v?.description||'','text','required')}${field('Valor em R$','amount',v?fmt(v.cents/100):'','text','required inputmode="decimal"')}${field('Data','date',v?.dueDate||((v?.month||s.referenceCycle)+'-25'),'date','required')}${selectField('Categoria','category',[['Habitação','Habitação'],['Energia','Energia'],['Água','Água'],['Gás','Gás'],['Alimentação','Alimentação'],['Saúde','Saúde'],['Lazer','Lazer'],['Transporte','Transporte'],['Receitas','Receitas'],['Outros','Outros']],v?.category||'Outros')}${selectField('Abater do orçamento existente?','budgetKey',budgetOptions(),v?.budgetKey||'')}</div><p class="caption">Movimentações já realizadas atualizam o caixa. Contas futuras são projetadas no ciclo da data escolhida.</p>`;
  }else if(modalName==='confirm'){
   title=confirmAction?.title||'Confirmar';body=`<p style="line-height:1.65;margin-top:0">${h(confirmAction?.message||'Deseja continuar?')}</p>${confirmAction?.extra||''}`;submit='confirm';
  }
@@ -726,12 +726,21 @@ function submitForm(form,name){
   }else if(name==='saveSettings'){
    const salary=validateMoney(formVal(form,'salaryNet')),bonus=validateMoney(formVal(form,'bonus')),diversion=validateMoney(formVal(form,'diversion')),cycles=Number(formVal(form,'cycles')),growth=Number(String(formVal(form,'obraGrowth')).replace(',','.'));if(salary<=0||bonus<0||diversion<0||cycles<3||cycles>24||!Number.isFinite(growth)||growth< -50||growth>100)throw Error('Confira os parâmetros informados.');snapshot();s.salaryNetCents=salary;Object.assign(s.settings,{bonusCents:bonus,diversionMonthlyCents:diversion,includeTravel:checked(form,'includeTravel'),includeVacation:checked(form,'includeVacation'),obraGrowthPct:growth,projectionCycles:cycles});closeModal();commit('Projeção recalculada com as novas premissas.');
   }else if(name==='saveExpense'){
-   const old=s.entries.find(e=>e.id===editTarget),type=formVal(form,'type'),status=formVal(form,'status'),amount=validateMoney(formVal(form,'amount')),date=formVal(form,'date'),descr=formVal(form,'description').trim(),category=formVal(form,'category'),budgetKey=formVal(form,'budgetKey');if(amount<=0||!descr)throw Error('Informe descrição e valor positivo.');
+   const old=s.entries.find(e=>e.id===editTarget),type=formVal(form,'type'),status=formVal(form,'status'),amount=validateMoney(formVal(form,'amount')),date=formVal(form,'date'),descr=formVal(form,'description').trim(),category=formVal(form,'category'),budgetKey=formVal(form,'budgetKey');
+   if(amount<=0||!descr||!date)throw Error('Informe descrição, data e valor positivo.');
+   if(old&&!['previsto','pago','nao_realizado'].includes(status))throw Error('Situação inválida.');
+   const linked=old?s.ledger.find(x=>x.id==='cash-entry-'+old.id):null;
+   if(old?.status==='pago'&&!linked&&(status!=='pago'||amount!==old.cents||type!==old.type))throw Error('Este pagamento não possui movimentação individual vinculada. Não posso revertê-lo sem identificar o ajuste do caixa.');
    snapshot();
-   if(old){Object.assign(old,{month:cycleForDate(date),type,category,description:descr,cents:amount,status:'previsto',dueDate:date,budgetKey});}
-   else if(status==='realizado'){s.ledger.push({id:'cash-manual-'+V(),date,cents:type==='despesa'?-amount:amount,category,description:descr,budgetKey:type==='despesa'?budgetKey:'',budgetCycle:cycleForDate(date)})}
+   if(old){
+    Object.assign(old,{month:cycleForDate(date),type,category,description:descr,cents:amount,status,dueDate:date,budgetKey});
+    if(linked){
+     if(status==='pago')Object.assign(linked,{date,cents:type==='despesa'?-amount:amount,category,description:descr,budgetKey:type==='despesa'?(budgetKey||budgetKeyFor(old)):'',budgetCycle:cycleForDate(date)});
+     else s.ledger=s.ledger.filter(x=>x.id!=='cash-entry-'+old.id);
+    }else if(status==='pago')s.ledger.push({id:'cash-entry-'+old.id,date,cents:type==='despesa'?-amount:amount,category,description:descr,budgetKey:type==='despesa'?(budgetKey||budgetKeyFor(old)):'',budgetCycle:cycleForDate(date)});
+   }else if(status==='realizado'){s.ledger.push({id:'cash-manual-'+V(),date,cents:type==='despesa'?-amount:amount,category,description:descr,budgetKey:type==='despesa'?budgetKey:'',budgetCycle:cycleForDate(date)})}
    else{s.entries.push({id:'manual-'+V(),month:cycleForDate(date),type,category,description:descr,cents:amount,status:'previsto',includeInProjection:true,budgetKey,source:'Inclusão manual',dueDate:date,card:''})}
-   closeModal();commit('Lançamento registrado.');
+   closeModal();commit('Lançamento e situação atualizados.');
   }else if(name==='confirm'){
    if(confirmAction?.yes){const cb=confirmAction.yes;confirmAction=null;cb();closeModal()}else closeModal();
   }
@@ -777,7 +786,48 @@ function importDelta(raw){
 function importBackup(raw){try{let obj=JSON.parse(raw);if(!obj ||typeof obj!=='object'||!Array.isArray(obj.entries))throw Error('Formato de backup inválido.');if(obj.version!==4){if(!Array.isArray(obj.invoices)||!Array.isArray(obj.invoiceMovements))throw Error('Formato anterior incompleto.');let next=clone(SEED);next.entries=obj.entries;next.invoices=obj.invoices.map(i=>({...i,paid:false,manualDeltaCents:0}));next.movements=obj.invoiceMovements.map((t,j)=>({...t,id:'mov-legacy-'+j,deleted:false,category:t.category||'Outros / a classificar'}));obj=next;}
  obj.inbox ||= [];obj.salaryHistory ||= [];obj.cardViewCycle ||= '2026-11';obj.cardClosings ||= {};obj.invoiceClosingDates ||= {};obj.whatIf ||= {option:'45-fixo',payLosango:true,payNubankSmall:false,payNubankLarge:false,payCards:false,startCycle:'2026-12'};obj.settings ||= {};obj.settings.budgetOverrides ||= {}; if(!obj.settings.referenceCycleManual)obj.referenceCycle=activeCycle(); if(!Array.isArray(obj.receivables)||!Array.isArray(obj.movements)||!obj.vault||!obj.loan)throw Error('Backup incompleto.');ask('Importar backup','A importação substituirá o estado atual deste navegador. Exporte uma cópia primeiro, caso tenha alterações não salvas.',()=>{snapshot();s=clone(obj);closeModal();commit('Backup importado com sucesso.');});
  }catch(e){alert('Não foi possível importar: '+e.message)}}
-function payEntry(id){const e=s.entries.find(x=>x.id===id);if(!e||e.status==='pago')return;const val=e.category==='Lazer'&&e.description==='Diversão'?s.settings.diversionMonthlyCents:e.cents;ask('Registrar pagamento',`Confirmar pagamento de ${e.description} no valor de ${m(val)}? O valor será descontado do caixa atual e sairá da projeção.`,()=>{snapshot();e.status='pago';s.ledger.push({id:'cash-entry-'+e.id,date:localToday(),cents:-val,category:e.category,description:e.description});commit('Conta marcada como paga.')})}
+function payEntry(id){
+ const e=s.entries.find(x=>x.id===id);if(!e||e.status==='pago'||e.status==='excluido'||e.status==='nao_realizado')return;
+ const val=entryAmount(e);if(val<=0)return alert('Esta despesa não tem saldo previsto. Reative ou ajuste a previsão primeiro.');
+ ask('Registrar pagamento',`Você realmente pagou ${m(val)} de ${e.description}? O valor será retirado do caixa. Se não utilizou a despesa, escolha "Não ocorreu".`,()=>{
+  snapshot();e.status='pago';s.ledger.push({id:'cash-entry-'+e.id,date:localToday(),cents:-val,category:e.category,description:e.description,budgetKey:e.budgetKey||budgetKeyFor(e),budgetCycle:e.month});commit('Pagamento registrado no caixa.');
+ })
+}
+function skipEntry(id){
+ const e=s.entries.find(x=>x.id===id);if(!e||e.status==='pago'||e.status==='excluido')return;
+ ask('Despesa não realizada',`Confirmar que "${e.description}" não ocorreu nesta referência? Ela deixa de entrar nas contas previstas e o caixa não muda.`,()=>{
+  snapshot();e.status='nao_realizado';commit('Despesa retirada da previsão, sem alterar o caixa.');
+ });
+}
+function restoreEntry(id){
+ const e=s.entries.find(x=>x.id===id);if(!e||e.status!=='nao_realizado')return;
+ snapshot();e.status='previsto';commit('Despesa restaurada como prevista.');
+}
+function reopenEntry(id){
+ const e=s.entries.find(x=>x.id===id);if(!e||e.status!=='pago')return;
+ if(!s.ledger.some(x=>x.id==='cash-entry-'+id))return alert('Este pagamento não tem uma movimentação vinculada para reverter com segurança.');
+ ask('Desfazer pagamento',`Reabrir "${e.description}" como não paga e devolver ao caixa o valor registrado? Faça isso somente se o pagamento tiver sido marcado por engano.`,()=>{
+  snapshot();s.ledger=s.ledger.filter(x=>x.id!=='cash-entry-'+id);e.status='previsto';commit('Pagamento desfeito e despesa reaberta.');
+ });
+}
+function skipBudget(key){
+ const cycle=s.referenceCycle;if(!BUDGETS.some(x=>x[0]===key))return;
+ if(budgetUsed(cycle,key)>0)return alert('Este orçamento já tem despesas utilizadas. Você pode editar o previsto até o valor efetivamente gasto.');
+ ask('Não utilizado neste ciclo',`Não reservar ${m(budgetBase(cycle,key))} para ${BUDGETS.find(x=>x[0]===key)[1]} em ${cycleLabel(cycle)}? Nenhum dinheiro será retirado do caixa.`,()=>{
+  snapshot();s.settings.budgetOverrides[cycle]||={};s.settings.budgetPaused||={};s.settings.budgetPaused[cycle]||={};
+  s.settings.budgetPaused[cycle][key]=budgetBase(cycle,key);s.settings.budgetOverrides[cycle][key]=0;
+  commit('Orçamento marcado como não utilizado somente nesta referência.');
+ });
+}
+function restoreBudget(key){
+ const cycle=s.referenceCycle;if(!BUDGETS.some(x=>x[0]===key))return;
+ snapshot();
+ const prev=s.settings.budgetPaused?.[cycle]?.[key];
+ if(prev!==undefined)s.settings.budgetOverrides[cycle][key]=prev;
+ else if(s.settings.budgetOverrides[cycle])delete s.settings.budgetOverrides[cycle][key];
+ if(s.settings.budgetPaused?.[cycle])delete s.settings.budgetPaused[cycle][key];
+ commit('Orçamento restaurado nesta referência.');
+}
 function deleteTransaction(id){const t=s.movements.find(x=>x.id===id);if(!t)return;const inv=s.invoices.find(i=>i.id===t.invoice);
  ask('Remover item do detalhamento',`Excluir “${t.description}” (${m(t.cents)}) do detalhamento? O total da fatura informado pelo banco permanecerá igual.`,()=>{snapshot();t.deleted=true;commit('Lançamento removido do detalhamento; fatura preservada.');toast('Lançamento removido.',true)});
 }
@@ -796,7 +846,7 @@ function onClick(e){const b=e.target.closest('[data-act]');if(!b)return;const ac
  if(act==='insightTab'){insightView=id;render();return}
  if(act==='editCategory'){showModal('quickCategory',id);return}
  if(act==='activityFilter'){activityFilter=id;render();return}
- if(act==='editEntry'){const e=s.entries.find(x=>x.id===id);if(e){if(e.card){showModal('transaction',id)}else showModal('expense',id)}return}
+ if(act==='editEntry'){const e=s.entries.find(x=>x.id===id);if(e){if(e.card&&!e.loanId&&e.category!=='Empréstimos'){showModal('transaction',id)}else showModal('expense',id)}return}
  if(act==='deleteEntry'){deleteEntry(id);return}
 if(act==='open'){showModal(b.dataset.modal,id);return}if(act==='closeModal'){closeModal();return}if(act==='card'){const iv=s.invoices.find(x=>x.id===id);if(iv){selectedCard=iv.card;s.cardViewCycle=iv.cycle}else{selectedCard=id}setPage('cards');return}if(act==='scrollToConsolidated'){document.querySelector('#consolidado')?.scrollIntoView({behavior:'smooth'});return}
  if(act==='export'){exportSecureBackup();return}if(act==='exportAnalysis'){if(!window.confirm('Esta exportação NÃO terá senha e conterá seu histórico financeiro. Gere apenas para enviar privadamente nesta conversa, nunca publique no GitHub. Continuar?'))return;exportBackup();return}
@@ -808,7 +858,13 @@ if(act==='open'){showModal(b.dataset.modal,id);return}if(act==='closeModal'){clo
  if(act==='undo'){if(lastUndo){s=lastUndo;lastUndo=null;commit('Última alteração desfeita.')}return}
  if(act==='deleteTx'){deleteTransaction(id);return}if(act==='deleteReceivable'){deleteReceivable(id);return}
  if(act==='askPayInvoice'){payInvoice(id);return}if(act==='unpayInvoice'){reopenInvoice(id);return}
- if(act==='askPayEntry'){payEntry(id);return}if(act==='askPayLosango'){payoffLosango();return}if(act==='askPayNubank'){payoffNubank(id);return}
+ if(act==='askPayEntry'){payEntry(id);return}
+ if(act==='skipEntry'){skipEntry(id);return}
+ if(act==='restoreEntry'){restoreEntry(id);return}
+ if(act==='reopenEntry'){reopenEntry(id);return}
+ if(act==='skipBudget'){skipBudget(id);return}
+ if(act==='restoreBudget'){restoreBudget(id);return}
+ if(act==='askPayLosango'){payoffLosango();return}if(act==='askPayNubank'){payoffNubank(id);return}
 }
 function onChange(e){const el=e.target;
  if(el.dataset.field==='cardScope'){cardScope=el.value;render();return}
