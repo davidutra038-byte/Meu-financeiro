@@ -130,3 +130,51 @@ Validação: `node scripts/planning-smoke.js index.html`, além dos testes de da
 - Não há migração destrutiva ou alteração automática de saldo, pagamentos, contratos, metas ou dados pessoais. Registros e anotações continuam locais e fazem parte do backup protegido.
 
 Validação: executar os cinco testes existentes e `node scripts/review-smoke.js index.html`.
+
+## Faturas — confirmação do total e detalhamento
+
+Os cartões separam valor, vencimento, confiabilidade do total, detalhamento e registro de pagamento. “Valores conferem” indica igualdade numérica, sem afirmar conferência manual. A soma líquida dos detalhes considera créditos e ajustes. A confirmação do total não altera a projeção ou registra pagamentos.
+
+Verificação: `node scripts/invoice-smoke.js index.html`. Opcionalmente, informe os caminhos de um backup original e do ajustado para comparar saldo e projeções; a prévia com dados pessoais é gerada apenas em `dados-privados/`, pasta ignorada pelo Git.
+
+Registros explicitamente marcados com `excludedFromInvoiceDetails` são preservados em seção separada e excluídos apenas da soma de conciliação; isso não registra pagamento nem altera o total da fatura. Créditos sem essa marca continuam participando normalmente.
+
+## V17 — gastos, dívidas e apartamento no mesmo plano
+
+- Hoje prioriza saldo registrado, compromissos próximos e risco de caixa; a agenda aparece antes dos caminhos para organizar gastos, comparar dívidas e acompanhar o apartamento.
+- O teste de compra e o resumo da reserva ficam ao lado da agenda no desktop e abaixo dela no celular.
+- Plano reúne alerta de aperto, evolução do caixa e cartão da meta. Caixa e dinheiro guardado permanecem separados.
+- O gráfico mensal mantém proporções e exibe referências de valor fora do SVG, com texto responsivo. A linha de zero é preservada.
+- A comparação de entradas e saídas usa barras horizontais com valores exatos, resultado do mês e seleção por botão ou lista. Exibe até seis meses de cada vez, sem rolagem horizontal; todo o horizonte continua acessível no seletor.
+- Selecionar um mês atualiza também as contas detalhadas. O botão Ver contas leva diretamente ao detalhamento. Seletores e botões têm foco visível.
+- O gráfico diário usa distância real entre datas e degraus por evento, preservando os mínimos dentro do dia.
+- A interface não altera lançamentos, pagamentos ou cálculos. O formato de backup v4 e a chave do aplicativo foram preservados.
+
+Teste adicional: `node scripts/redesign-smoke.js index.html`. Com backup e HTML anterior como argumentos adicionais, compara caixa e projeções de 48 meses e 90 dias e gera uma prévia privada com armazenamento isolado. Nenhuma alteração dessa prévia sincroniza com a versão em uso.
+
+### Ajustes de composição e término das parcelas
+
+- Faturas com total confirmado e soma de detalhes inferior usam “Detalhes parciais”, em tom neutro. “Sem detalhamento cadastrado” explica a parte não distribuída; não é cobrança adicional nem erro no total confirmado.
+- Términos de parcelas agrupados por competência, com dois níveis de abertura: compras/contratos no mês e registros de cada sequência.
+- O cabeçalho soma as últimas parcelas efetivamente cadastradas. A redução mensal identificada considera somente calendários completos e começa na competência seguinte. Registros restantes e redução mensal têm rótulos distintos.
+- Testes adicionais em `scripts/planning-smoke.js` verificam soma por competência e exclusão de calendários parciais do alívio mensal.
+
+### Correção do Nubank e vínculo das parcelas atuais/futuras
+
+O pagamento antigo retirado pelo usuário fica arquivado no backup, com `excludedFromInvoiceDetails` e `invoiceRecordVisibility: archive-only`, sem aparecer na composição atual. Não gera pagamento de caixa. As parcelas atuais de faturas são associadas às séries futuras apenas quando há correspondência única entre cartão, competência, valor e parcela (número/total), eliminando sequências visuais repetidas de C&A e Renner sem apagar dados nem alterar projeções. Testes reais opcionais: `node scripts/planning-smoke.js index.html <backup-ajustado>`.
+
+### Dados e backup em um só lugar
+
+Um único acesso no cabeçalho abre criação de backup protegido e restauração. Importação de parcelas e exportação para análise ficam em ferramentas expansíveis nessa área. Removidos os atalhos repetidos da lateral, cabeçalho móvel, cartões, revisão de planejamento, preferências e simulação. A tela inicial vazia preserva o atalho de recuperação; o lembrete periódico leva à central. Criptografia, arquivos aceitos e confirmação de substituição continuam iguais.
+
+## Contas e entrada pela conversa
+
+Contas prioriza A pagar, Pagas e recebidas e A conferir; outras visualizações ficam recolhidas. Ações secundárias por conta ficam em Mais opções. Novo lançamento começa por valor e descrição, com atalhos de tipo e categoria nos detalhes opcionais.
+
+**Contas → Trazer do ChatGPT** recebe blocos `MEU-FINANCEIRO-CHAT-V1` como sugestões. Cada item exige confirmação antes de criar registro financeiro. Isso não é sincronização com o chat e não usa restauração de backup. Veja [CONVERSA_CHATGPT.md](CONVERSA_CHATGPT.md) para o contrato, exemplos e limites. Teste: `node scripts/chat-entry-smoke.js index.html`.
+
+## V18 — arquivo diário do ChatGPT
+
+Contas → Trazer do ChatGPT → Escolher arquivo do ChatGPT (.json) lê pacotes MEU-FINANCEIRO-CHAT-V1 de até 100 itens e 500 KB. A leitura ocorre localmente; itens válidos entram em A conferir, sem substituir a base ou movimentar o caixa. IDs estáveis impedem reenvios do mesmo item. Blocos inválidos ou backups completos não são aceitos nessa entrada. Copiar e colar continua disponível em opção expansível.
+
+Para usar no celular, compartilhe CONVERSA_CHATGPT.md com a nova conversa, anote os gastos e peça o arquivo quando desejar. Não há geração diária automática nem sincronização com o navegador. O teste chat-entry-smoke.js cobre também seleção de arquivo, reenvio, tamanho máximo e formatos incompatíveis.
