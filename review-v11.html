@@ -730,7 +730,7 @@ function submitForm(form,name){
    const old=s.entries.find(e=>e.id===editTarget),type=formVal(form,'type'),status=formVal(form,'status'),amount=validateMoney(formVal(form,'amount')),date=formVal(form,'date'),descr=formVal(form,'description').trim(),category=formVal(form,'category'),budgetKey=formVal(form,'budgetKey');
    if(amount<=0||!descr||!date)throw Error('Informe descrição, data e valor positivo.');
    if(old&&!['previsto','pago','nao_realizado'].includes(status))throw Error('Situação inválida.');
-   const linked=old?s.ledger.find(x=>x.id==='cash-entry-'+old.id):null;
+   const linked=old?s.ledger.find(x=>x.id==='cash-entry-'+old.id):null,wasPaid=old?.status==='pago';
    if(old?.status==='pago'&&!linked&&(status!=='pago'||amount!==old.cents||type!==old.type))throw Error('Este pagamento não possui movimentação individual vinculada. Não posso revertê-lo sem identificar o ajuste do caixa.');
    snapshot();
    if(old){
@@ -738,7 +738,7 @@ function submitForm(form,name){
     if(linked){
      if(status==='pago')Object.assign(linked,{date,cents:type==='despesa'?-amount:amount,category,description:descr,budgetKey:type==='despesa'?(budgetKey||budgetKeyFor(old)):'',budgetCycle:cycleForDate(date)});
      else s.ledger=s.ledger.filter(x=>x.id!=='cash-entry-'+old.id);
-    }else if(status==='pago')s.ledger.push({id:'cash-entry-'+old.id,date,cents:type==='despesa'?-amount:amount,category,description:descr,budgetKey:type==='despesa'?(budgetKey||budgetKeyFor(old)):'',budgetCycle:cycleForDate(date)});
+    }else if(status==='pago'&&!wasPaid)s.ledger.push({id:'cash-entry-'+old.id,date,cents:type==='despesa'?-amount:amount,category,description:descr,budgetKey:type==='despesa'?(budgetKey||budgetKeyFor(old)):'',budgetCycle:cycleForDate(date)});
    }else if(status==='realizado'){s.ledger.push({id:'cash-manual-'+V(),date,cents:type==='despesa'?-amount:amount,category,description:descr,budgetKey:type==='despesa'?budgetKey:'',budgetCycle:cycleForDate(date)})}
    else{s.entries.push({id:'manual-'+V(),month:cycleForDate(date),type,category,description:descr,cents:amount,status:'previsto',includeInProjection:true,budgetKey,source:'Inclusão manual',dueDate:date,card:''})}
    closeModal();commit('Lançamento e situação atualizados.');
@@ -789,6 +789,7 @@ function importBackup(raw){try{let obj=JSON.parse(raw);if(!obj ||typeof obj!=='o
  }catch(e){alert('Não foi possível importar: '+e.message)}}
 function payEntry(id){
  const e=s.entries.find(x=>x.id===id);if(!e||e.status==='pago'||e.status==='excluido'||e.status==='nao_realizado')return;
+ if(s.ledger.some(x=>x.id==='cash-entry-'+e.id))return alert('Já existe um pagamento vinculado a esta despesa. Verifique o histórico antes de registrá-lo novamente.');
  const val=entryAmount(e);if(val<=0)return alert('Esta despesa não tem saldo previsto. Reative ou ajuste a previsão primeiro.');
  ask('Registrar pagamento',`Você realmente pagou ${m(val)} de ${e.description}? O valor será retirado do caixa. Se não utilizou a despesa, escolha "Não ocorreu".`,()=>{
   snapshot();e.status='pago';s.ledger.push({id:'cash-entry-'+e.id,date:localToday(),cents:-val,category:e.category,description:e.description,budgetKey:e.budgetKey||budgetKeyFor(e),budgetCycle:e.month});commit('Pagamento registrado no caixa.');
