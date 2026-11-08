@@ -1,0 +1,13 @@
+# Não incluir informações financeiras ou segredos neste repositório público
+*.mfb
+*.json
+*.csv
+*.xlsx
+*.xls
+*.pdf
+*.zip
+*Backup*
+*backup*
+*.env
+.env*
+.DS_Store
