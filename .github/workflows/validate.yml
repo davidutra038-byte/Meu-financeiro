@@ -12,6 +12,7 @@ on:
       - "scripts/planning-smoke.js"
       - "scripts/review-smoke.js"
       - "scripts/financial-review-smoke.js"
+      - "scripts/forecast-sync-smoke.js"
       - "index.html"
       - ".github/workflows/validate.yml"
   workflow_dispatch:
@@ -46,6 +47,7 @@ jobs:
           node scripts/planning-smoke.js index.html
           node scripts/review-smoke.js index.html
           node scripts/financial-review-smoke.js index.html
+          node scripts/forecast-sync-smoke.js index.html
           node scripts/invoice-smoke.js index.html
           node scripts/chat-entry-smoke.js index.html
           node scripts/smoke.js review-v10.html

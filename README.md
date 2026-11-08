@@ -191,3 +191,13 @@ O fechamento exato é preservado. Sem uma data exata, o dia habitual é exibido 
 Em **Dados e backup → Aplicar revisão do ChatGPT**, um arquivo `MEU-FINANCEIRO-REVIEW-V1` confirma somente faturas cujo identificador, cartão, competência e total ainda coincidam. Faturas alteradas depois da revisão são preservadas, com aviso. Aplicar novamente não duplica registros. A revisão mantém lançamentos novos e não restaura uma base antiga. Totais estimados só passam a confirmados mediante esse arquivo ou edição explícita; igualdade numérica não confirma uma estimativa automaticamente.
 
 Validação: `node scripts/financial-review-smoke.js index.html`; opcionalmente, passe o caminho de um backup privado para comparar caixa, 48 meses, projeção por data e composição de todas as faturas. Dados privados e arquivos de revisão nunca são publicados neste repositório.
+
+## V19.1 — valores previstos consistentes
+
+Editar um lançamento previsto atualiza também seu ajuste de orçamento. O formulário comum e a edição de repetição exibem o valor efetivo do mês, inclusive quando existe um ajuste anterior. Criar ou editar uma sequência de lazer grava o valor escolhido para cada mês selecionado, sem ser substituído pelo padrão mensal.
+
+A edição de orçamento aberta pela lista de vários meses mantém a competência do lançamento. Valor previsto total, valor já utilizado/reservado e restante têm rótulos próprios. As leituras de Hoje, Contas, Plano, detalhamento mensal e simulação usam a mesma previsão. A hipótese de obra é aplicada uma única vez; seus formulários identificam a base editada.
+
+Pagamentos continuam separados das previsões. Alterações de um mês não modificam automaticamente os meses seguintes; a edição de repetição mantém essa escolha explícita. O formulário impede reduzir a previsão abaixo dos gastos vinculados ou mover uma previsão utilizada para outro mês. Não é necessário importar outro arquivo para esta atualização.
+
+Teste: `node scripts/forecast-sync-smoke.js index.html`. O teste compara os caminhos de edição, reservas vinculadas, recorrências, competência, persistência, reabertura e hipótese de obra. Pode receber um backup privado e a versão anterior do HTML como argumentos opcionais para verificar que previsões não editadas mantêm seus valores.
