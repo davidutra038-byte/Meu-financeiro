@@ -6,6 +6,7 @@ on:
       - "review-v10.html"
       - "review-v11.html"
       - "scripts/smoke.js"
+      - "scripts/ux-smoke.js"
       - "index.html"
       - ".github/workflows/validate.yml"
   workflow_dispatch:
@@ -34,6 +35,7 @@ jobs:
       - name: Run synthetic simulation tests
         run: |
           node scripts/smoke.js index.html
+          node scripts/ux-smoke.js index.html
           node scripts/smoke.js review-v10.html
           node scripts/smoke.js review-v11.html
       - name: Package source for independent review

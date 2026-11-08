@@ -49,3 +49,13 @@ O aplicativo elimina o fragmento do endereço ao recebê-lo e adiciona o conteú
 - Fragmentos de URL não são enviados na requisição HTTP ao GitHub Pages, mas podem ser sensíveis enquanto aparecem em atalhos ou histórico.
 
 > Protótipo de controle financeiro: confira todos os dados com o banco antes de realizar pagamentos.
+
+## Interface V12 — lançamentos
+
+- A data de novos lançamentos usa o dia local do dispositivo e permanece editável, com atalho Hoje.
+- O mesmo formulário permite escolher conta/dinheiro ou cartão de crédito e mostra o efeito no caixa e a referência da fatura antes de salvar.
+- A referência pode ser sugerida por um fechamento exato cadastrado e sempre pode ser alterada. Sem esse fechamento, confira a referência com o banco.
+- Categoria, orçamento e parcela ficam em detalhes opcionais. Informar 1/3 descreve a parcela atual; não cria automaticamente as demais.
+- Movimentações manuais de caixa podem ser corrigidas ou excluídas no histórico, com Desfazer. Receitas previstas aparecem no filtro Recebimentos.
+- Compras preservam o total da fatura informado pelo banco. Ao informar uma fatura antes sem total, seus detalhes já cadastrados são mantidos.
+- Testes sintéticos adicionais: `node scripts/ux-smoke.js index.html`.
