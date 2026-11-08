@@ -13,6 +13,7 @@ on:
       - "scripts/review-smoke.js"
       - "scripts/financial-review-smoke.js"
       - "scripts/forecast-sync-smoke.js"
+      - "scripts/due-recurrence-smoke.js"
       - "index.html"
       - ".github/workflows/validate.yml"
   workflow_dispatch:
@@ -48,6 +49,7 @@ jobs:
           node scripts/review-smoke.js index.html
           node scripts/financial-review-smoke.js index.html
           node scripts/forecast-sync-smoke.js index.html
+          node scripts/due-recurrence-smoke.js index.html
           node scripts/invoice-smoke.js index.html
           node scripts/chat-entry-smoke.js index.html
           node scripts/smoke.js review-v10.html

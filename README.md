@@ -201,3 +201,15 @@ A edição de orçamento aberta pela lista de vários meses mantém a competênc
 Pagamentos continuam separados das previsões. Alterações de um mês não modificam automaticamente os meses seguintes; a edição de repetição mantém essa escolha explícita. O formulário impede reduzir a previsão abaixo dos gastos vinculados ou mover uma previsão utilizada para outro mês. Não é necessário importar outro arquivo para esta atualização.
 
 Teste: `node scripts/forecast-sync-smoke.js index.html`. O teste compara os caminhos de edição, reservas vinculadas, recorrências, competência, persistência, reabertura e hipótese de obra. Pode receber um backup privado e a versão anterior do HTML como argumentos opcionais para verificar que previsões não editadas mantêm seus valores.
+
+## V20 — vencimento por cartão e fim da repetição
+
+Em Cartões → Vencimento, cadastre o dia fixo e escolha o ajuste para o próximo dia útil. A regra vale a partir da referência selecionada, sem criar faturas ou alterar seus totais. Datas de faturas pagas são preservadas. Uma data específica informada para uma fatura prevalece sobre a regra; esse campo também pode ser limpo para voltar ao cálculo automático.
+
+O calendário considera fins de semana, feriados bancários nacionais, Carnaval, Sexta-Feira da Paixão, Corpus Christi e o último dia de atendimento bancário do ano para pagamento de contas. Feriados adicionais aceitam DD/MM (anual) ou AAAA-MM-DD. As previsões usam esse calendário, mas a data específica comunicada pelo banco pode ser registrada como exceção. Referências: [calendário FEBRABAN](https://feriadosbancarios.febraban.org.br/), [orientação FEBRABAN sobre pagamentos no fim do ano](https://portal.febraban.org.br/Noticia/4403/pt_br), [Resolução CMN 4.880/2020](https://www.bcb.gov.br/estabilidadefinanceira/exibenormativo?numero=4880&tipo=RESOLU%C3%87%C3%83O%20CMN).
+
+Dias 1 a 19 pertencem ao segundo mês do ciclo salarial, e dias 20 a 31 ao primeiro. Dias que não existem no mês são limitados ao último dia, antes do ajuste bancário. O deslocamento para o próximo dia útil não transfere o compromisso para outra referência salarial. As próximas parcelas conhecidas ganham vencimento, sem misturar empréstimos separados ou alterar pagamentos e dados de compras.
+
+Em Contas → Mais opções → Parar de repetir, escolha o primeiro mês sem a conta e confirme Encerrar repetição. O mesmo acesso existe em Editar repetição. A operação retira previsões pendentes a partir do mês escolhido, mantém os registros e permite Desfazer. Pagamentos anteriores, receitas recebidas e gastos vinculados permanecem. Uma reserva que já possua gastos vinculados é encerrada apenas quanto ao restante ainda previsto. Para retirar somente uma ocorrência, continua disponível Não ocorreu.
+
+Validação: `node scripts/due-recurrence-smoke.js index.html`. Testes abrangem calendários, anos bissextos, virada de ano, feriados locais, exceções, persistência, integridade financeira, mês de encerramento, histórico, despesas vinculadas e desfazer.
