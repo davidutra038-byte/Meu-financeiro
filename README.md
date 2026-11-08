@@ -229,3 +229,9 @@ Validação: `node scripts/receivable-edit-smoke.js index.html`. Cobre cadastro,
 Busca geral por descrição, pessoa, cartão, categoria ou valor em todos os meses, com acesso ao editor original. Excluídos e créditos arquivados não reaparecem. A tela Hoje reúne atalhos, Resolver primeiro com edição direta, progresso da meta e categorias que abrem seus lançamentos. Gastos vinculados descontam o restante previsto no gráfico, sem somar pagamentos de faturas. A revisão abre todos os meses para alcançar pendências anteriores. Nenhuma migração ou alteração automática de valores.
 
 Validação: `node scripts/discovery-smoke.js index.html` e demais testes de regressão.
+
+### V21.1 — organizar datas e repetições
+
+Previsões mensais de Diversão, Passagem e Cabelo ficam reservadas sem virar alerta de boleto sem data. Datas conhecidas da mesma série e das faturas servem de projeção quando não há regra ou exceção, com identificação de origem. Histórico ambíguo exige preenchimento. Organizar datas reúne as ocorrências dos próximos 90 dias por conta e permite definir dia mensal, orçamento ao longo do mês ou manter sem data. Empréstimos têm calendário próprio. A configuração preserva datas específicas, valores, recebimentos e pagamentos.
+
+Validação: `node scripts/date-organization-smoke.js index.html`.

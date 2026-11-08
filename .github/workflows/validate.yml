@@ -16,6 +16,7 @@ on:
       - "scripts/due-recurrence-smoke.js"
       - "scripts/receivable-edit-smoke.js"
       - "scripts/discovery-smoke.js"
+      - "scripts/date-organization-smoke.js"
       - "index.html"
       - ".github/workflows/validate.yml"
   workflow_dispatch:
@@ -54,6 +55,7 @@ jobs:
           node scripts/due-recurrence-smoke.js index.html
           node scripts/receivable-edit-smoke.js index.html
           node scripts/discovery-smoke.js index.html
+          node scripts/date-organization-smoke.js index.html
           node scripts/invoice-smoke.js index.html
           node scripts/chat-entry-smoke.js index.html
           node scripts/smoke.js review-v10.html
