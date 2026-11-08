@@ -1,0 +1,770 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/><meta name="color-scheme" content="light"/><meta name="theme-color" content="#102944"/><meta name="apple-mobile-web-app-capable" content="yes"/><title>Meu Financeiro · controle pessoal</title><style>:root{color-scheme:light;--bg:#f5f7fa;--surface:#fff;--ink:#162942;--sub:#64758c;--muted:#96a2b3;--line:#e5eaf1;--navy:#12365a;--brand:#1276ad;--brand2:#e7f4fc;--positive:#14816b;--negative:#bb474e;--gold:#9b7133;--goldbg:#fff6e5;--shadow:0 14px 45px rgba(24,41,64,.055);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-size:14px;-webkit-font-smoothing:antialiased}button,input,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.48;cursor:not-allowed}a{color:var(--brand)}.app{display:grid;grid-template-columns:250px minmax(0,1fr);min-height:100vh}.sidebar{height:100vh;position:sticky;top:0;background:#102944;color:#d4e3f0;padding:26px 15px;display:flex;flex-direction:column;gap:28px}.brand{display:flex;align-items:center;gap:11px;padding:3px 13px}.brand-mark{background:#ecf7ff;color:#135483;width:37px;height:37px;border-radius:12px;display:grid;place-items:center;font-weight:900;font-size:19px;letter-spacing:-2px}.brand-name{font-size:17px;font-weight:750;color:#fff;letter-spacing:-.6px}.brand-sub{font-size:11px;color:#98b0c8;margin-top:2px}.nav-group-title{color:#809bb3;font-size:10px;letter-spacing:1.2px;text-transform:uppercase;padding:0 15px;margin-bottom:8px;font-weight:750}.nav{display:grid;gap:5px}.navbtn{display:flex;align-items:center;gap:12px;padding:13px 14px;border:1px solid transparent;border-radius:12px;color:#b9cddd;background:transparent;text-align:left;font-weight:600;width:100%}.navbtn svg{width:18px;height:18px}.navbtn:hover{background:#173754}.navbtn.active{background:#e7f4fb;color:#154e73}.side-footer{margin-top:auto;padding:16px;border-radius:13px;background:#173958;line-height:1.45;font-size:12px;color:#bdcfdf}.side-footer strong{color:#fff;display:block;margin-bottom:5px}.main{min-width:0;padding:27px clamp(20px,4.1vw,56px) 70px;max-width:1500px;width:100%;margin:0 auto}.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:27px}.eyebrow{font-weight:750;text-transform:uppercase;letter-spacing:1.2px;color:var(--brand);font-size:10px;margin:0 0 8px}.page-title{font-size:clamp(23px,2.3vw,30px);line-height:1.15;letter-spacing:-.8px;font-weight:800;margin:0}.page-description{color:var(--sub);margin:9px 0 0;line-height:1.5}.top-actions{display:flex;align-items:center;flex-wrap:wrap;gap:10px}.btn{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:11px;padding:10px 14px;min-height:40px;display:inline-flex;gap:8px;align-items:center;justify-content:center;font-weight:650;white-space:nowrap;transition:.16s}.btn:hover{filter:brightness(.98);border-color:#9eb2c6}.btn-primary{background:var(--navy);color:white;border-color:var(--navy)}.btn-accent{color:#fff;background:var(--brand);border-color:var(--brand)}.btn-danger{color:var(--negative);background:#fff;border-color:#eed5d8}.btn-ghost{background:transparent;border-color:transparent;color:var(--sub)}.btn-sm{padding:7px 10px;min-height:32px;font-size:12px}.btn svg{width:16px;height:16px;flex:0 0 16px}.iconbtn{border:1px solid var(--line);border-radius:9px;background:var(--surface);height:34px;width:36px;display:inline-grid;place-items:center;color:var(--sub)}.iconbtn svg{width:16px;height:16px}.iconbtn.danger{color:var(--negative)}.chips{display:flex;flex-wrap:wrap;gap:8px}.chip{display:inline-flex;gap:6px;align-items:center;background:#eaf1f9;color:#355c7b;font-weight:650;font-size:11px;border-radius:50px;padding:6px 10px}.chip.warn{background:var(--goldbg);color:var(--gold)}.chip.ok{background:#e8f8f2;color:var(--positive)}.chip.dim{background:#edf0f4;color:#677487}.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}.pad{padding:22px}.grid{display:grid;gap:16px}.g2{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(3,minmax(0,1fr))}.g4{grid-template-columns:repeat(4,minmax(0,1fr))}.split{display:grid;grid-template-columns:minmax(0,1.32fr) minmax(320px,1fr);gap:16px}.section{margin-top:26px}.section-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:0 0 14px}.section-heading h2,.box-title{font-size:16px;font-weight:780;letter-spacing:-.25px;margin:0}.small{font-size:12px;color:var(--sub);line-height:1.52}.muted{color:var(--sub)}.tiny{font-size:11px;color:var(--sub);line-height:1.45}.smallcaps{font-size:10px;color:var(--sub);font-weight:750;letter-spacing:.6px;text-transform:uppercase}.metric-label{font-size:12px;color:var(--sub);font-weight:600}.metric-value{font-size:clamp(23px,2.3vw,31px);font-weight:800;letter-spacing:-.8px;margin-top:9px;font-variant-numeric:tabular-nums}.metric-value.smallval{font-size:22px}.metric-note{font-size:11px;color:var(--sub);line-height:1.45;margin-top:7px}.metric-icon{height:37px;width:37px;border-radius:12px;display:grid;place-items:center;background:var(--brand2);color:#16628d;margin-bottom:16px}.metric-icon svg{width:19px;height:19px}.negative{color:var(--negative)}.positive{color:var(--positive)}.hero{border-radius:20px;background:linear-gradient(115deg,#123457,#1b4e70);color:white;padding:26px;overflow:hidden;position:relative}.hero:before{content:'';position:absolute;width:250px;height:250px;background:rgba(255,255,255,.05);border-radius:50%;top:-140px;right:-80px}.hero .small,.hero .metric-label,.hero .metric-note{color:#c6dceb}.hero h2{font-size:12px;font-weight:700;color:#c5dceb;letter-spacing:.2px;margin:0}.hero .big-number{font-size:clamp(29px,3vw,42px);letter-spacing:-1px;font-weight:850;margin:11px 0 8px;font-variant-numeric:tabular-nums}.hero-footer{display:flex;align-items:center;flex-wrap:wrap;justify-content:space-between;gap:10px;margin-top:18px;border-top:1px solid #ffffff27;padding-top:16px}.hero button{border:1px solid #b4cde3;background:transparent;color:white;border-radius:10px;padding:9px 12px;font-weight:650}.head-flex{display:flex;gap:14px;align-items:center;justify-content:space-between}.select-wrap{display:flex;align-items:center;gap:8px}.field,select,input[type=text],input[type=number],input[type=date],textarea{background:white;border:1px solid #d5dfeb;border-radius:11px;min-height:42px;padding:10px 12px;width:100%;color:var(--ink);outline:none;font-size:14px}.field:focus,select:focus,input:focus,textarea:focus{border-color:#4795bd;box-shadow:0 0 0 3px #d9eefb}input[type=checkbox]{accent-color:var(--brand)}label{display:block;font-weight:650;font-size:12px;margin-bottom:7px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.form-grid .full{grid-column:1/-1}.row{display:flex;align-items:center;gap:10px}.between{justify-content:space-between}.col{display:flex;flex-direction:column;gap:4px}.line{border-top:1px solid var(--line)}.list{display:grid}.item{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--line)}.item:last-child{border-bottom:none}.item-left{display:flex;gap:11px;align-items:center;min-width:0}.item-avatar{background:#edf4f9;border-radius:11px;width:37px;height:37px;display:grid;place-items:center;color:#356686;flex:0 0 auto}.item-avatar svg{width:17px;height:17px}.item-label{font-weight:700;line-height:1.3;overflow-wrap:anywhere}.item-sub{font-size:11px;color:var(--sub);margin-top:4px;overflow-wrap:anywhere}.amount{font-weight:780;font-variant-numeric:tabular-nums;white-space:nowrap}.item-actions{display:flex;align-items:center;gap:7px}.bar{height:8px;background:#e7edf4;border-radius:20px;overflow:hidden}.bar-fill{height:100%;border-radius:20px;background:#347da5}.cat-row{display:grid;grid-template-columns:minmax(0,1fr) 120px;align-items:center;gap:8px;margin:13px 0}.cat-row .bar{grid-column:1/-1}.cat-amount{font-weight:750;text-align:right;font-size:12px;font-variant-numeric:tabular-nums}.empty{text-align:center;padding:35px 17px;color:var(--sub);font-size:13px}.empty-icon{margin:0 auto 10px;display:grid;place-items:center;height:44px;width:44px;border-radius:50%;background:var(--brand2);color:var(--brand)}.card-selector{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.card-choice{padding:14px;border-radius:13px;background:white;border:1px solid var(--line);text-align:left;min-width:0}.card-choice.selected{border:1.8px solid #2376a5;background:#f0f8fd}.card-choice .choice-name{font-weight:780;font-size:12px}.card-choice .choice-val{font-weight:800;font-size:20px;margin-top:10px;font-variant-numeric:tabular-nums}.card-choice .choice-date{font-size:10px;color:var(--sub);margin-top:5px}.infostrip{padding:12px 14px;background:#f3f7fb;border:1px solid #e2ebf3;border-radius:12px;color:#42627e;font-size:12px;line-height:1.5}.infostrip.warn{background:var(--goldbg);border-color:#f2e1bd;color:#886c39}.infostrip.good{background:#ecf8f4;border-color:#d2eee5;color:#216958}.pill-stat{background:#f3f7fb;border-radius:12px;padding:12px}.pill-stat .smallcaps{margin-bottom:8px}.pill-stat strong{font-size:17px;font-variant-numeric:tabular-nums;display:block}.details{display:grid;gap:2px}.details .detail-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line);gap:14px}.details .detail-row:last-child{border-bottom:0}.detail-row span:last-child{font-weight:730;white-space:nowrap}.tablewrap{overflow:auto}.table{width:100%;border-collapse:collapse;min-width:540px}.table th{text-align:left;color:var(--sub);font-size:11px;letter-spacing:.1px;font-weight:750;padding:12px;border-bottom:1px solid var(--line)}.table td{padding:13px 12px;border-bottom:1px solid var(--line);font-size:12px}.table td:last-child{text-align:right}.table tr:last-child td{border-bottom:0}.monthbars{display:flex;align-items:flex-end;gap:9px;height:145px;padding-top:10px}.monthbar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:7px;height:100%;min-width:0}.monthbar-track{display:flex;align-items:flex-end;flex:1;width:100%;justify-content:center}.monthbar-stick{background:#64a1c6;border-radius:7px 7px 2px 2px;width:80%;min-height:3px;max-width:38px}.monthbar-stick.negativebar{background:#db9699}.monthbar-label{font-size:10px;color:var(--sub);font-weight:700;white-space:nowrap}.statusdot{width:8px;height:8px;border-radius:50%;background:#edbe67;display:inline-block;margin-right:5px}.statusdot.ok{background:#3aa88b}.statusdot.danger{background:#c65c61}.subheading{font-size:13px;font-weight:760;margin:0 0 10px}.seg{border:1px solid var(--line);background:#f1f5f9;border-radius:12px;display:inline-flex;padding:3px;gap:2px}.seg button{border:0;background:transparent;border-radius:9px;padding:8px 11px;color:#526b83;font-size:12px;font-weight:700}.seg button.on{background:white;color:var(--navy);box-shadow:0 2px 5px #1e304012}.caption{font-size:11px;line-height:1.5;color:var(--sub)}.outlinebox{border:1px solid var(--line);border-radius:13px;padding:14px}.timeline{border-left:2px solid #d7e3ee;margin-left:8px;padding-left:20px}.timeline-item{position:relative;padding:1px 0 16px}.timeline-item:before{content:'';width:10px;height:10px;border-radius:50%;background:#5b95bc;position:absolute;left:-26px;top:5px;border:2px solid white}.timeline-item:last-child{padding-bottom:0}.progress{height:12px;background:#ecf0f4;border-radius:20px;overflow:hidden}.progress-inner{height:100%;background:linear-gradient(90deg,#21678e,#45b1bd);border-radius:20px}.modalbg{position:fixed;inset:0;background:rgba(12,24,39,.48);display:flex;justify-content:center;align-items:center;padding:16px;z-index:30;backdrop-filter:blur(3px)}.modal{width:min(100%,560px);background:white;border-radius:18px;max-height:min(91vh,820px);overflow:auto;box-shadow:0 25px 90px #0003}.modal-wide{width:min(100%,660px)}.modal-h{padding:22px 24px 15px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:10px;align-items:center}.modal-title{font-size:18px;letter-spacing:-.3px;font-weight:800;margin:0}.modal-body{padding:22px 24px}.modal-f{padding:17px 24px;display:flex;justify-content:flex-end;gap:10px;border-top:1px solid var(--line);position:sticky;bottom:0;background:white}.snack{position:fixed;bottom:25px;right:25px;z-index:35;background:#112e47;color:#fff;padding:15px 17px;border-radius:12px;box-shadow:0 10px 35px #0003;display:flex;align-items:center;gap:15px;max-width:480px;font-size:12px}.snack button{background:transparent;border:0;color:#9de0ff;font-weight:800}.mobilebar{display:none}.mobilehead{display:none}.footnote{margin-top:25px;color:#8a98a7;font-size:11px;line-height:1.5}.nowrap{white-space:nowrap}.monospaced{font-variant-numeric:tabular-nums}.clickable{cursor:pointer}.help{color:#54758e;text-decoration:underline;text-decoration-style:dotted}.spacer{flex:1}.hide{display:none!important}
+@media(max-width:1120px){.app{grid-template-columns:210px minmax(0,1fr)}.sidebar{padding:22px 10px}.main{padding:23px 20px 65px}.split{grid-template-columns:1fr}.g4{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:760px){body{background:#f5f7fa}.app{display:block;padding-bottom:77px}.sidebar{display:none}.main{padding:20px 15px 30px}.topbar{margin-bottom:20px;align-items:flex-start}.top-actions .hide-mobile{display:none}.top-actions{align-items:flex-start}.page-title{font-size:24px}.mobilehead{display:flex;align-items:center;justify-content:space-between;padding:13px 17px 0}.mobilehead .brand-name{color:var(--navy);font-size:14px}.mobilehead .brand{padding:0}.mobilebar{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));position:fixed;bottom:0;left:0;right:0;z-index:20;background:rgba(255,255,255,.97);border-top:1px solid #dde5ee;padding:7px 7px max(8px,env(safe-area-inset-bottom));box-shadow:0 -9px 24px #2a486111}.mobilebar button{background:transparent;border:0;color:#73849a;padding:4px 1px;display:flex;gap:4px;flex-direction:column;align-items:center;justify-content:center;font-size:10px;font-weight:750}.mobilebar button svg{width:20px;height:20px}.mobilebar button.active{color:#12638f}.g4{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.g3{grid-template-columns:1fr}.g2{grid-template-columns:1fr}.grid{gap:12px}.pad{padding:17px}.card{border-radius:16px}.metric-value{font-size:24px}.metric-value.smallval{font-size:20px}.hero{padding:20px}.hero .big-number{font-size:34px}.section{margin-top:23px}.card-selector{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.card-choice{padding:12px}.card-choice .choice-val{font-size:18px}.item-label{font-size:12px}.item-sub{font-size:10px}.item{gap:8px}.item-actions{gap:3px}.item-avatar{height:33px;width:33px}.form-grid{grid-template-columns:1fr}.modalbg{padding:0;align-items:flex-end}.modal{width:100%;max-height:93vh;border-radius:20px 20px 0 0}.modal-h{padding:18px 19px 13px}.modal-body{padding:18px 19px}.modal-f{padding:15px 19px}.snack{bottom:94px;left:14px;right:14px;max-width:none}.tablet-center{align-items:flex-start}.desktoponly{display:none}}@media(min-width:761px){.mobileonly{display:none}}
+.chip svg,.infostrip svg,.side-footer svg{height:15px;width:15px;display:inline-block;vertical-align:middle;margin-right:2px}.item svg,.metric-icon svg,.btn svg,.navbtn svg,.mobilebar svg{flex-shrink:0}
+
+
+.period-nav{display:flex;align-items:center;justify-content:center;gap:14px;margin:12px 0 18px}.period-current{text-align:center;font-size:18px;font-weight:800;min-width:170px}.period-current .tiny{display:block;font-size:11px;font-weight:500;color:var(--sub);margin-top:4px}.finance-details{border:1px solid var(--line);border-radius:12px;margin:8px 0;background:var(--surface);overflow:hidden}.finance-details>summary{cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:53px;padding:12px 14px;font-weight:650}.finance-details>summary::-webkit-details-marker{display:none}.finance-details>summary:after{content:'⌄';font-weight:700;color:var(--brand);font-size:18px}.finance-details[open]>summary{border-bottom:1px solid var(--line);background:var(--bg)}.finance-details[open]>summary:after{content:'⌃'}.finance-details summary small{color:var(--sub);font-weight:450}.finance-details .list{padding:0 12px}.insight-row{padding:10px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);gap:8px;color:var(--sub);font-size:13px}.insight-row:last-child{border-bottom:none}.insight-row small{font-size:11px;color:var(--sub)}.insight-row b{color:var(--ink);white-space:nowrap}.budget-tile{padding:14px;border:1px solid var(--line);border-radius:13px}.progress-track{height:7px;border-radius:7px;background:#eaf0f6;overflow:hidden;margin:12px 0 8px}.progress-bar{height:100%;border-radius:7px;background:var(--brand)}.whatif-checks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:18px 0}.whatif-checks label{display:flex;gap:9px;align-items:center;font-weight:500;font-size:13px}.whatif-checks input{accent-color:var(--brand)}.accordion-stack{margin-top:7px}.accordion-stack .finance-details{margin-bottom:7px}@media(max-width:768px){.whatif-checks{grid-template-columns:1fr}.period-current{min-width:145px}.mobilebar{gap:2px}.mobilebar button span{font-size:10px}.card-selector{display:flex;overflow-x:auto;padding-bottom:8px}.card-choice{min-width:135px}.item-actions{gap:3px}.finance-details>summary{font-size:13px}}
+
+
+.notif-outer{background:transparent}.notif-body{padding:15px}.notif-body textarea{min-height:90px;resize:vertical;width:100%;border:1px solid var(--line);border-radius:12px;padding:13px;background:var(--surface);color:var(--ink);font:inherit}.notif-item{border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:10px;display:flex;align-items:center;justify-content:space-between;gap:12px}.notif-item p{font-size:13px;margin:5px 0;overflow-wrap:anywhere}.notif-item small{color:var(--sub)}.notif-item .row{flex-shrink:0}@media(max-width:650px){.notif-item{flex-direction:column;align-items:stretch}.notif-item .row{justify-content:flex-end}}
+
+/* Análise de cartões V7: uma única área de exploração */
+.insight-toolbar{display:flex;gap:12px;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;margin-bottom:10px}
+.insight-toolbar>div:first-child{flex:1;min-width:185px}.insight-toolbar select{max-width:360px;margin-top:5px;width:100%}
+.insight-period{display:flex;gap:4px;flex-direction:column;text-align:right}.insight-period strong{font-size:12px}
+.insight-tabs{display:flex;gap:7px;overflow-x:auto;scrollbar-width:thin;padding:4px 0 10px;white-space:nowrap}
+.insight-tabs button{background:#f4f7fb;border:1px solid #dce5ef;color:#355371;border-radius:999px;padding:10px 13px;font-size:12px;font-weight:750;cursor:pointer;flex-shrink:0}
+.insight-tabs button.on{background:var(--navy);color:white;border-color:var(--navy)}
+.insight-summary{display:flex;align-items:center;justify-content:space-between;padding:14px;background:#eff5fb;border-radius:12px;margin:2px 0 15px;gap:10px;font-size:12px}
+.insight-summary b{font-size:17px;white-space:nowrap}
+.insight-group-caption{display:block;font-size:10px;color:var(--sub);font-weight:450;margin-top:3px}
+.insight-inner{padding:0 4px 4px}.insight-action-row{display:flex;flex-wrap:wrap;gap:9px;align-items:center}
+.insight-description{display:flex;flex-direction:column;gap:4px;min-width:0;flex:1;overflow-wrap:anywhere}
+.insight-description strong{color:var(--ink);font-weight:650}.insight-description small{display:block}
+.insight-side{display:flex;gap:8px;align-items:center;flex-shrink:0}
+.btn-classify{font-size:11px;padding:6px 8px;white-space:nowrap;line-height:1}
+.btn-classify svg{width:13px;height:13px}
+.insight-rank{display:flex;align-items:center;border-bottom:1px solid var(--line)}
+.insight-rank .insight-row{flex:1;border:0}.rank-n{padding-left:8px;font-size:11px;font-weight:800;color:var(--sub);min-width:25px}
+@media(max-width:650px){.insight-side{align-items:flex-end;flex-direction:column;gap:5px}.btn-classify{padding:7px 9px}.item-actions{flex-wrap:wrap;justify-content:flex-end}.item-actions>.amount{width:100%;text-align:right}.insight-summary{align-items:flex-start;flex-wrap:wrap}.insight-toolbar select{max-width:100%}}
+
+/* iPhone-first accessibility and cash-scenario interface */
+.sim-shell{border:1px solid #d8e2ee;background:#fff;border-radius:20px;padding:clamp(16px,2.5vw,26px);box-shadow:var(--shadow)}
+.sim-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:20px}
+.sim-heading h2{font-size:clamp(20px,2.6vw,26px);line-height:1.15;margin:6px 0 8px;letter-spacing:-.5px}
+.sim-heading p,.sim-results-head p{color:var(--sub);line-height:1.5;margin:0;max-width:690px}
+.sim-eyebrow{font-size:11px;color:var(--brand);font-weight:750;letter-spacing:.3px}
+.sim-pill{border-radius:99px;background:#e7f5ed;color:#196046;font-weight:800;padding:8px 12px;font-size:11px;white-space:nowrap}
+.sim-controls{display:grid;grid-template-columns:minmax(0,1.8fr) minmax(170px,1fr);gap:12px;align-items:end}
+.sim-controls select,.sim-controls input,.sim-results-head select{min-height:46px;border-radius:12px}
+.sim-subheading{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:20px 0 10px}
+.sim-subheading span{color:var(--sub);font-size:12px}
+.sim-toggles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.sim-toggle{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:12px;padding:12px;min-height:65px;cursor:pointer;margin:0}
+.sim-toggle:has(input:checked){border-color:#6eafd2;background:#f1f9ff}
+.sim-toggle input{width:19px;height:19px;flex:0 0 auto}
+.sim-toggle-copy{flex:1;min-width:0;display:grid;gap:2px}
+.sim-toggle-copy strong{font-size:13px;line-height:1.3}
+.sim-toggle-copy small{font-size:11px;color:var(--sub);line-height:1.35;font-weight:400}
+.sim-toggle b{font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.sim-cash-grid{margin:18px 0;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:12px}
+.sim-cash-hero{display:grid;gap:8px;padding:21px;border-radius:16px;color:#fff;background:linear-gradient(135deg,#13365b,#1c6283)}
+.sim-cash-hero>span{font-size:12px;color:#d5e9f3;font-weight:700}
+.sim-cash-hero>strong{font-size:clamp(27px,3vw,36px);letter-spacing:-.8px;line-height:1.15;font-variant-numeric:tabular-nums}
+.sim-cash-hero .negative{color:#ffbbb8}
+.sim-cash-hero small{font-size:12px;line-height:1.4;color:#d8e9f3}
+.sim-cash-math{padding:14px 17px;border-radius:16px;background:#f4f7fb}
+.sim-money-line{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid #dce7f0;font-size:13px}
+.sim-money-line strong{white-space:nowrap;font-variant-numeric:tabular-nums}
+.sim-cash-math-foot{font-size:11px;color:var(--sub);line-height:1.4;margin-top:10px}
+.sim-alert{color:#8b392e;background:#fff2ec;padding:10px 11px;border-radius:9px;font-size:12px;line-height:1.4;margin:8px 0}
+.sim-results-head{display:flex;justify-content:space-between;align-items:end;gap:14px;margin:24px 0 13px}
+.sim-results-head h3{font-size:17px;margin:0 0 7px}
+.sim-results-head>div:last-child{min-width:126px}
+.sim-compare{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.sim-stat{border:1px solid var(--line);border-radius:13px;padding:14px;background:#fafbfd;display:grid;gap:7px}
+.sim-stat span{font-size:11px;color:var(--sub);font-weight:700}
+.sim-stat b{font-size:clamp(18px,2.2vw,24px);letter-spacing:-.5px;font-variant-numeric:tabular-nums}
+.sim-stat-accent{background:#edf6fd;border-color:#add6ef}
+.sim-flow{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:16px;margin-top:18px}
+.sim-flow h4{font-size:13px;margin:0 0 13px}
+.sim-graph,.sim-months{border:1px solid var(--line);border-radius:14px;padding:15px;min-width:0}
+.sim-spark-row{display:grid;grid-template-columns:75px minmax(50px,1fr) auto;align-items:center;gap:10px;margin:12px 0;font-size:11px}
+.sim-spark-row strong{font-size:11px;font-variant-numeric:tabular-nums;text-align:right}
+.sim-spark-track{height:9px;border-radius:10px;background:#ebf1f6;overflow:hidden}
+.sim-spark-fill{height:100%;background:#217aa2;border-radius:10px}
+.sim-spark-fill.sim-bad{background:#b85d60}
+.sim-month{border-bottom:1px solid var(--line);padding:0 1px}
+.sim-month:last-child{border-bottom:0}
+.sim-month summary{display:flex;align-items:center;gap:8px;padding:12px 0;cursor:pointer;list-style:none}
+.sim-month summary::-webkit-details-marker{display:none}
+.sim-month summary>span:first-child{flex:1;display:grid;gap:3px}
+.sim-month summary small{font-size:11px;color:var(--sub);font-weight:400}
+.sim-month summary>strong{font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.sim-expander{color:var(--brand);font-size:18px}
+.sim-breakdown{padding:10px 12px 13px;border-radius:10px;background:#f5f8fc;margin:0 0 9px}
+.sim-breakdown>div{display:flex;justify-content:space-between;gap:8px;padding:6px 0;font-size:12px}
+.sim-breakdown>div b{white-space:nowrap}
+.sim-disclaimer{font-size:11px;color:var(--sub);line-height:1.55;border-top:1px solid var(--line);padding-top:14px;margin:20px 0 0}
+.sim-actual{margin-top:4px}
+.sim-actual>summary{cursor:pointer;display:flex;flex-wrap:wrap;align-items:center;gap:7px;justify-content:space-between;min-height:48px}
+.sim-actual>summary small{font-size:11px;color:var(--sub)}
+.sim-actual .grid{margin-top:18px}
+@media(max-width:760px){
+ .app{padding-bottom:calc(82px + env(safe-area-inset-bottom))}
+ .mobilebar{grid-template-columns:repeat(6,minmax(0,1fr));padding:7px 2px max(6px,env(safe-area-inset-bottom));gap:0}
+ .mobilebar button{min-width:0;min-height:48px;gap:3px;padding:6px 0;font-size:10px}
+ .mobilebar button svg{width:20px;height:20px}
+ .mobilebar button span{font-size:9px;white-space:nowrap;letter-spacing:-.3px}
+ .main{padding-bottom:26px}
+ button,.iconbtn{min-height:40px}
+ select,input[type=text],input[type=number],input[type=date],input[type=month],textarea{font-size:16px}
+ .sim-shell{border-radius:16px;padding:15px}
+ .sim-heading{gap:8px}
+ .sim-heading h2{font-size:22px}
+ .sim-pill{font-size:10px;padding:6px 9px}
+ .sim-controls,.sim-cash-grid,.sim-flow,.sim-compare{grid-template-columns:minmax(0,1fr)}
+ .sim-toggles{grid-template-columns:minmax(0,1fr)}
+ .sim-toggle{min-height:58px}
+ .sim-cash-hero{padding:20px}
+ .sim-results-head{align-items:stretch;flex-wrap:wrap}
+ .sim-results-head>div:last-child{width:100%}
+ .sim-graph,.sim-months{padding:12px}
+ .sim-compare{gap:8px}
+ .sim-stat b{font-size:20px}
+ .sim-spark-row{grid-template-columns:62px minmax(30px,1fr) auto;gap:6px}
+ .sim-spark-row strong{font-size:10px}
+ .card-selector{-webkit-overflow-scrolling:touch}
+ .tabstrip,.insight-tabs{scrollbar-width:none}
+}
+@media(max-width:360px){
+ .mobilebar button span{font-size:8px}
+ .sim-heading .sim-pill{display:none}
+ .sim-toggle b{font-size:12px}
+ .sim-cash-hero>strong{font-size:27px}
+}
+
+
+/* V10: clear cash position and mobile-friendly account hierarchy */
+.cycle-picker{display:flex;flex-wrap:wrap;align-items:center;gap:7px}
+.cycle-picker select{max-width:190px}
+.mf-cash-review{border:1px solid #cbdced;background:#fff;border-radius:18px;padding:16px}
+.mf-cash-panel{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.mf-cash-panel>div{min-width:0;border-radius:12px;padding:16px;background:#f1f5fa}
+.mf-cash-panel .mf-cash-result{background:#e9f2f9;border:1px solid #adcae2}
+.mf-eyebrow{font-size:12px;line-height:1.4;color:#334e6d;font-weight:750;display:block}
+.mf-focus-number{font-weight:800;font-size:clamp(20px,3vw,30px);letter-spacing:-.7px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere;margin:6px 0}
+.mf-cash-panel p{font-size:12px;line-height:1.45;margin:0;color:#526780}
+.mf-next-due{margin-top:13px;border:1px solid var(--line);border-radius:12px;padding:0 12px}
+.mf-next-due summary{cursor:pointer;display:flex;gap:8px;justify-content:space-between;align-items:center;min-height:48px;font-size:13px}
+.mf-next-due summary span{color:var(--sub);font-size:12px}
+.mf-due-list{padding-bottom:8px}
+.mf-due-row{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-top:1px solid #e1e6ed;font-size:13px}
+.mf-due-row span{display:grid;gap:3px}
+.mf-due-row small{font-size:11px;color:var(--sub)}
+.mf-due-row strong{font-variant-numeric:tabular-nums;white-space:nowrap}
+.mf-cash-warning{margin:10px 0 0;line-height:1.5}
+@media(max-width:760px){
+ .mf-cash-panel{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .mf-cash-panel .mf-cash-result{grid-column:1/-1}
+ .mf-cash-review{padding:12px}
+ .mf-cash-panel>div{padding:12px}
+ .mf-focus-number{font-size:21px}
+ .cycle-picker select{width:160px}
+}
+@media(max-width:360px){
+ .mf-cash-panel{grid-template-columns:1fr}
+ .mf-cash-panel .mf-cash-result{grid-column:auto}
+}
+</style></head><body><div id="app"></div><script>const SEED={"version":4,"schema":"meu-financeiro-offline-v4","name":"Meu Financeiro — privado","openedAt":"","openingCents":0,"salaryNetCents":0,"oldFuncefInstallmentCents":0,"oldFuncefEnd":"2028-02","lastSaved":null,"referenceCycle":"2026-11","entries":[],"invoices":[],"movements":[],"receivables":[],"loanOptions":[{"id":"nenhum","label":"Sem empréstimo","netCents":0,"installmentCents":0,"months":0,"totalCents":0}],"nubankLoans":[],"losango":{"payoffCents":0,"offerDate":"","paid":true},"loan":{"status":"none","option":"nenhum","netCents":0,"paymentCents":0,"durationMonths":0,"releaseDate":"","startCycle":"2026-12","description":""},"ledger":[],"vault":{"goalCents":0,"targetCycle":"2028-03","estimatedAnnualRatePct":0,"monthlyPlannedCents":0,"startCycle":"2027-01","movements":[]},"settings":{"includeTravel":false,"diversionMonthlyCents":0,"bonusCents":0,"bonusStatus":"estimativa","includeVacation":false,"projectionCycles":12,"obraGrowthPct":0,"budgetOverrides":{}},"sourceNotes":[],"salaryHistory":[],"inbox":[],"whatIf":{"option":"nenhum","payLosango":false,"payNubankSmall":false,"payNubankLarge":false,"payCards":false,"startCycle":"2026-12"}};
+
+(()=>{
+'use strict';
+const KEY='meu-financeiro-2026-local-v4', V=()=>String(Date.now())+'-'+String(Math.floor(Math.random()*1e4));
+function localToday(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+const PATHS={home:'<path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/>',card:'<rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20"/>',users:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',vault:'<rect x="3" y="6" width="18" height="15" rx="2"/><path d="M3 10h18M8 6V4h8v2"/><circle cx="12" cy="15" r="2"/>',plan:'<path d="M4 19V8m6 11V5m6 14v-9m4 9V3M2 21h20"/>',list:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',plus:'<path d="M12 5v14M5 12h14"/>',download:'<path d="M12 3v12m-5-5 5 5 5-5M5 17v3h14v-3"/>',upload:'<path d="M12 21V9m-5 5 5-5 5 5M5 7V4h14v3"/>',arrow:'<path d="m9 18 6-6-6-6"/>',back:'<path d="m15 18-6-6 6-6"/>',trash:'<path d="M3 6h18M8 6V4h8v2m3 0-1 15H6L5 6m5 4v7m4-7v7"/>',edit:'<path d="m15 5 4 4M4 20l4-1 12-12a2 2 0 0 0-3-3L5 16l-1 4Z"/>',close:'<path d="M18 6 6 18M6 6l12 12"/>',check:'<path d="m5 12 4 4L19 6"/>',info:'<circle cx="12" cy="12" r="10"/><path d="M12 11v5m0-9v.01"/>',calendar:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4m10-4v4M3 10h18"/>',wallet:'<rect x="2" y="6" width="20" height="15" rx="2"/><path d="M16 13h6M2 10V5h17"/>',trend:'<path d="m3 17 6-6 4 4 8-8m-6 0h6v6"/>',clock:'<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',shield:'<path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z"/><path d="m9 12 2 2 4-4"/>',refresh:'<path d="M20 7v5h-5M4 17v-5h5"/><path d="M6 9a8 8 0 0 1 14-2M18 15a8 8 0 0 1-14 2"/>',filter:'<path d="M4 7h16M7 12h10m-7 5h4"/>',bell:'<path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9m-8 12h4"/>',tag:'<path d="m20 12-8 8-9-9V4h7z"/><circle cx="7" cy="8" r="1"/>',target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',piggy:'<path d="M19 8c1 1 2 2 2 5 0 5-4 8-10 8H7l-2 1v-5c-2-1-3-3-3-5 0-4 4-8 10-8 2 0 3 0 4 1l4-2v5z"/><circle cx="16" cy="11" r=".8"/>',file:'<path d="M7 2h7l5 5v14H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Z"/><path d="M14 2v6h5"/>',eye:'<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>'};
+function ic(n){return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${PATHS[n]||PATHS.info}</svg>`}
+function clone(o){return JSON.parse(JSON.stringify(o))}
+let s; try{const raw=localStorage.getItem(KEY);s=raw?JSON.parse(raw):clone(SEED);if(!s || s.version!==4) throw Error('old schema')}catch(e){s=clone(SEED)}
+s.cardViewCycle ||= '2026-11';
+s.salaryHistory ||= [];
+s.inbox ||= [];
+s.whatIf ||= {option:'45-fixo',payLosango:true,payNubankSmall:false,payNubankLarge:false,payCards:false,startCycle:'2026-12'};
+s.settings ||= {};
+s.settings.budgetOverrides ||= {};
+s.cardClosings ||= {};s.invoiceClosingDates ||= {};
+if(!s.settings.referenceCycleManual && s.referenceCycle==='2026-11' && localToday()<'2026-11-20'){
+ s.referenceCycle=cycleForDate(localToday());
+}
+
+
+let insightView='categoria',insightCard='todos',cardScope='mes';
+let page='home',selectedCard='c6',activityFilter='all',modalName='',editTarget='',confirmAction=null,lastUndo=null,snackTimer=null,detailCycle=s.referenceCycle||'2026-11',activeChart='geral';
+const $=q=>document.querySelector(q),h=v=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;');
+const BRL=new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}),INT=new Intl.NumberFormat('pt-BR');
+const m=c=>BRL.format((Number(c)||0)/100),fmt=v=>Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+function cents(v){if(typeof v==='number')return Math.round(v*100);let t=String(v||'0').trim().replace(/[^\d,.\-]/g,'');if(t.includes(','))t=t.replaceAll('.','').replace(',','.');const f=Number(t);return Number.isFinite(f)?Math.round(f*100):0}
+function cycShift(c,delta){let [y,mm]=c.split('-').map(Number),d=new Date(Date.UTC(y,mm-1+delta,1));return d.toISOString().slice(0,7)}
+const MONTHS=['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ'];
+function cycleLabel(c){let [y,mo]=c.split('-').map(Number),n=mo%12;return `${MONTHS[mo-1]}/${MONTHS[n]}`}
+function fmtDate(d){if(!d)return 'Data a confirmar';let [y,mo,day]=d.split('-');return `${day}/${mo}/${y}`}
+function cycleForDate(d){if(!d || d.length<10)return cycleForDate(localToday());let [y,mo,day]=d.split('-').map(Number);return Number(day)>=20?`${y}-${String(mo).padStart(2,'0')}`:cycShift(`${y}-${String(mo).padStart(2,'0')}`,-1)}
+function activeCycle(){return cycleForDate(localToday())}
+function isSameCycle(a,b){return a===b}
+function nextPayday(){
+ let candidate=activeCycle();
+ for(let i=0;i<4;i++,candidate=cycShift(candidate,1)){
+  const due=salaryPayDate(candidate);
+  if(due>=localToday())return {date:due,cycle:candidate};
+ }
+ return {date:salaryPayDate(cycShift(activeCycle(),1)),cycle:cycShift(activeCycle(),1)}
+}
+function upcomingBills(){
+ const until=nextPayday().date,start=localToday();
+ const rows=[];
+ for(const i of s.invoices.filter(x=>!x.paid && x.dueDate && x.dueDate<=until))rows.push({id:i.id,name:'Fatura '+i.card,cents:currentInvoice(i),date:i.dueDate,kind:'invoice'});
+ for(const e of s.entries.filter(x=>x.dueDate && x.dueDate<=until && expenseIncluded(x))){
+  const key=budgetKeyFor(e);
+  const amount=key?budgetRest(e.month,key):e.cents;
+  if(e.budgetKey && !e.card)continue;
+  rows.push({id:e.id,name:e.description,cents:amount,date:e.dueDate,kind:'entry'});
+ }
+ rows.sort((a,b)=>a.date.localeCompare(b.date));
+ return {until,start,rows,total:sumBy(rows,x=>x.cents),overdue:rows.filter(x=>x.date<start).length};
+}
+
+function uiCycleSelect(value=s.referenceCycle){let v='',first=cycShift(activeCycle(),-12);for(let i=0;i<72;i++){let key=cycShift(first,i);v+=`<option value="${key}" ${value===key?'selected':''}>${cycleLabel(key)} · ${key.slice(0,4)}</option>`}return `<div class="cycle-picker"><select aria-label="Ciclo de referência" data-field="cycle" style="width:auto;min-width:144px">${v}</select><button type="button" class="btn btn-sm" data-act="currentCycle" title="Ir à referência atual">Atual</button></div>`}
+function save(){s.lastSaved=new Date().toISOString();try{localStorage.setItem(KEY,JSON.stringify(s));return true}catch(e){toast('Armazenamento bloqueado. Exporte um backup antes de fechar.');return false}}
+function toast(t,undo=false){const box=$('#toast');if(!box)return;box.innerHTML=`${h(t)}${undo?'<button type="button" data-act="undo">Desfazer</button>':''}`;box.classList.remove('hide');clearTimeout(snackTimer);snackTimer=setTimeout(()=>box.classList.add('hide'),6500)}
+function commit(message){save();render();if(message)toast(message)}
+function setPage(name){page=name;modalName='';render();window.scrollTo({top:0,behavior:'smooth'})}
+function navButton(id,name,ico,mobile=false){return `<button class="${mobile?'':'navbtn'} ${page===id?'active':''}" type="button" data-act="nav" data-page="${id}">${ic(ico)}<span>${h(name)}</span></button>`}
+function top(){const labels={home:['Visão geral','Controle privado sem sincronização.'],cards:['Cartões','Faturas e compras de todos os meses.'],receivables:['A receber','Valores compartilhados e reembolsos.'],vault:['Cofre do apartamento','Reserva, rendimento e objetivo.'],plan:['Planejamento','Fluxo de caixa e empréstimos.'],activity:['Lançamentos','Contas previstas, gastos e salário confirmado.']};const [name,descr]=labels[page];return `<div class="topbar"><div><p class="eyebrow">Controle financeiro pessoal</p><h1 class="page-title">${name}</h1><p class="page-description">${descr}</p></div><div class="top-actions"><button class="btn hide-mobile" data-act="export">${ic('download')} Backup</button><button class="btn btn-primary" data-act="open" data-modal="expense">${ic('plus')}<span class="desktoponly"> Novo</span> lançamento</button></div></div>`}
+function layout(){const navigation=[['home','Início','home'],['cards','Cartões','card'],['receivables','A receber','users'],['vault','Cofre','vault'],['plan','Planejar','plan'],['activity','Lançamentos','list']];return `<div class="app"><aside class="sidebar"><div class="brand"><div class="brand-mark">MF</div><div><div class="brand-name">Meu Financeiro</div><div class="brand-sub">Controle pessoal</div></div></div><div><p class="nav-group-title">Navegação</p><nav class="nav">${navigation.map(x=>navButton(...x)).join('')}</nav></div><div class="side-footer"><strong>${ic('shield')} Seus dados, no seu dispositivo</strong>Esta versão funciona sem servidor. Exporte um backup com frequência; não há sincronização entre aparelhos.<div style="margin-top:12px"><button class="btn btn-sm" data-act="export">${ic('download')} Backup com senha</button></div></div></aside><div><div class="mobilehead"><div class="brand"><div class="brand-mark">MF</div><div class="brand-name">Meu Financeiro</div></div><button class="iconbtn" data-act="export" aria-label="Exportar dados">${ic('download')}</button></div><main class="main" id="main">${top()}${renderContent()}<p class="footnote">Referência salarial dia 20 • valores previstos não equivalem a pagamentos realizados • dados locais neste navegador • atualização inicial: 07/11/2026</p></main></div><nav class="mobilebar">${[navigation[0],navigation[5],navigation[1],navigation[2],navigation[3],navigation[4]].map(x=>navButton(...x,true)).join('')}</nav></div><div id="modalHost"></div><div id="toast" class="snack hide" role="status"></div><input id="importBackup" type="file" accept=".json,application/json" hidden><input id="importDeltaFile" type="file" accept=".json,application/json" hidden>`}
+function render(){const app=$('#app');app.innerHTML=layout();if(modalName)renderModal()}
+function renderContent(){return page==='home'?renderHome():page==='cards'?renderCards():page==='receivables'?renderReceivables():page==='vault'?renderVault():page==='plan'?renderPlan():renderActivity()}
+function liveCash(){return s.openingCents+s.ledger.reduce((t,e)=>t+(e.cents||0),0)}
+function vaultBalance(){return s.vault.movements.reduce((a,v)=>a+(v.cents||0),0)}
+function activeMovements(id){return s.movements.filter(x=>x.invoice===id&&!x.deleted)}
+function currentInvoice(i){return i.amountCents+(i.manualDeltaCents||0)}
+function totalInvoices(cycle){return s.invoices.filter(i=>i.cycle===cycle&&!i.paid).reduce((n,i)=>n+currentInvoice(i),0)}
+function sumBy(rows,fn=x=>x.cents){return rows.reduce((n,x)=>n+(fn(x)||0),0)}
+function getReceivableEvents(cycle){const out=[];for(const r of s.receivables){if(!r.firstCycle || !r.dateConfirmed)continue;const todo=r.totalInstallments-r.currentInstallment+1;for(let i=0;i<todo;i++){const c=cycShift(r.firstCycle,i);if(c!==cycle)continue;out.push({...r,cycle:c,installment:r.currentInstallment+i,paid:(r.paidCycles||[]).includes(c),eventId:`rec-${r.id}-${c}`})}}return out}
+function nextReceivableTotal(cycle,onlyConfirmed=true){let total=0;for(const r of s.receivables){if(!r.firstCycle)continue;if(onlyConfirmed&&!r.dateConfirmed)continue;let k=Number(cycle.slice(0,4))*12+Number(cycle.slice(5));let start=Number(r.firstCycle.slice(0,4))*12+Number(r.firstCycle.slice(5));const idx=k-start;if(idx<0||idx>=r.totalInstallments-r.currentInstallment+1||(r.paidCycles||[]).includes(cycle))continue;total+=r.amountCents}return total}
+const asMonth=(k)=>Number(k.slice(0,4))*12+Number(k.slice(5));
+function monthlyNetSalary(cycle){return salaryRecord(cycle)?0:salaryEstimate(cycle)}
+function expenseIncluded(e){if(e.status==='pago'||e.status==='excluido'||e.includeInProjection===false)return false;if(e.card && /^fatura-/i.test(e.id))return false; // invoice is a unique payables register
+ if(e.card && s.invoices.some(i=>i.card===e.card&&i.cycle===e.month))return false; // card carnê/parcelas already covered by bank invoice
+ if(e.category==='Empréstimos' && e.description==='Losango'&&s.losango.paid)return false;
+ if(e.loanId && s.nubankLoans.find(l=>l.id===e.loanId)?.paid)return false;
+ if(e.category==='Viagens'&&!s.settings.includeTravel)return false;
+ return e.type==='despesa';}
+function forecastFor(cycle){let income=monthlyNetSalary(cycle),expenses=0,breakdown=[],note=[];
+ if(cycle==='2026-11'){income+=s.settings.bonusCents;note.push('13º: valor previsto, recebimento garantido')}
+ if(s.settings.includeVacation){for(const e of s.entries.filter(x=>x.month===cycle&&x.type==='receita'&&x.description?.startsWith('Férias')))income+=e.cents}
+ income+=sumBy(s.entries.filter(e=>e.month===cycle&&e.type==='receita'&&e.id?.startsWith('manual-')&&e.status==='previsto'));
+ let receivable=nextReceivableTotal(cycle,true);income+=receivable;
+ for(const e of s.entries.filter(x=>x.month===cycle&&expenseIncluded(x))){
+   let key=budgetKeyFor(e),amt=key?budgetRest(cycle,key):e.cents;if(e.budgetKey && !e.card)amt=0;
+   if(e.category==='Habitação' && e.id?.startsWith('obra-') && cycle!=='2026-11'){const n=Math.max(0,asMonth(cycle)-asMonth('2026-11'));amt=Math.round(amt*Math.pow(1+s.settings.obraGrowthPct/100,n));}
+   if(e.category==='Empréstimos'&&e.description==='Losango'&&s.losango.paid)continue;
+   expenses+=amt;breakdown.push({name:e.description,cents:amt,id:e.id})
+ }
+ for(const i of s.invoices.filter(x=>x.cycle===cycle&&!x.paid)){
+   let val=currentInvoice(i);expenses+=val;breakdown.push({name:'Fatura '+i.card,cents:val,id:i.id})
+ }
+ const coff=(asMonth(cycle)>=asMonth(s.vault.startCycle)?s.vault.monthlyPlannedCents:0);
+ return {cycle,income,expenses,transfer:coff,receivable,breakdown:breakdown.sort((a,b)=>b.cents-a.cents),note};
+}
+function projected(cycles=12){let bal=liveCash(),out=[];const first=nextPayday().cycle;
+ for(let i=0;i<cycles;i++){let cycle=cycShift(first,i),f=forecastFor(cycle);bal+=f.income-f.expenses-f.transfer;out.push({...f,balance:bal})}
+ return out}
+function currentEntries(cycle){return s.entries.filter(e=>e.month===cycle&&e.type==='despesa'&&expenseIncluded(e))}
+function breakdownExpense(cycle){let a=currentEntries(cycle).map(x=>({...x,cents:x.category==='Lazer'&&x.description==='Diversão'?s.settings.diversionMonthlyCents:x.cents}));for(const i of s.invoices.filter(x=>x.cycle===cycle&&!x.paid))a.push({id:i.id,description:'Fatura '+i.card,cents:currentInvoice(i),category:'Faturas de cartão'});return a.sort((a,b)=>b.cents-a.cents)}
+const BUDGETS=[['diversao','Diversão'],['passagem','Passagem'],['internet','Internet (Vivo)'],['cabelo','Cabelo'],['claro','Claro']];
+function budgetOptions(){return [['','Não abater de orçamento'],...BUDGETS.map(x=>[x[0],x[1]])]}
+function budgetKeyFor(e){const n=String(e.description||'').toLowerCase().trim();return BUDGETS.find(x=>x[1].toLowerCase()===n)?.[0]||''}
+function billCards(){return [...new Set(s.invoices.map(i=>i.card).concat(s.entries.filter(x=>x.card).map(x=>x.card)))];}
+function cardBase(name){return s.invoices.find(x=>x.card===name)?.id||''}
+function invoiceForCard(cycle,card){return s.invoices.find(i=>i.cycle===cycle&&i.card===card)}
+function cardLines(cycle,card){
+ const i=invoiceForCard(cycle,card);
+ if(i){return activeMovements(i.id).filter(x=>x.cents>0).map(x=>({...x,kind:'movement',valueCents:x.cents,card,cycle})).sort((a,b)=>(b.date||'').localeCompare(a.date||''));}
+ return s.entries.filter(e=>e.card===card&&e.month===cycle&&e.status!=='excluido'&&!/^fatura /i.test(e.description||'')&&!String(e.description||'').includes('anuidade (provisão')).map(e=>({...e,kind:'entry',valueCents:e.cents,card,cycle})).sort((a,b)=>(b.dueDate||'').localeCompare(a.dueDate||''));
+}
+function cardAdjustments(cycle,card){const i=invoiceForCard(cycle,card);return i?activeMovements(i.id).filter(x=>x.cents<0):[];}
+function cardMonthlyTotal(cycle,card){const i=invoiceForCard(cycle,card);return i?currentInvoice(i):sumBy(cardLines(cycle,card),x=>x.valueCents);}
+function cardTotalForCycle(cycle){return sumBy(billCards(),c=>cardMonthlyTotal(cycle,c))}
+function canonicalCategory(raw){
+ const cat=String(raw||'').trim();
+ const synonym={'Viagens':'Viagem e eventos','Viagem':'Viagem e eventos','Viagens e Eventos':'Viagem e eventos','Alimentação':'Alimentação e lazer','Lazer':'Alimentação e lazer','Mercado':'Alimentação e lazer','Vestuário':'Compras e vestuário','Compras':'Compras e vestuário','Saúde':'Saúde e bem-estar','Assinaturas':'Serviços e assinaturas','Parcelamentos':'Parcelamentos e encargos','Outros':'Outros / a classificar','Outros Lançamentos':'Outros / a classificar','Cartões':'Parcelamentos e encargos','Cartão de crédito':'Parcelamentos e encargos'};
+ return synonym[cat]||cat;
+}
+function inferredCategory(x){
+ const n=String(x.description||'').toLowerCase(),raw=String(x.category||'').trim(),cat=raw.toLowerCase();
+ // Descrições herdadas como "Outros" podem conter parcelamentos de fatura:
+ // reconhecê-los sem editar o lançamento nem sua fatura bancária.
+ if(raw&&!['cartões','cartao','não classificado','outros','outros / a classificar','parcelas futuras dos cartões'].includes(cat))return canonicalCategory(raw);
+ if(/parcelamento.*fatura|parcelamento de fatura|renegocia[cç][aã]o de pend[eê]ncias|fatura.*parcelad/.test(n))return 'Parcelamentos e encargos';
+ if(/uber|brb|bus|99 |mobilid|passagem/.test(n))return 'Transporte';
+ if(/airbnb|hotel|viage|ticket/.test(n))return 'Viagem e eventos';
+ if(/mercado|pizza|restaur|outback|giraffas|food|lanch|cafe/.test(n))return 'Alimentação e lazer';
+ if(/wellhub|drogaria|farmac|sa[uú]de/.test(n))return 'Saúde e bem-estar';
+ if(/netshoes|shein|zara|renner|cea|c&a|moda/.test(n))return 'Compras e vestuário';
+ if(/lightroom|google|assinatura|one/.test(n))return 'Serviços e assinaturas';
+ return 'Outros / a classificar';
+}
+function installmentDetails(x){
+ const part=String(x.installment||'').trim(),desc=String(x.description||'');
+ const matched=part.match(/(\d{1,2})\s*(?:\/|de)\s*(\d{1,2})/i)||(/parcela/i.test(desc)?desc.match(/(\d{1,2})\s*(?:\/|de)\s*(\d{1,2})/i):null);
+ const finance=/parcelamento.*fatura|fatura.*parcelad|renegocia[cç][aã]o de pend[eê]ncias|cr[eé]dito refinanciamento/i.test(desc);
+ return {isInstallment:!!matched||finance,finance,number:matched?Number(matched[1]):0,total:matched?Number(matched[2]):0};
+}
+function merchantName(x){
+ const d=String(x.description||'Outros').replace(/\s*·\s*\d+\/\d+.*$/,'').replace(/\s*\(m[ií]nimo identificado\)$/i,'').trim();
+ if(/^\s*brb\b|^\s*brb[\s*_-]*\d/i.test(d))return 'BRB';
+ if(/\buber\b|uberrides/i.test(d))return 'Uber';
+ if(/parcelamento.*fatura|fatura.*parcelad/i.test(d))return 'Parcelamento de fatura';
+ return d||'Outros';
+}
+function classifyButton(x){return `<button class="btn btn-sm btn-classify" data-act="editCategory" data-id="${h(x.kind+':'+x.id)}" title="Alterar categoria deste lançamento">${ic('tag')} Categoria</button>`}
+function insightDetailRow(x){return `<div class="insight-row insight-action-row"><div class="insight-description"><strong>${h(x.description)}</strong><small>${h(x.card)}${x.installment?' · '+h(x.installment):''} · ${h(inferredCategory(x))}</small></div><div class="insight-side"><b>${m(x.valueCents)}</b>${classifyButton(x)}</div></div>`}
+function insightGroup(title,val,rows,caption=''){
+ return `<details class="finance-details"><summary><span>${h(title)}${caption?`<small class="insight-group-caption">${h(caption)}</small>`:''}</span><b>${m(val)}</b></summary><div class="insight-inner">${rows.map(insightDetailRow).join('')||'<p class="caption">Sem lançamentos detalhados.</p>'}</div></details>`
+}
+function cardLineHTML(x){const isFuture=x.kind==='entry', action=isFuture?'editEntry':'open';const data=isFuture?`data-act="editEntry"`:`data-act="open" data-modal="transaction"`;
+ return `<div class="item"><div class="item-left"><div class="item-avatar">${ic('tag')}</div><div><div class="item-label">${h(x.description)}</div><div class="item-sub">${h(inferredCategory(x))}${x.installment?' · '+h(x.installment):''}${x.dueDate?' · '+fmtDate(x.dueDate):x.date?' · '+fmtDate(x.date):''}${x.budgetKey?' · abate '+h(BUDGETS.find(z=>z[0]===x.budgetKey)?.[1]||'orçamento'):''}</div></div></div><div class="item-actions"><strong class="amount">${m(x.valueCents)}</strong>${classifyButton(x)}<button class="iconbtn" ${data} data-id="${h(x.id)}" aria-label="Editar">${ic('edit')}</button><button class="iconbtn danger" data-act="${isFuture?'deleteEntry':'deleteTx'}" data-id="${h(x.id)}" aria-label="Excluir">${ic('trash')}</button></div></div>`}
+function salaryHoliday(d){const [y,mm,dd]=d.split('-').map(Number);const fixed=[ '01-01','04-21','05-01','09-07','10-12','11-02','11-15','11-20','12-25'];return fixed.includes(`${String(mm).padStart(2,'0')}-${String(dd).padStart(2,'0')}`);}
+function salaryPayDate(cycle){let [y,mm]=cycle.split('-').map(Number);let d=new Date(Date.UTC(y,mm-1,20));for(let z=0;z<7;z++){const iso=d.toISOString().slice(0,10);if(![0,6].includes(d.getUTCDay())&&!salaryHoliday(iso))return iso;d.setUTCDate(d.getUTCDate()+1);}return d.toISOString().slice(0,10)}
+function salaryRecord(cycle){return s.salaryHistory.find(x=>x.cycle===cycle)}
+function budgetBase(cycle,key){const e=s.entries.find(x=>x.month===cycle&&budgetKeyFor(x)===key&&x.type==='despesa'&&x.status!=='excluido');const explicit=s.settings.budgetOverrides[cycle]?.[key];return explicit!==undefined?explicit:key==='diversao'?s.settings.diversionMonthlyCents:(e?.cents||0)}
+function budgetUsed(cycle,key){let spent=sumBy(s.ledger.filter(x=>x.budgetKey===key&&x.budgetCycle===cycle&&x.cents<0),x=>-x.cents);
+ for(const inv of s.invoices.filter(x=>x.cycle===cycle))spent+=sumBy(activeMovements(inv.id).filter(x=>x.budgetKey===key&&x.cents>0));
+ spent+=sumBy(s.entries.filter(x=>x.month===cycle&&x.budgetKey===key&&x.status!=='excluido'&&((x.card&&!invoiceForCard(cycle,x.card))||(!x.card&&x.id?.startsWith('manual-')&&x.type==='despesa'))));
+ return spent;}
+function budgetRest(cycle,key){return Math.max(0,budgetBase(cycle,key)-budgetUsed(cycle,key))}
+function salaryEstimate(cycle){const oldEnd=asMonth(s.oldFuncefEnd),t=asMonth(cycle);if(s.loan.status==='active'&&t>=asMonth(s.loan.startCycle)){const n=t-asMonth(s.loan.startCycle);return s.salaryNetCents+s.oldFuncefInstallmentCents-(n<s.loan.durationMonths?s.loan.paymentCents:0)}return t>oldEnd?s.salaryNetCents+s.oldFuncefInstallmentCents:s.salaryNetCents}
+function scenarioProjection(){
+ const o=s.whatIf||{},options=s.loanOptions||[],option=options.find(x=>x.id===o.option)||options[0]||{id:'nenhum',netCents:0,installmentCents:0,months:0};
+ const takingLoan=option.id!=='nenhum',loanNet=takingLoan?Math.max(0,option.netCents||0):0;
+ const dueLosango=o.payLosango&&!s.losango.paid?Math.max(0,s.losango.payoffCents||0):0;
+ const small=s.nubankLoans.find(x=>x.id==='nu-pequeno'),large=s.nubankLoans.find(x=>x.id==='nu-grande');
+ const dueSmall=o.payNubankSmall&&small&&!small.paid?Math.max(0,small.payoffCents||0):0;
+ const dueLarge=o.payNubankLarge&&large&&!large.paid?Math.max(0,large.payoffCents||0):0;
+ const firstCycle='2026-11',dueCards=o.payCards?Math.max(0,cardTotalForCycle(firstCycle)):0;
+ const upfront=dueLosango+dueSmall+dueLarge+dueCards;
+ const currentCash=liveCash(),instant=currentCash+loanNet-upfront;
+ let balance=instant,baseline=currentCash,rows=[];
+ const horizon=Math.min(48,Math.max(6,Number(o.horizon)||12)),firstPayroll=o.startCycle||'2026-12';
+ for(let n=0;n<horizon;n++){
+  const cycle=cycShift(firstCycle,n),f=forecastFor(cycle);
+  baseline+=f.income-f.expenses-f.transfer;
+  let income=f.income,expenses=f.expenses,avoided=0,salaryDelta=0;
+  const canAvoid=e=>e.month===cycle&&expenseIncluded(e);
+  if(dueLosango)avoided+=sumBy(s.entries.filter(e=>canAvoid(e)&&e.description==='Losango'),e=>e.cents);
+  if(dueSmall)avoided+=sumBy(s.entries.filter(e=>canAvoid(e)&&e.loanId==='nu-pequeno'),e=>e.cents);
+  if(dueLarge)avoided+=sumBy(s.entries.filter(e=>canAvoid(e)&&e.loanId==='nu-grande'),e=>e.cents);
+  if(dueCards&&cycle===firstCycle){
+   avoided+=totalInvoices(firstCycle);
+   avoided+=sumBy(s.entries.filter(e=>canAvoid(e)&&!!e.card),e=>e.cents);
+  }
+  expenses=Math.max(0,expenses-avoided);
+  if(takingLoan&&asMonth(cycle)>=asMonth(firstPayroll)&&!salaryRecord(cycle)){
+   const nth=asMonth(cycle)-asMonth(firstPayroll);
+   const newPayment=nth<option.months?option.installmentCents:0;
+   const afterPayroll=s.salaryNetCents+s.oldFuncefInstallmentCents-newPayment;
+   salaryDelta=afterPayroll-salaryEstimate(cycle);
+   income+=salaryDelta;
+  }
+  balance+=income-expenses-f.transfer;
+  rows.push({cycle,income,expenses,transfer:f.transfer,avoided,salaryDelta,baseline,balance,vsBaseline:balance-baseline});
+ }
+ rows.meta={currentCash,loanNet,upfront,instant,losango:dueLosango,small:dueSmall,large:dueLarge,cards:dueCards,option,takingLoan,horizon,firstPayroll,originalNextCycle:rows[0]?rows[0].baseline:currentCash,simulatedNextCycle:rows[0]?rows[0].balance:instant};
+ return rows;
+}
+function renderHome(){if(s.entries.length===0&&s.invoices.length===0&&s.ledger.length===0){return `<div class="section card pad" style="max-width:620px;margin:auto"><div class="section-heading"><h2>Seu controle financeiro começa aqui</h2></div><p>Este aplicativo está vazio para proteger sua privacidade. Seus dados não estão incluídos no arquivo publicado.</p><p class="caption">Importe seu backup pessoal pelo botão abaixo para começar. O conteúdo será guardado apenas neste navegador, sem envio a um banco de dados.</p><button class="btn btn-primary" data-act="import">${ic('upload')} Importar meus dados</button><p class="caption">Faça backups protegidos por senha regularmente. O armazenamento local deste navegador não é criptografado pelo aplicativo.</p></div>`;}const cycle=s.referenceCycle||activeCycle(),f=forecastFor(cycle),forecast=projected(8),invoices=s.invoices.filter(x=>!x.paid).sort((a,b)=>(a.dueDate||'').localeCompare(b.dueDate||'')),balance=liveCash();
+const got=nextReceivableTotal(cycle,true),pending=s.receivables.filter(x=>!x.dateConfirmed).length;
+const near=upcomingBills(),available=balance-near.total;
+const risk=near.overdue?'Existem '+near.overdue+' vencimento(s) atrasado(s) cadastrado(s). ':'';
+const loc=s.losango?.paid?'':'As parcelas vencidas da Losango podem não estar lançadas separadamente. ';
+const insight=near.rows.slice(0,5).map(x=>`<div class="mf-due-row"><span>${h(x.name)}<small>${fmtDate(x.date)}${x.date<near.start?' · vencida':''}</small></span><strong>${m(x.cents)}</strong></div>`).join('');
+
+ return `<div class="head-flex" style="margin-bottom:14px"><div class="chips"><span class="chip">${ic('calendar')} Ciclo salarial · dia 20</span><span class="chip dim">Hoje · ${fmtDate(localToday())}</span></div><div class="select-wrap">${uiCycleSelect()}</div></div>
+<div class="section mf-cash-review">
+ <div class="mf-cash-panel">
+  <div><span class="mf-eyebrow">Caixa real registrado</span><div class="mf-focus-number">${m(balance)}</div><p>Conferido apenas até os últimos lançamentos registrados no aplicativo.</p></div>
+  <div><span class="mf-eyebrow">Compromissos cadastrados até ${fmtDate(near.until)}</span><div class="mf-focus-number">${m(near.total)}</div><p>Não inclui novas compras, contas sem data e dívidas vencidas ausentes da base.</p></div>
+  <div class="mf-cash-result"><span class="mf-eyebrow">Saldo provisório antes do próximo salário</span><div class="mf-focus-number ${available<0?'negative':''}">${m(available)}</div><p>${available<0?'Atenção: falta dinheiro para os compromissos cadastrados.':'Valor condicionado à conferência de todas as contas.'}</p></div>
+ </div>
+ <details class="mf-next-due"><summary><strong>Ver vencimentos até o salário de ${fmtDate(near.until)}</strong><span>${near.rows.length} contas</span></summary>
+ <div class="mf-due-list">${insight||'<p class="caption">Nenhuma conta datada cadastrada nesse intervalo.</p>'}</div></details>
+ <p class="caption mf-cash-warning">${h(risk+loc)}Não confunda este saldo provisório com uma reserva disponível para gastar.</p>
+ </div> <div class="grid g2"><div class="hero"><h2>Dinheiro disponível em caixa</h2><div class="big-number">${m(balance)}</div><div class="small">O valor que você tem, descontadas somente movimentações registradas após a abertura.</div><div class="hero-footer"><span class="small">${s.loan.status==='active'?'Empréstimo contratado registrado':s.loan.status==='pending'?'Contratação pendente de liberação':'Nenhum empréstimo novo registrado'}</span><button data-act="open" data-modal="cash">Ajustar caixa</button></div></div><div class="card pad"><div class="head-flex"><div><div class="metric-label">Saldo futuro • ${cycleLabel(cycle)}</div><div class="metric-value ${forecast.find(x=>x.cycle===cycle)?.balance<0?'negative':''}">${m(forecast.find(x=>x.cycle===cycle)?.balance??balance)}</div></div><div class="metric-icon">${ic('trend')}</div></div><div class="metric-note">Projeção após receitas e despesas previstas. Não é dinheiro disponível hoje.</div><div class="line" style="margin:16px 0 11px"></div><div class="row between"><span class="small">A receber de terceiros</span><strong class="positive">+ ${m(got)}</strong></div><div class="row between" style="margin-top:7px"><span class="small">Faturas do ciclo</span><strong>${m(totalInvoices(cycle))}</strong></div></div></div>
+ <div class="section grid g3"><div class="card pad"><div class="metric-label">Salário ${salaryRecord(cycle)?"confirmado":"previsto"}</div><div class="metric-value smallval">${m(salaryRecord(cycle)?.cents??salaryEstimate(cycle))}</div><div class="metric-note">${salaryRecord(cycle)?`Recebido em ${fmtDate(salaryRecord(cycle).date)}`:`Previsão ${fmtDate(salaryPayDate(cycle))}`}</div><button class="btn btn-sm" style="margin-top:12px" data-act="open" data-modal="salary">${salaryRecord(cycle)?"Corrigir salário":"Confirmar salário"}</button></div><div class="card pad"><div class="metric-label">Gastos planejados do ciclo</div><div class="metric-value smallval">${m(f.expenses)}</div><div class="metric-note">Inclui parcelas, faturas e contas não pagas.</div></div><div class="card pad"><div class="metric-label">Cofre do apartamento</div><div class="metric-value smallval">${m(vaultBalance())}</div><div class="metric-note">Separado do caixa disponível; rendimento só quando informado.</div></div></div>
+ <div class="section split"><div class="card pad"><div class="section-heading"><h2>Como seu caixa pode evoluir</h2><button class="btn btn-sm" data-act="nav" data-page="plan">Ver projeção ${ic('arrow')}</button></div>${barChart(forecast.slice(0,6))}<p class="caption">Projeção conservadora sem crédito novo não contratado. O 13º é garantido, mas seu valor ainda é estimado. Viagens opcionais estão desativadas.</p></div><div class="card pad"><div class="section-heading"><h2>Próximas faturas</h2><button class="btn btn-sm" data-act="nav" data-page="cards">Todos os cartões</button></div><div class="list">${invoices.slice(0,5).map(i=>`<div class="item"><div class="item-left"><div class="item-avatar">${ic('card')}</div><div><div class="item-label">${h(i.card)}</div><div class="item-sub">Vence ${fmtDate(i.dueDate)} ${i.estimated?'· estimada':''}</div></div></div><div class="col" style="align-items:flex-end"><span class="amount">${m(currentInvoice(i))}</span><button class="btn btn-sm btn-ghost" data-act="card" data-id="${i.id}">Detalhar ${ic('arrow')}</button></div></div>`).join('')}</div></div></div>
+ <div class="section grid g2"><div class="card pad"><div class="section-heading"><h2>Valores a receber</h2><button class="btn btn-sm" data-act="nav" data-page="receivables">Ver todos</button></div><div class="list">${s.receivables.map(r=>`<div class="item"><div><div class="item-label">${h(r.description)}</div><div class="item-sub">${r.currentInstallment}/${r.totalInstallments} · ${r.dateConfirmed?cycleLabel(r.firstCycle):'início a confirmar'}</div></div><span class="amount positive">${m(r.amountCents)}</span></div>`).join('')}</div>${pending?`<p class="caption" style="margin:12px 0 0">${pending} sequência(s) ainda sem data confirmada; não entram na projeção.</p>`:''}</div><div class="card pad"><div class="section-heading"><h2>Suas maiores saídas</h2><button class="btn btn-sm" data-act="nav" data-page="activity">Ver lançamentos</button></div>${breakdownExpense(cycle).slice(0,5).map(e=>`<div class="item"><div><div class="item-label">${h(e.description)}</div><div class="item-sub">${h(e.category)}</div></div><span class="amount">${m(e.cents)}</span></div>`).join('')||'<p class="small">Não há contas previstas.</p>'}</div></div><div class="section infostrip">${ic('info')} Lembre-se: os reembolsos compartilhados são receitas previstas. Eles <b>não reduzem a fatura de cartão</b>. Editar o detalhamento não altera automaticamente o total informado pelo banco.</div>`}
+function barChart(series){if(!series.length)return '';const max=Math.max(1,...series.map(r=>Math.abs(r.balance)));return `<div class="monthbars">${series.map(p=>{let height=Math.max(6,Math.round(Math.abs(p.balance)/max*107));return `<div class="monthbar-col"><div class="monthbar-track"><div class="monthbar-stick ${p.balance<0?'negativebar':''}" style="height:${height}px" title="${cycleLabel(p.cycle)} ${m(p.balance)}"></div></div><span class="monthbar-label">${cycleLabel(p.cycle)}</span></div>`}).join('')}</div>`}
+function catTotals(ms){const map={};for(const t of ms){if(t.cents<=0||t.deleted)continue;const cat=t.category||'Outros / a classificar';map[cat]=(map[cat]||0)+t.cents}return Object.entries(map).sort((a,b)=>b[1]-a[1])}
+function catBars(entries,max=7){if(!entries.length)return '<div class="empty">Nenhuma compra categorizada nesta seleção.</div>';const largest=Math.max(1,entries[0][1]);return entries.slice(0,max).map(([cat,val],n)=>`<div class="cat-row"><div class="item-label" style="font-size:12px">${h(cat)}</div><div class="cat-amount">${m(val)}</div><div class="bar"><div class="bar-fill" style="width:${Math.max(2,val/largest*100)}%;background:${['#1e668f','#3189a9','#57a3bd','#7bb8c6','#9bc7d4','#aab8c9'][Math.min(n,5)]}"></div></div></div>`).join('')}
+function renderCards(){
+ const cyc=s.cardViewCycle||s.referenceCycle||'2026-11',cards=billCards(),selected=cards.includes(selectedCard)?selectedCard:cards[0],selectedRows=cardLines(cyc,selected),selectedInvoice=invoiceForCard(cyc,selected);
+ const futureEnd=cycShift(cyc,36),cycles=cardScope==='mes'?[cyc]:[...new Set([cyc,...s.invoices.map(x=>x.cycle),...s.entries.filter(x=>x.card).map(x=>x.month)])].filter(k=>k>=cyc&&k<=futureEnd).sort();
+ const all=cycles.flatMap(k=>cards.flatMap(c=>cardLines(k,c))),allSpend=sumBy(all,x=>x.valueCents),big=all.slice().sort((a,b)=>b.valueCents-a.valueCents)[0];
+ const totalShown=sumBy(cycles,k=>cardTotalForCycle(k)),selectedTotal=cardMonthlyTotal(cyc,selected),scopeLabel=cardScope==='mes'?'Somente esta referência':'Esta referência + compromissos futuros cadastrados';
+ const filtered=insightCard==='todos'?all:all.filter(x=>x.card===insightCard),filteredSpend=sumBy(filtered,x=>x.valueCents),grouped=new Map();
+ const tabs=[['categoria','Categorias'],['estabelecimentos','Estabelecimentos'],['parcelamentos','Parcelamentos'],['cartoes','Cartões'],['maiores','Maiores compras']];
+ const filteredByCategory=filtered.filter(x=>inferredCategory(x)==='Parcelamentos e encargos'||/parcelamento.*fatura|fatura.*parcelad|renegocia[cç][aã]o de pend[eê]ncias/i.test(x.description||''));
+ const rowsFor=(keyfn,list=filtered)=>{const grouped=new Map();for(const x of list){let k=keyfn(x);if(!grouped.has(k))grouped.set(k,[]);grouped.get(k).push(x)}return [...grouped].map(([label,rows])=>({label,rows,total:sumBy(rows,r=>r.valueCents)})).sort((a,b)=>b.total-a.total)};
+ let insightBody='';
+ if(insightView==='categoria'){
+  const groups=rowsFor(inferredCategory);
+  insightBody=groups.map(({label,rows,total})=>insightGroup(label,total,rows,`${(total/Math.max(1,filteredSpend)*100).toFixed(1).replace('.',',')}% dos gastos detalhados`)).join('');
+ }else if(insightView==='estabelecimentos'){
+  insightBody=rowsFor(merchantName).map(({label,rows,total})=>insightGroup(label,total,rows,`${rows.length} lançamento(s)`)).join('');
+ }else if(insightView==='parcelamentos'){
+  const parts=filtered.filter(x=>installmentDetails(x).isInstallment);
+  const purchases=parts.filter(x=>!installmentDetails(x).finance),finance=parts.filter(x=>installmentDetails(x).finance);
+  insightBody=`<div class="insight-summary"><span>Compras parceladas</span><b>${m(sumBy(purchases,x=>x.valueCents))} · ${purchases.length} parcelas</b></div>`+
+    (rowsFor(x=>x.card,purchases).map(({label,rows,total})=>insightGroup(label,total,rows,`${rows.length} compra(s) parcelada(s)`)).join('')||'<p class="caption">Nenhuma compra parcelada identificada.</p>')+
+    `<div class="insight-summary"><span>Parcelamentos de fatura e renegociações</span><b>${m(sumBy(finance,x=>x.valueCents))} · ${finance.length} parcelas</b></div>`+
+    (rowsFor(x=>x.card,finance).map(({label,rows,total})=>insightGroup(label,total,rows,`${rows.length} parcela(s) de dívida`)).join('')||'<p class="caption">Nenhum parcelamento de fatura identificado.</p>')+
+    '<p class="caption">Os valores são parcelas identificadas no período selecionado, não o valor total original de cada compra ou contrato.</p>';
+ }else if(insightView==='cartoes'){
+  insightBody=rowsFor(x=>x.card).map(({label,rows,total})=>insightGroup(label,total,rows,`${rows.length} lançamentos detalhados; pode diferir das faturas`)).join('');
+ }else{
+  insightBody=filtered.slice().sort((a,b)=>b.valueCents-a.valueCents).slice(0,20).map((x,i)=>`<div class="insight-rank"><span class="rank-n">${i+1}</span>${insightDetailRow(x)}</div>`).join('');
+ }
+ const options=cards.map(c=>`<option value="${h(c)}" ${insightCard===c?'selected':''}>${h(c)}</option>`).join('');
+ return `<div class="card pad"><div class="section-heading"><h2>Faturas por mês</h2><div class="row" style="flex-wrap:wrap;gap:6px"><button class="btn btn-sm" data-act="importDelta">${ic('upload')} Importar parcelas</button><button class="btn btn-sm" data-act="open" data-modal="transaction">${ic('plus')} Lançar compra</button></div></div><div class="period-nav"><button class="btn btn-sm" data-act="cardCyclePrev" aria-label="Mês anterior">${ic('back')}</button><div class="period-current">${cycleLabel(cyc)} · ${cyc.slice(0,4)}<span class="tiny">Referência salarial / faturamento</span></div><button class="btn btn-sm" data-act="cardCycleNext" aria-label="Mês seguinte">${ic('arrow')}</button></div><div class="card-selector">${cards.map(c=>`<button class="card-choice ${c===selected?'selected':''}" data-act="selectCard" data-id="${h(c)}"><span class="choice-name">${h(c)}</span><div class="choice-val">${m(cardMonthlyTotal(cyc,c))}</div><div class="choice-date">${invoiceForCard(cyc,c)?'Fatura informada':'Parcelas conhecidas'}</div></button>`).join('')}</div></div>
+ <div class="section card pad"><div class="head-flex" style="align-items:center;gap:10px;flex-wrap:wrap"><div><strong>Período dos totais e da análise</strong><p class="caption" style="margin:3px 0 0">Escolha esta referência ou os compromissos futuros já cadastrados.</p></div><select aria-label="Período dos totais" data-field="cardScope" style="max-width:290px"><option value="mes" ${cardScope==='mes'?'selected':''}>Esta referência · ${cycleLabel(cyc)}</option><option value="futuro" ${cardScope==='futuro'?'selected':''}>Compromissos cadastrados (atual + futuros)</option></select></div></div>
+ <div class="section grid g3"><div class="card pad"><div class="metric-label">${cardScope==='mes'?'Total previsto · referência':'Total conhecido · até 36 meses'}</div><div class="metric-value smallval">${m(totalShown)}</div><div class="metric-note">${cardScope==='mes'?'Faturas deste ciclo e parcelas previstas':'Somente faturas e parcelas cadastradas; não equivale ao saldo total dos bancos'}</div></div><div class="card pad"><div class="metric-label">Lançamentos detalhados</div><div class="metric-value smallval">${all.length}</div><div class="metric-note">${scopeLabel}</div></div><div class="card pad"><div class="metric-label">Maior lançamento conhecido</div><div class="metric-value smallval">${big?m(big.valueCents):'—'}</div><div class="metric-note">${big?h(big.description):'Sem lançamentos detalhados'} · ${scopeLabel}</div></div></div>
+ <div class="section card pad"><div class="section-heading"><div><h2>${h(selected)} · ${cycleLabel(cyc)}</h2><p class="caption">${selectedInvoice?`Fatura: ${m(selectedTotal)} ${selectedInvoice.estimated?'(estimativa)':'(informada pelo banco)'}`:`Parcelas futuras identificadas: ${m(selectedTotal)} · mínimo, sujeito a novas compras`}</p><p class="caption">Fechamento: ${h(s.invoiceClosingDates[selected+'|'+cyc]?fmtDate(s.invoiceClosingDates[selected+'|'+cyc]):s.cardClosings[selected]?'todo dia '+s.cardClosings[selected]:'a informar')}</p></div><div class="row" style="flex-wrap:wrap;gap:8px"><button class="btn btn-sm" data-act="open" data-modal="closing" data-id="${h(selected)}">${ic('calendar')} Fechamento</button><button class="btn btn-sm" data-act="open" data-modal="invoice" data-id="${selectedInvoice?.id||'new:'+cardBase(selected)}">${ic('edit')} Valor da fatura</button></div></div>
+ <div class="list">${selectedRows.length?selectedRows.map(cardLineHTML).join(''):'<div class="empty">Sem compras detalhadas neste mês. Adicione uma ou navegue para outros meses.</div>'}</div>
+ <div class="row" style="flex-wrap:wrap;gap:8px;margin-top:16px"><button class="btn btn-primary" data-act="open" data-modal="transaction">${ic('plus')} Adicionar neste mês</button>${selectedInvoice?`<button class="btn btn-sm" data-act="${selectedInvoice.paid?'unpayInvoice':'askPayInvoice'}" data-id="${selectedInvoice.id}">${selectedInvoice.paid?'Reabrir fatura':'Confirmar pagamento da fatura'}</button>`:''}</div></div>
+ <div class="section card pad" id="consolidado"><div class="section-heading"><div><h2>Análise dos gastos</h2><p class="caption" style="margin:4px 0 0">Uma análise, vários filtros — sem repetir o mesmo consolidado.</p></div><span class="chip">${all.length} itens</span></div>
+ <p class="caption">Período analisado: <strong>${h(scopeLabel)}</strong>. Para alterar, use o seletor acima.</p>
+ <div class="insight-toolbar"><div><label for="insightCardSelect">Analisar</label><select id="insightCardSelect" data-field="insightCard"><option value="todos" ${insightCard==='todos'?'selected':''}>Todos os cartões</option>${options}</select></div><div class="insight-period"><span class="tiny">Referência</span><strong>${cycleLabel(cyc)}</strong></div></div>
+ <div class="insight-tabs" role="group" aria-label="Como analisar os gastos">${tabs.map(([id,label])=>`<button class="${insightView===id?'on':''}" data-act="insightTab" data-id="${id}" aria-pressed="${insightView===id}">${label}</button>`).join('')}</div>
+ <div class="insight-summary"><span>${insightCard==='todos'?'Compras detalhadas de todos os cartões':h(insightCard)}</span><b>${m(filteredSpend)}</b></div>
+ ${insightBody||'<p class="caption">Sem compras detalhadas neste período.</p>'}
+ <p class="caption" style="margin-top:14px">As categorias são editáveis pelo botão <b>Categoria</b>. Pagamentos de fatura já realizados não são novas despesas. O total de uma fatura informada pelo banco só muda se você o editar.</p></div>`;
+}
+function renderReceivables(){const cycle=s.referenceCycle,totalRemain=s.receivables.reduce((a,r)=>a+(r.totalInstallments-r.currentInstallment+1-(r.paidCycles||[]).length)*r.amountCents,0),monthConfirmed=nextReceivableTotal(cycle,true),uncert=s.receivables.filter(x=>!x.dateConfirmed).length;
+ return `<div class="grid g3"><div class="card pad"><div class="metric-label">Total futuro compartilhado</div><div class="metric-value smallval positive">${m(totalRemain)}</div><div class="metric-note">Soma nominal das parcelas cadastradas ainda não recebidas.</div></div><div class="card pad"><div class="metric-label">A receber · ${cycleLabel(cycle)}</div><div class="metric-value smallval">${m(monthConfirmed)}</div><div class="metric-note">Somente parcelas com mês inicial confirmado.</div></div><div class="card pad"><div class="metric-label">Datas a confirmar</div><div class="metric-value smallval">${uncert}</div><div class="metric-note">Não consideradas no saldo futuro até a confirmação.</div></div></div>
+ <div class="section-heading section"><h2>Recebimentos compartilhados</h2><button class="btn btn-primary" data-act="open" data-modal="receivable">${ic('plus')} Adicionar</button></div>
+ <div class="grid g2">${s.receivables.map(r=>{let remain=r.totalInstallments-r.currentInstallment+1-(r.paidCycles||[]).length;return `<div class="card pad"><div class="section-heading"><div><h2>${h(r.description)}</h2><div class="item-sub" style="margin-top:5px">${h(r.person||'Pessoa não informada')}</div></div><div class="row"><button class="iconbtn" data-act="open" data-modal="receivable" data-id="${r.id}" aria-label="Editar reembolso">${ic('edit')}</button><button class="iconbtn danger" data-act="deleteReceivable" data-id="${r.id}" aria-label="Excluir reembolso">${ic('trash')}</button></div></div><div class="row between"><div><div class="metric-label">Parcela mensal</div><div class="metric-value smallval positive">${m(r.amountCents)}</div></div><span class="chip ${r.dateConfirmed?'ok':'warn'}">${r.dateConfirmed?'Mês confirmado':'Mês a confirmar'}</span></div><div class="details" style="margin:16px 0"><div class="detail-row"><span>Próxima parcela</span><span>${r.currentInstallment}/${r.totalInstallments}</span></div><div class="detail-row"><span>Restantes não recebidas</span><span>${remain}</span></div><div class="detail-row"><span>Primeiro ciclo</span><span>${cycleLabel(r.firstCycle)}${r.dateConfirmed?'':' (provisório)'}</span></div></div><div class="row between"><span class="small">Para registrar recebimento, confirme o mês inicial.</span>${r.dateConfirmed?`<button class="btn btn-sm btn-primary" data-act="open" data-modal="receive" data-id="${r.id}">Receber parcela</button>`:`<button class="btn btn-sm" data-act="open" data-modal="receivable" data-id="${r.id}">Confirmar data</button>`}</div></div>`}).join('')}</div>
+ <div class="section"><div class="card pad"><div class="section-heading"><h2>Calendário de reembolsos</h2><span class="chip">Próximos 6 ciclos</span></div><div class="tablewrap"><table class="table"><thead><tr><th>Ciclo</th><th>Confirmado</th><th>A conferir (não projetado)</th><th>Total confirmado</th></tr></thead><tbody>${Array.from({length:6},(_,j)=>{let cycle=cycShift('2026-11',j),events=getReceivableEvents(cycle),unc=s.receivables.filter(r=>!r.dateConfirmed&&asMonth(cycle)>=asMonth(r.firstCycle)&&asMonth(cycle)-asMonth(r.firstCycle)<r.totalInstallments-r.currentInstallment+1);return `<tr><td><b>${cycleLabel(cycle)}</b></td><td>${events.map(r=>`${h(r.description)} (${r.installment}/${r.totalInstallments})`).join('<div style="height:5px"></div>')||'—'}</td><td>${unc.length?unc.map(r=>`${m(r.amountCents)} · ${h(r.description)}`).join('; '):'—'}</td><td class="amount">${m(nextReceivableTotal(cycle))}</td></tr>`}).join('')}</tbody></table></div><p class="caption">Ao marcar como recebido, o valor entra no caixa e sai dos recebíveis pendentes. A fatura do cartão permanece com seu valor integral.</p></div></div>`}
+function vaultProjection(months=12){let total=vaultBalance(),r=Math.max(-99,Number(s.vault.estimatedAnnualRatePct)||0)/100,rate=Math.pow(1+r,1/12)-1,out=[];for(let j=0;j<months;j++){let c=cycShift('2026-11',j),interest=Math.round(Math.max(0,total)*rate);total+=interest;if(asMonth(c)>=asMonth(s.vault.startCycle))total+=s.vault.monthlyPlannedCents;out.push({cycle:c,total,interest})}return out}
+function renderVault(){const v=s.vault,balance=vaultBalance(),goal=v.goalCents,pct=goal?Math.min(100,balance/goal*100):0,proj=vaultProjection(),actualYield=sumBy(v.movements.filter(x=>x.type==='yield')),est=proj.reduce((n,x)=>n+x.interest,0),toTarget=Math.max(1,asMonth(v.targetCycle||'2028-03')-asMonth('2026-11')+1),required=Math.ceil(Math.max(0,goal-balance)/toTarget);
+ return `<div class="grid g2"><div class="hero"><h2>Saldo separado para o apartamento</h2><div class="big-number">${m(balance)}</div><div class="small">Aportes reais + rendimentos efetivamente creditados – retiradas.</div><div class="hero-footer"><span class="small">Meta ${m(goal)}</span><button data-act="open" data-modal="vaultMove">${ic('plus')} Movimentar</button></div></div><div class="card pad"><div class="section-heading"><h2>Minha meta</h2><button class="iconbtn" data-act="open" data-modal="vaultSettings" aria-label="Configurar cofre">${ic('edit')}</button></div><div class="row between"><div><div class="metric-label">Progresso</div><div class="metric-value">${pct.toFixed(1).replace('.',',')}%</div></div><div class="metric-icon">${ic('target')}</div></div><div class="progress" style="margin-top:18px"><div class="progress-inner" style="width:${pct}%"></div></div><div class="row between" style="margin-top:12px"><span class="small">Faltam ${m(Math.max(0,goal-balance))}</span><span class="small">Objetivo ${m(goal)} · ${cycleLabel(v.targetCycle||'2028-03')}</span></div><p class="caption" style="margin:14px 0 0">Para alcançar a meta no prazo, seriam necessários aproximadamente <b>${m(required)} por mês</b>, sem contar rendimento.</p></div></div>
+ <div class="section grid g3"><div class="card pad"><div class="metric-label">Rendimento creditado</div><div class="metric-value smallval positive">${m(actualYield)}</div><div class="metric-note">Só considera valores que você registrou.</div></div><div class="card pad"><div class="metric-label">Taxa anual estimada</div><div class="metric-value smallval">${fmt(v.estimatedAnnualRatePct)}%</div><div class="metric-note">Hipótese editável, não uma rentabilidade garantida.</div></div><div class="card pad"><div class="metric-label">Rendimento projetado · 12 meses</div><div class="metric-value smallval">${m(est)}</div><div class="metric-note">Bruto, com taxa constante e aportes planejados; sem IR e IOF.</div></div></div>
+ <div class="section split"><div class="card pad"><div class="section-heading"><h2>Projeção do cofre</h2><button class="btn btn-sm" data-act="open" data-modal="vaultSettings">Ajustar taxa e aportes</button></div>${barChart(proj.slice(0,6).map(p=>({cycle:p.cycle,balance:p.total})))}<p class="caption">Aporte automático planejado: ${m(v.monthlyPlannedCents)} por ciclo, a partir de ${cycleLabel(v.startCycle)}. O aporte planejado reduz a projeção de caixa, mas só muda o saldo real do cofre após registrar uma transferência.</p></div><div class="card pad"><div class="section-heading"><h2>Movimentações do cofre</h2><button class="btn btn-sm" data-act="open" data-modal="vaultMove">${ic('plus')} Nova</button></div>${v.movements.length?`<div class="list">${v.movements.slice().reverse().map(e=>`<div class="item"><div class="item-left"><div class="item-avatar">${ic(e.type==='yield'?'trend':'vault')}</div><div><div class="item-label">${e.type==='deposit'?'Aporte':e.type==='withdraw'?'Resgate':'Rendimento creditado'}</div><div class="item-sub">${fmtDate(e.date)} ${e.note?'· '+h(e.note):''}</div></div></div><strong class="${e.cents>=0?'positive':'negative'}">${m(e.cents)}</strong></div>`).join('')}</div>`:`<div class="empty"><div class="empty-icon">${ic('vault')}</div>Seu cofre começa com R$ 0 até registrar um aporte. O saldo do caixa não é uma poupança automaticamente.</div>`}</div></div>`}
+function renderSimulation(){
+ const rows=scenarioProjection(),mta=rows.meta,o=s.whatIf||{},current=s.loan.status==='active';
+ const optionChoices=s.loanOptions.map(x=>'<option value="'+h(x.id)+'" '+(o.option===x.id?'selected':'')+'>'+h(x.label)+'</option>').join('');
+ const horizonChoices=[6,12,24,36,48].map(n=>'<option value="'+n+'" '+(Number(o.horizon||12)===n?'selected':'')+'>'+n+' ciclos</option>').join('');
+ const paySwitch=(field,checked,title,price,extra)=>'<label class="sim-toggle"><input type="checkbox" data-field="'+field+'" '+(checked?'checked':'')+'/><span class="sim-toggle-copy"><strong>'+h(title)+'</strong><small>'+h(extra)+'</small></span><b>'+m(price)+'</b></label>';
+ const amounts=[
+  ['Caixa hoje (real)',m(mta.currentCash),''],
+  ['Crédito líquido hipotético','+ '+m(mta.loanNet),''],
+  ['Quitar dívidas e faturas','− '+m(mta.upfront),''],
+ ];
+ const cashLines=amounts.map(x=>'<div class="sim-money-line"><span>'+x[0]+'</span><strong>'+x[1]+'</strong></div>').join('');
+ const maximum=Math.max(1,...rows.slice(0,8).map(x=>Math.abs(x.balance)),...rows.slice(0,8).map(x=>Math.abs(x.baseline)));
+ const graphic=rows.slice(0,8).map(x=>{
+  const val=Math.min(100,Math.max(2,Math.round(Math.abs(x.balance)/maximum*100)));
+  return '<div class="sim-spark-row"><span>'+h(cycleLabel(x.cycle))+'</span><div class="sim-spark-track"><div class="sim-spark-fill '+(x.balance<0?'sim-bad':'')+'" style="width:'+val+'%"></div></div><strong class="'+(x.balance<0?'negative':'')+'">'+m(x.balance)+'</strong></div>';
+ }).join('');
+ const detailRows=rows.map((x,k)=>{
+  const tag=x.balance<0?'negative':'positive',delta=x.vsBaseline;
+  return '<details class="sim-month"><summary><span><b>'+h(cycleLabel(x.cycle))+'</b><small>Sem empréstimo: '+m(x.baseline)+'</small></span><strong class="'+tag+'">'+m(x.balance)+'</strong><span class="sim-expander" aria-hidden="true">⌄</span></summary>'+
+  '<div class="sim-breakdown">'+
+  '<div><span>Entradas previstas</span><b>'+m(x.income)+'</b></div>'+
+  '<div><span>Saídas previstas</span><b>− '+m(x.expenses)+'</b></div>'+
+  '<div><span>Aporte planejado ao cofre</span><b>− '+m(x.transfer)+'</b></div>'+
+  '<div><span>Diferença vs. cenário atual</span><b class="'+(delta<0?'negative':'positive')+'">'+(delta>0?'+ ':'')+m(delta)+'</b></div>'+
+  (x.salaryDelta?'<p class="caption">Mudança do salário líquido pelo novo desconto: '+m(x.salaryDelta)+'</p>':'')+
+  (x.avoided?'<p class="caption">Parcelas/faturas retiradas deste ciclo por antecipação simulada: '+m(x.avoided)+'</p>':'')+
+  '</div></details>';
+ }).join('');
+ return '<section class="sim-shell" id="simulacao" aria-label="Simulador financeiro">'+
+  '<div class="sim-heading"><div><span class="sim-eyebrow">Planejamento · sem alterar seus dados</span><h2>Quanto vou ter em caixa?</h2><p>Teste a liberação de um empréstimo e as dívidas que você pretende quitar. Compare o que sobra agora e nos próximos ciclos.</p></div><span class="sim-pill">Simulação</span></div>'+
+  (current?'<p class="sim-alert">Já existe empréstimo ativo registrado. Esta ferramenta não calcula automaticamente sua quitação para refinanciá-lo; confira antes de simular outro contrato.</p>':'')+
+  '<div class="sim-controls">'+
+   '<div><label for="whatIfLoan">Empréstimo hipotético</label><select id="whatIfLoan" data-field="whatIfLoan">'+optionChoices+'</select></div>'+
+   '<div><label for="whatIfStart">Primeiro desconto no salário</label><input id="whatIfStart" type="month" data-field="whatIfStart" value="'+h(o.startCycle||'2026-12')+'"/></div>'+
+  '</div>'+
+  '<div class="sim-subheading"><b>Quais contas pretende quitar com esse dinheiro?</b><span>Marque ou desmarque para comparar</span></div>'+
+  '<div class="sim-toggles">'+
+    paySwitch('whatIfLosango',o.payLosango,'Losango',s.losango.paid?0:s.losango.payoffCents,s.losango.paid?'Quitação já registrada':'Oferta à vista, confirmar data de validade')+
+    s.nubankLoans.map(x=>paySwitch(x.id==='nu-pequeno'?'whatIfNubankSmall':'whatIfNubankLarge',x.id==='nu-pequeno'?o.payNubankSmall:o.payNubankLarge,'Nubank · '+m(x.monthlyCents)+'/mês',x.paid?0:x.payoffCents,x.paid?'Já quitado':'Liquidação antecipada estimada')).join('')+
+    paySwitch('whatIfCards',o.payCards,'Faturas desta referência',cardTotalForCycle('2026-11'),'Antecipar somente contas conhecidas de NOV/DEZ, não todas as parcelas futuras')+
+  '</div>'+
+  '<div class="sim-cash-grid"><div class="sim-cash-hero"><span>Caixa hipotético após receber e quitar</span><strong class="'+(mta.instant<0?'negative':'')+'">'+m(mta.instant)+'</strong><small>Saldo antes dos próximos salários e vencimentos. Inclui o caixa real de hoje.</small>'+
+    (mta.instant<0?'<p class="sim-alert">Faltaria dinheiro para executar todas as quitações selecionadas.</p>':'')+'</div>'+
+   '<div class="sim-cash-math">'+cashLines+'<div class="sim-cash-math-foot">Se nenhuma dívida for marcada, o dinheiro permanece no caixa. Não é renda adicional do salário.</div></div></div>'+
+  '<div class="sim-results-head"><div><h3>Como fica seu fluxo de caixa?</h3><p>Saldo acumulado projetado após receitas, contas, cartões, empréstimos e aportes ao cofre.</p></div><div><label for="whatIfHorizon">Período</label><select id="whatIfHorizon" data-field="whatIfHorizon">'+horizonChoices+'</select></div></div>'+
+  '<div class="sim-compare"><div class="sim-stat"><span>Próximo ciclo · sem contratar</span><b>'+m(mta.originalNextCycle)+'</b></div><div class="sim-stat sim-stat-accent"><span>Próximo ciclo · com a simulação</span><b class="'+(mta.simulatedNextCycle<0?'negative':'')+'">'+m(mta.simulatedNextCycle)+'</b></div></div>'+
+  '<div class="sim-flow"><div class="sim-graph"><h4>Primeiros 8 ciclos</h4>'+graphic+'</div><div class="sim-months"><h4>Ver entradas e saídas de cada ciclo</h4>'+detailRows+'</div></div>'+
+  '<div class="sim-export" style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:18px;padding:14px;border:1px solid var(--line);border-radius:12px;background:#f8fafc"><button class="btn" type="button" data-act="exportAnalysis">Exportar dados para análise no ChatGPT</button><span class="caption" style="flex:1;min-width:220px">Gera um JSON sem senha com seus registros para enviar nesta conversa. Não publique no GitHub nem compartilhe com terceiros.</span></div><p class="sim-disclaimer">A liberação e as quitações são simuladas imediatamente a partir do caixa atual; as datas exatas de cada movimentação não são projetadas dia a dia. As faturas futuras só incluem compromissos conhecidos. Valores variáveis (INPC, obra, novos gastos e 13º estimado) podem mudar. <strong>Nada será registrado como real</strong> nesta tela.</p>'+
+  '</section>';
+}
+function renderPlan(){let proj=projected(s.settings.projectionCycles),opt=s.loanOptions.find(x=>x.id===s.loan.option)||s.loanOptions[0];let budget=forecastFor('2026-11');return `<div class="section">${renderSimulation()}</div><details class="section card pad sim-actual"><summary><b>Empréstimos e quitações efetivamente realizados</b><small>Registrar operações reais somente depois de confirmadas</small></summary><div class="grid g2"><div class="card pad"><div class="section-heading"><h2>Empréstimo FUNCEF</h2><span class="chip ${s.loan.status==='active'?'ok':s.loan.status==='pending'?'warn':'dim'}">${s.loan.status==='active'?'Liberado e registrado':s.loan.status==='pending'?'Contratado, ainda não liberado':'Sem novo contrato'}</span></div>${s.loan.status==='none'?`<p class="small">As propostas abaixo são apenas consulta. <b>Nenhum valor entra no saldo</b> até você registrar a liberação do empréstimo.</p><div style="margin:13px 0">${loanSelect('planLoan')}</div><div class="details"><div class="detail-row"><span>Valor líquido estimado</span><span>${m(opt.netCents)}</span></div><div class="detail-row"><span>Parcela inicial</span><span>${m(opt.installmentCents)}</span></div><div class="detail-row"><span>Prazo</span><span>${opt.months} meses</span></div></div>`:`<div class="details"><div class="detail-row"><span>Modalidade</span><span>${h(s.loan.description||'Contrato informado')}</span></div><div class="detail-row"><span>Dinheiro líquido</span><span>${m(s.loan.netCents)}</span></div><div class="detail-row"><span>Parcela em folha</span><span>${m(s.loan.paymentCents)}</span></div><div class="detail-row"><span>Primeiro desconto</span><span>${cycleLabel(s.loan.startCycle)}</span></div></div>`}<div class="row" style="margin-top:15px;flex-wrap:wrap"><button class="btn btn-primary" data-act="open" data-modal="loan">${ic('file')} ${s.loan.status==='none'?'Registrar contratação':'Editar contrato'}</button></div>${s.loan.status==='pending'?`<p class="caption">Aguardando depósito: saldo e salário ainda não mudaram.</p>`:''}</div><div class="card pad"><div class="section-heading"><h2>Controle de dívidas</h2></div><div class="details"><div class="detail-row"><span>Losango · quitação oferecida 23/11</span><span>${m(s.losango.payoffCents)}</span></div><div class="detail-row"><span>Empréstimos Nubank · quitação atual</span><span>${m(sumBy(s.nubankLoans.filter(x=>!x.paid),x=>x.payoffCents))}</span></div><div class="detail-row"><span>Nubank · prestação mensal somada</span><span>${m(sumBy(s.nubankLoans.filter(x=>!x.paid),x=>x.monthlyCents))}</span></div></div><div class="row" style="margin-top:15px;gap:8px;flex-wrap:wrap"><button class="btn btn-sm ${s.losango.paid?'':'btn-primary'}" data-act="askPayLosango" ${s.losango.paid?'disabled':''}>${s.losango.paid?'Losango quitada':'Registrar quitação Losango'}</button>${s.nubankLoans.filter(x=>!x.paid).map(x=>`<button class="btn btn-sm" data-act="askPayNubank" data-id="${x.id}">Quitar ${m(x.monthlyCents)}/mês</button>`).join('')}</div></div></div></details>
+ <div class="section"><div class="card pad"><div class="section-heading"><h2>Preferências de projeção</h2><div class="row" style="flex-wrap:wrap"><button class="btn btn-sm" data-act="import">${ic('upload')} Importar backup</button><button class="btn btn-sm" data-act="open" data-modal="settings">${ic('edit')} Ajustar parâmetros</button></div></div><div class="grid g4"><div class="pill-stat"><div class="smallcaps">Salário-base</div><strong>${m(s.salaryNetCents)}</strong></div><div class="pill-stat"><div class="smallcaps">13º estimado</div><strong>${m(s.settings.bonusCents)}</strong></div><div class="pill-stat"><div class="smallcaps">Lazer mensal previsto</div><strong>${m(s.settings.diversionMonthlyCents)}</strong></div><div class="pill-stat"><div class="smallcaps">Viagens</div><strong>${s.settings.includeTravel?'Incluídas':'Adiadas'}</strong></div></div></div></div>
+
+<div class="section"><div class="card pad"><div class="section-heading"><h2>Saldo projetado por ciclo</h2><span class="chip">${s.settings.projectionCycles} ciclos</span></div>${barChart(proj.slice(0,8))}<div class="tablewrap" style="margin-top:12px"><table class="table"><thead><tr><th>Ciclo</th><th>Entradas*</th><th>Saídas*</th><th>Aportes ao cofre</th><th>Saldo final</th></tr></thead><tbody>${proj.map(f=>`<tr><td><b>${cycleLabel(f.cycle)} ${f.cycle.slice(0,4)}</b></td><td class="positive">${m(f.income)}</td><td>${m(f.expenses)}</td><td>${m(f.transfer)}</td><td><b class="${f.balance<0?'negative':''}">${m(f.balance)}</b></td></tr>`).join('')}</tbody></table></div><p class="caption">* Entradas incluem salários e somente reembolsos com datas confirmadas; saídas incluem lançamentos previstos e faturas informadas, sem somar os detalhes duas vezes. A previsão NÃO inclui novos gastos não registrados, juros de obra futuros desconhecidos, reajuste INPC variável nem o financiamento imobiliário futuro.</p></div></div>`}
+function loanSelect(id){return `<select id="${id}" data-field="loanOption">${s.loanOptions.filter(x=>x.id!=='nenhum').map(x=>`<option value="${x.id}" ${s.loan.option===x.id?'selected':''}>${h(x.label)}</option>`).join('')}</select>`}
+function notificationLines(text){return text.split(/\r?\n/).map(x=>x.trim()).filter(x=>x.length>10).slice(0,250).map(x=>{
+ let parts=x.split('|'),date=new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,10),app='',body=x;
+ if(parts.length>=3&&/^\d{4}-\d\d-\d\d$/.test(parts[0].trim())){date=parts.shift().trim();app=parts.shift().trim();body=parts.join('|').trim()}else if(parts.length>=2&&/^(Nubank|C6(?: Black)?|Sicoob|Mercado Pago|BRB|Renner|C&A(?: Pay)?)$/i.test(parts[0].trim())){app=parts.shift().trim();body=parts.join('|').trim()}
+ const dm=body.match(/(?:R\$\s*)([\d.,]+\d{2})/i),amount=dm?cents(dm[1]):0;
+ const bank=app||(['Nubank','C6','Sicoob','Mercado Pago','Renner','C&A'].find(v=>body.toLowerCase().includes(v.toLowerCase()))||'Não identificado');
+ const normalized=[date,bank,body].join('|').replace(/\s+/g,' ').toLowerCase();
+ return {id:'notif-'+V(),date,app:bank,body,amount,normalized,status:'pending'};
+});}
+function addNotificationText(text){const found=notificationLines(text),known=new Set(s.inbox.map(x=>x.normalized));let added=0;for(const n of found){if(known.has(n.normalized))continue;known.add(n.normalized);s.inbox.push(n);added++}commit(added+' notificações recebidas para revisão; '+(found.length-added)+' repetidas ignoradas.');}
+function renderInbox(){const pending=s.inbox.filter(x=>x.status==='pending'),others=s.inbox.filter(x=>x.status!=='pending').length;
+ return `<details class="finance-details notif-outer" ${pending.length?'open':''}><summary><span>${ic('inbox')} Notificações e lançamentos enviados por aqui</span><span class="chip ${pending.length?'warn':'dim'}">${pending.length} para revisar</span></summary><div class="notif-body"><p class="caption">Cole notificações recebidas ou informações que organizamos no chat. Cada linha vira uma sugestão. Só entra no orçamento após sua confirmação. Formato opcional: <code>2026-11-07|C6|Compra R$ 58,40 em Mercado</code>. O Atalhos do iPhone também pode abrir este aplicativo com <code>#mov=</code> seguido de uma notificação codificada na URL. O texto será recebido aqui, como <b>pendente</b>, não como gasto confirmado.</p><textarea id="notificationPaste" rows="3" placeholder="Cole uma notificação por linha, com o valor em R$..."></textarea><div class="row" style="gap:8px;flex-wrap:wrap;margin:10px 0"><button class="btn btn-primary btn-sm" data-act="addNotifications">${ic('plus')} Revisar texto</button><button class="btn btn-sm" data-act="importNotificationsFile">${ic('upload')} Importar arquivo .txt</button><input type="file" id="notificationFile" accept=".txt,text/plain,.csv" hidden></div>${pending.length?pending.slice(-30).reverse().map(x=>`<div class="notif-item"><div><strong>${hEsc(x.app)}</strong><p>${hEsc(x.body)}</p><small>${hEsc(x.date)} · ${x.amount?m(x.amount):'Valor a conferir'}</small></div><div class="row" style="gap:5px"><button class="btn btn-primary btn-sm" data-act="reviewNotification" data-id="${hEsc(x.id)}">Revisar</button><button class="iconbtn" data-act="ignoreNotification" data-id="${hEsc(x.id)}" aria-label="Ignorar">${ic('trash')}</button></div></div>`).join(''):'<p class="caption">Nenhuma notificação pendente.</p>'}<p class="caption">${others} já revisadas ou ignoradas. Não é necessário informar senhas, CPF ou números de conta.</p></div></details>`;
+}
+function hEsc(value){return h(String(value??''))}
+function renderActivity(){const cycle=s.referenceCycle,rec=salaryRecord(cycle),entries=breakdownExpense(cycle),ledger=s.ledger.filter(x=>x.date&&cycleForDate(x.date)===cycle).slice().reverse(),cats=BUDGETS.map(([key,name])=>({key,name,base:budgetBase(cycle,key),used:budgetUsed(cycle,key),remaining:budgetRest(cycle,key)})),futureCards=billCards().filter(c=>cardLines(cycle,c).length||invoiceForCard(cycle,c));
+ const list=(activityFilter==='cards'?entries.filter(x=>x.category==='Faturas de cartão'||x.card):activityFilter==='income'?[]:entries.filter(x=>activityFilter==='all'||activityFilter==='unpaid'));
+ return `<div class="section-heading"><div><h2>Movimentações · ${cycleLabel(cycle)}</h2><p class="caption">Contas previstas e pagamentos efetivos separados, por ciclo.</p></div>${uiCycleSelect()}</div>
+ <div class="grid g2"><div class="card pad"><div class="section-heading"><h2>Salário do mês</h2><span class="chip ${rec?'ok':'warn'}">${rec?'Confirmado':'A confirmar'}</span></div><div class="metric-value smallval">${m(rec?.cents??salaryEstimate(cycle))}</div><p class="caption">Data prevista: ${fmtDate(salaryPayDate(cycle))}. ${rec?`Recebido em ${fmtDate(rec.date)}.`:'Valor ainda estimado; confirme quando entrar na conta.'}</p><button class="btn ${rec?'':'btn-primary'}" data-act="open" data-modal="salary">${ic('check')} ${rec?'Corrigir salário':'Confirmar salário recebido'}</button></div>
+ <div class="card pad"><div class="section-heading"><h2>Registrar lançamento</h2></div><p class="caption">Escolha se a movimentação deve consumir um orçamento existente, como diversão, passagem, internet, cabelo ou Claro.</p><button class="btn btn-primary" data-act="open" data-modal="expense">${ic('plus')} Nova despesa / receita</button></div></div>
+ <div class="section card pad"><div class="section-heading"><h2>Orçamentos do ciclo</h2><span class="chip dim">Sem duplicar despesas</span></div><div class="grid g3">${cats.map(b=>`<div class="budget-tile"><div class="row between"><strong>${h(b.name)}</strong><span class="small">${m(b.remaining)} restante</span></div><div class="progress-track"><div class="progress-bar" style="width:${b.base?Math.min(100,100*b.used/b.base):0}%"></div></div><div class="caption">${m(b.used)} utilizado / ${m(b.base)} previsto</div></div>`).join('')}</div><p class="caption">Só abato um orçamento quando você indicar essa opção no lançamento. Despesas pagas pelo cartão continuam dentro da fatura, sem contar uma segunda vez.</p></div>
+ <div class="section card pad"><div class="section-heading"><h2>Caixa de entrada</h2><span class="chip">Somente no aparelho</span></div>${renderInbox()}</div>
+ <div class="section card pad"><div class="section-heading"><h2>Contas e faturas</h2><div class="row" style="flex-wrap:wrap;gap:5px">${[['all','Tudo'],['unpaid','A pagar'],['cards','Cartões'],['income','Recebimentos']].map(([key,label])=>`<button class="btn btn-sm ${activityFilter===key?'btn-primary':''}" data-act="activityFilter" data-id="${key}">${label}</button>`).join('')}</div></div>
+ ${activityFilter==='income'?`<p class="caption">Salário: ${rec?'confirmado':'estimado'}; reembolsos futuros: ${m(nextReceivableTotal(cycle))}.</p><button class="btn btn-sm" data-act="nav" data-page="receivables">Ver reembolsos detalhados</button>`:
+ `<div class="list">${list.map(x=>`<div class="item"><div class="item-left"><div class="item-avatar">${ic(x.category==='Faturas de cartão'?'card':'list')}</div><div><div class="item-label">${h(x.description)}</div><div class="item-sub">${h(x.category)}${x.budgetKey?' · orçamento '+h(x.budgetKey):''}</div></div></div><div class="item-actions"><strong class="amount">${m(x.cents)}</strong>${x.category==='Faturas de cartão'?`<button class="iconbtn" data-act="card" data-id="${x.id}">${ic('arrow')}</button>`:`<button class="iconbtn" data-act="editEntry" data-id="${x.id}" title="Editar">${ic('edit')}</button><button class="iconbtn danger" data-act="deleteEntry" data-id="${x.id}" title="Excluir previsão">${ic('trash')}</button><button class="iconbtn" data-act="askPayEntry" data-id="${x.id}" title="Confirmar pagamento">${ic('check')}</button>`}</div></div>`).join('')||'<div class="empty">Nenhuma conta prevista nesta referência.</div>'}</div>`}
+ <div class="subheading" style="margin-top:18px">Detalhamento por cartão e mês</div><div class="accordion-stack">${futureCards.map(c=>{const l=cardLines(cycle,c);return `<details class="finance-details"><summary><span>${h(c)} <small>· ${l.length} lançamentos</small></span><b>${m(cardMonthlyTotal(cycle,c))}</b></summary><div class="list">${l.length?l.map(cardLineHTML).join(''):'<p class="caption">Fatura informada; detalhes não cadastrados.</p>'}</div></details>`}).join('')||'<p class="caption">Nenhum cartão cadastrado nesse ciclo.</p>'}</div></div>
+ <div class="section card pad"><div class="section-heading"><h2>Movimentações já realizadas</h2><button class="btn btn-sm" data-act="open" data-modal="cash">Conferir caixa</button></div><div class="list">${ledger.map(e=>`<div class="item"><div><div class="item-label">${h(e.description||e.category||'Movimentação')}</div><div class="item-sub">${fmtDate(e.date)} · ${h(e.category||'Caixa')}${e.budgetKey?' · orçamento '+h(e.budgetKey):''}</div></div><strong class="amount ${e.cents>=0?'positive':'negative'}">${m(e.cents)}</strong></div>`).join('')||'<div class="empty">Sem movimentações efetivas registradas neste ciclo.</div>'}</div></div>`;
+}
+function field(name,id,value='',type='text',extra=''){return `<div><label for="${id}">${h(name)}</label><input id="${id}" name="${id}" type="${type}" value="${h(value)}" ${extra}></div>`}
+function selectField(name,id,options,selected){return `<div><label for="${id}">${h(name)}</label><select id="${id}" name="${id}">${options.map(([v,label])=>`<option value="${h(v)}" ${v===selected?'selected':''}>${h(label)}</option>`).join('')}</select></div>`}
+const categories=['Alimentação e lazer','Compras e vestuário','Transporte','Saúde e bem-estar','Serviços e assinaturas','Viagem e eventos','Parcelamentos e encargos','Outros / a classificar','Ajustes / créditos'];
+function showModal(name,id=''){modalName=name;editTarget=id;renderModal()}
+function closeModal(){modalName='';editTarget='';const host=$('#modalHost');if(host)host.innerHTML=''}
+function renderModal(){const host=$('#modalHost');if(!host||!modalName)return;let title='',body='',footer='',submit='';let v=null;
+ if(modalName==='closing'){
+  const card=editTarget||selectedCard,cycle=s.cardViewCycle||s.referenceCycle,actual=s.invoiceClosingDates[card+'|'+cycle]||'';
+  title='Fechamento do cartão · '+card;submit='saveClosing';
+  body=`<p class="caption">Defina o dia habitual do fechamento e, se desejar, a data exata para a referência ${cycleLabel(cycle)}. Não será aplicada uma data presumida às faturas passadas.</p><div class="form-grid">${field('Dia habitual do fechamento (1 a 31)','closingDay',s.cardClosings[card]||'','number','min="1" max="31"')}${field('Data de fechamento desta fatura','closingDate',actual,'date')}</div><p class="caption">O dia habitual serve de referência. O fechamento exato pode variar conforme fins de semana e regras do banco.</p>`;
+ }else if(modalName==='quickCategory'){
+  const [kind,id]=editTarget.split(':',2);v=kind==='movement'?s.movements.find(x=>x.id===id):s.entries.find(x=>x.id===id);
+  if(!v){closeModal();return;}
+  title='Alterar categoria';submit='saveQuickCategory';
+  const opts=categories.slice();
+  const current=inferredCategory(v);if(!opts.includes(current))opts.push(current);
+  body=`<p class="small"><b>${h(v.description)}</b><br>${m(v.cents)} · ${h(v.installment||'Compra à vista')}</p><div class="form-grid">${selectField('Categoria da compra','category',opts.map(c=>[c,c]),current)}</div><p class="caption">A nova categoria muda apenas a análise do gasto. Não altera o valor da fatura, seu saldo em caixa nem outros lançamentos.</p>`;
+ }else if(modalName==='transaction'){
+  v=s.movements.find(x=>x.id===editTarget)||s.entries.find(x=>x.id===editTarget&&x.card);const card=v?.invoice||cardBase(v?.card||'')||((editTarget&&s.invoices.some(x=>x.id===editTarget))?editTarget:selectedCard);title=v?'Editar lançamento do cartão':'Adicionar lançamento no cartão';submit='saveTransaction';body=`<div class="form-grid">${selectField('Cartão','invoice',s.invoices.map(x=>[x.id,x.card]),card)}${field('Data da compra','date',v?.date||localToday(),'date')}${field('Descrição','description',v?.description||'','text','required')}${field('Valor em R$ (negativo para crédito)','amount',v?fmt(v.cents/100):'','text','inputmode="decimal" required')}${selectField('Categoria','category',categories.map(c=>[c,c]),v?inferredCategory(v):categories[7])}${field('Parcela (ex.: 2/10)','installment',v?.installment||'','text')}${field('Ciclo da fatura','billingCycle',v?.cycle||v?.month||s.cardViewCycle||'2026-11','month')}${selectField('Abater do orçamento?','budgetKey',budgetOptions(),v?.budgetKey||'')}</div><div class="infostrip" style="margin-top:15px">${ic('info')} A compra altera o detalhamento e os parcelamentos futuros conhecidos, mas NÃO modifica automaticamente um total de fatura informado pelo banco. Para isso, edite o valor da fatura separadamente.</div>`;
+ }else if(modalName==='invoice'){
+  v=editTarget.startsWith('new:')?null:(s.invoices.find(x=>x.id===editTarget)||s.invoices[0]);const selCard=v?.card||s.invoices.find(x=>x.id===editTarget.slice(4))?.card||selectedCard;title=`Editar fatura ${selCard}`;submit='saveInvoice';body=`<div class="form-grid">${field('Valor total previsto (R$)','invoiceTotal',fmt((v?currentInvoice(v):cardMonthlyTotal(s.cardViewCycle,selCard))/100),'text','inputmode="decimal" required')}${field('Vencimento','dueDate',v?.dueDate||cycShift(s.cardViewCycle,1)+'-01','date')}${selectField('Confiabilidade','estimated',[['false','Informado pelo banco'],['true','Estimativa para conferência']],String(v?.estimated??true))}</div><p class="caption">É o valor total que o banco informa (ou sua estimativa). Compras detalhadas não alteram essa quantia automaticamente.</p>`;
+ }else if(modalName==='receivable'){
+  v=s.receivables.find(x=>x.id===editTarget);title=v?'Editar recebimento compartilhado':'Novo valor a receber';submit='saveReceivable';body=`<div class="form-grid">${field('Descrição','description',v?.description||'','text','required')}${field('Pessoa responsável','person',v?.person||'','text')}${field('Valor por parcela (R$)','amount',v?fmt(v.amountCents/100):'','text','required inputmode="decimal"')}${field('Início do recebimento (ciclo salarial)','firstCycle',v?.firstCycle||'2026-11','month')}${field('Parcela inicial (nº)','currentInstallment',v?.currentInstallment||1,'number','min="1" max="120" required')}${field('Total de parcelas','totalInstallments',v?.totalInstallments||1,'number','min="1" max="120" required')}<div class="full"><label style="display:flex;align-items:center;gap:8px"><input type="checkbox" name="dateConfirmed" ${v?.dateConfirmed?'checked':''}>Confirmo que o recebimento começa nesse ciclo</label><p class="caption">Sem confirmação o valor fica registrado, mas não aumenta o saldo projetado.</p></div></div>`;
+ }else if(modalName==='receive'){
+  v=s.receivables.find(x=>x.id===editTarget);title=`Receber parcela · ${v?.description||''}`;submit='receiveInstallment';let schedule=[];if(v){for(let j=0;j<v.totalInstallments-v.currentInstallment+1;j++){let c=cycShift(v.firstCycle,j);if((v.paidCycles||[]).includes(c))continue;schedule.push([c,cycleLabel(c)+' · '+(v.currentInstallment+j)+'/'+v.totalInstallments])}}body=`<p class="small">Registre somente quando o dinheiro entrar de fato. Será somado ao caixa e retirado da lista de recebíveis.</p><div class="form-grid">${selectField('Parcela que entrou','receiveCycle',schedule,schedule[0]?.[0])}${field('Valor realmente recebido (R$)','amount',v?fmt(v.amountCents/100):'','text','required inputmode="decimal"')}${field('Data de recebimento','date',localToday(),'date','required')}</div>`;
+ }else if(modalName==='notification'){
+  const item=s.inbox.find(x=>x.id===editTarget);if(!item)return;
+  title='Conferir movimentação recebida';submit='saveNotification';body=`<p class="caption">${hEsc(item.app)} · ${hEsc(item.body)}</p><div class="form-grid">${selectField('Tipo de movimento','notifType',[['card','Compra no cartão'],['out','Pix/Débito saindo da conta'],['in','Recebimento na conta']],/recebi|recebido|entrada|depositado/i.test(item.body)?'in':'card')}${selectField('Qual cartão?','notifCard',billCards().map(c=>[c,c]),item.app.includes('Nubank')?'Nubank':item.app.includes('C6')?'C6 Black':item.app.includes('Sicoob')?'Sicoob':item.app.includes('Mercado')?'Mercado Pago':billCards()[0]||'')}${field('Ciclo da fatura do cartão','notifCycle',s.cardViewCycle||s.referenceCycle,'month','required')}${field('Descrição / estabelecimento','description',item.body.slice(0,180),'text','required')}${field('Valor (R$)','amount',item.amount?fmt(item.amount/100):'','text','required inputmode="decimal"')}${field('Data','date',item.date,'date','required')}${selectField('Categoria','category',categories.map(c=>[c,c]),'Outros / a classificar')}${selectField('Abater de algum orçamento?','budgetKey',budgetOptions(),'')}</div><p class="caption">Cartões: apenas detalha uma compra, sem aumentar o total bancário confirmado. Débito/Pix: altera o caixa. Confira se não é pagamento de fatura antes de confirmar.</p>`;
+ }else if(modalName==='salary'){
+  const cycle=s.referenceCycle,rec=salaryRecord(cycle);title='Confirmar salário líquido do mês';submit='saveSalary';body=`<div class="form-grid">${field('Ciclo de referência','salaryCycle',cycle,'month','required')}${field('Valor líquido efetivamente recebido (R$)','amount',fmt((rec?.cents??salaryEstimate(cycle))/100),'text','required inputmode="decimal"')}${field('Data de crédito','date',rec?.date||salaryPayDate(cycle),'date','required')}</div><p class="caption">O valor registrado entra no caixa uma única vez. Depois disso, deixa de aparecer como receita futura estimada na projeção.</p>`;
+ }else if(modalName==='cash'){
+  title='Conferir saldo em caixa';submit='saveCash';body=`<p class="small">Informe o saldo efetivamente disponível nas suas contas. Registrarei um ajuste, preservando o valor de abertura informado.</p><div class="form-grid">${field('Saldo atual conferido (R$)','cash',fmt(liveCash()/100),'text','required inputmode="decimal"')}${field('Data da conferência','date',localToday(),'date','required')}</div>`;
+ }else if(modalName==='vaultMove'){
+  title='Movimentar o cofre';submit='saveVaultMovement';body=`<div class="form-grid">${selectField('Tipo de movimentação','type',[['deposit','Guardar dinheiro (retirar do caixa)'],['withdraw','Resgatar dinheiro (devolver ao caixa)'],['yield','Rendimento creditado (só no cofre)']],'deposit')}${field('Valor em R$','amount','','text','required inputmode="decimal"')}${field('Data','date',localToday(),'date','required')}${field('Observação (opcional)','note','','text')}</div><p class="caption">O rendimento lançado aqui é o que o banco efetivamente creditou. A simulação de taxa não registra rendimento real automaticamente.</p>`;
+ }else if(modalName==='vaultSettings'){
+  title='Meta e rentabilidade do cofre';submit='saveVaultSettings';body=`<div class="form-grid">${field('Meta para o apartamento (R$)','goal',fmt(s.vault.goalCents/100),'text','required inputmode="decimal"')}${field('Mês-alvo da meta','targetCycle',s.vault.targetCycle||'2028-03','month')}${field('Rentabilidade anual estimada (%)','annualRate',fmt(s.vault.estimatedAnnualRatePct),'text','inputmode="decimal"')}${field('Aporte planejado mensal (R$)','monthlyDeposit',fmt(s.vault.monthlyPlannedCents/100),'text','inputmode="decimal"')}${field('Primeiro ciclo de aporte planejado','startCycle',s.vault.startCycle,'month')}</div><p class="caption">Rendimento projetado é bruto e ilustrativo, sem imposto ou variação das taxas. Aporte previsto reduz a projeção do caixa, mas não muda o saldo real sem transferência.</p>`;
+ }else if(modalName==='loan'){
+  const cur=s.loan, pre=s.loanOptions.find(x=>x.id===cur.option)||s.loanOptions.find(x=>x.id==='45-fixo');title=cur.status==='none'?'Registrar novo empréstimo FUNCEF':'Atualizar empréstimo FUNCEF';submit='saveLoan';body=`<div class="form-grid">${selectField('Proposta de referência','loanOption',s.loanOptions.filter(x=>x.id!=='nenhum').map(x=>[x.id,x.label]),cur.option||'45-fixo')}${selectField('Situação do empréstimo','loanStatus',[['pending','Contratado, aguardando liberação'],['active','Valor líquido já liberado']],[cur.status==='none'?'pending':cur.status][0])}${field('Valor líquido recebido (R$)','loanNet',cur.netCents?fmt(cur.netCents/100):fmt(pre.netCents/100),'text','required inputmode="decimal"')}${field('Nova parcela mensal em folha (R$)','loanPayment',cur.paymentCents?fmt(cur.paymentCents/100):fmt(pre.installmentCents/100),'text','required inputmode="decimal"')}${field('Quantidade de parcelas','loanMonths',cur.durationMonths||pre.months,'number','min="1" required')}${field('Primeiro desconto em folha (ciclo)','loanStart',cur.startCycle||'2026-12','month','required')}${field('Data da liberação (se liberado)','loanReleaseDate',cur.releaseDate||'2026-11-10','date')}</div><div class="infostrip" style="margin-top:16px">${ic('info')} O líquido do empréstimo <b>já desconta a quitação da FUNCEF antiga</b>. Ao marcar “liberado”, ele entra uma única vez no caixa e o salário futuro passa a refletir a nova parcela. A Losango e o Nubank não serão quitados automaticamente. <b>Na modalidade variável</b>, atualize o valor da parcela após cada reajuste pelo INPC: esta versão projeta a última parcela informada, sem prever índices futuros.</div>`;
+ }else if(modalName==='settings'){
+  title='Premissas das projeções';submit='saveSettings';body=`<div class="form-grid">${field('Salário líquido atual (R$)','salaryNet',fmt(s.salaryNetCents/100),'text','required inputmode="decimal"')}${field('13º estimado (R$)','bonus',fmt(s.settings.bonusCents/100),'text','inputmode="decimal"')}${field('Diversão mensal prevista (R$)','diversion',fmt(s.settings.diversionMonthlyCents/100),'text','inputmode="decimal"')}${field('Quantidade de ciclos a projetar','cycles',s.settings.projectionCycles,'number','min="3" max="24"')}${field('Variação mensal hipotética do encargo de obra (%)','obraGrowth',fmt(s.settings.obraGrowthPct),'text','inputmode="decimal"')}<div class="full"><label style="display:flex;align-items:center;gap:8px"><input type="checkbox" name="includeTravel" ${s.settings.includeTravel?'checked':''}> Incluir viagens planejadas da planilha antiga (estimativas, não despesas obrigatórias)</label></div><div class="full"><label style="display:flex;align-items:center;gap:8px"><input type="checkbox" name="includeVacation" ${s.settings.includeVacation?'checked':''}> Incluir receita estimada de férias do Excel</label></div></div><p class="caption">A evolução da obra não cresce necessariamente pela mesma porcentagem todo mês. Um percentual aqui é apenas teste de estresse.</p>`;
+ }else if(modalName==='expense'){
+  v=s.entries.find(x=>x.id===editTarget);title=v?'Editar previsão':'Novo lançamento';submit='saveExpense';body=`<div class="form-grid">${selectField('Tipo','type',[['despesa','Despesa'],['receita','Receita']],v?.type||'despesa')}${selectField('Situação','status',[['realizado','Já aconteceu (altera caixa)'],['previsto','Para pagar/receber futuramente']],v?'previsto':'previsto')}${field('Descrição','description',v?.description||'','text','required')}${field('Valor em R$','amount',v?fmt(v.cents/100):'','text','required inputmode="decimal"')}${field('Data','date',v?.dueDate||((v?.month||s.referenceCycle)+'-25'),'date','required')}${selectField('Categoria','category',[['Habitação','Habitação'],['Energia','Energia'],['Água','Água'],['Gás','Gás'],['Alimentação','Alimentação'],['Saúde','Saúde'],['Lazer','Lazer'],['Transporte','Transporte'],['Receitas','Receitas'],['Outros','Outros']],v?.category||'Outros')}${selectField('Abater do orçamento existente?','budgetKey',budgetOptions(),v?.budgetKey||'')}</div><p class="caption">Movimentações já realizadas atualizam o caixa. Contas futuras são projetadas no ciclo da data escolhida.</p>`;
+ }else if(modalName==='confirm'){
+  title=confirmAction?.title||'Confirmar';body=`<p style="line-height:1.65;margin-top:0">${h(confirmAction?.message||'Deseja continuar?')}</p>${confirmAction?.extra||''}`;submit='confirm';
+ }
+ footer=`<button class="btn" type="button" data-act="closeModal">Cancelar</button><button type="submit" form="modalForm" class="btn ${modalName==='confirm'?'btn-danger':'btn-primary'}">${modalName==='confirm'?'Confirmar':modalName==='receive'?'Registrar recebimento':'Salvar alterações'}</button>`;
+ host.innerHTML=`<div class="modalbg" data-overlay><div class="modal" role="dialog" aria-modal="true" aria-label="${h(title)}"><div class="modal-h"><h2 class="modal-title">${h(title)}</h2><button class="iconbtn" data-act="closeModal" aria-label="Fechar">${ic('close')}</button></div><form id="modalForm" data-form="${modalName}" data-submit="${submit}"><div class="modal-body">${body}</div></form><div class="modal-f">${footer}</div></div></div>`;
+}
+function ask(title,message,yes,extra=''){confirmAction={title,message,yes,extra};showModal('confirm')}
+function snapshot(){lastUndo=clone(s)}
+function formVal(form,k){return form.elements.namedItem(k)?.value||''}
+function checked(form,k){return !!form.elements.namedItem(k)?.checked}
+function validateMoney(value){if(!String(value).trim())throw Error('Informe um valor válido.');let c=cents(value);if(!Number.isFinite(c))throw Error('Valor inválido.');return c}
+function submitForm(form,name){
+ try{
+  if(name==='saveClosing'){
+   const card=editTarget||selectedCard,cycle=s.cardViewCycle||s.referenceCycle,day=formVal(form,'closingDay'),date=formVal(form,'closingDate');
+   if(day&&(Number(day)<1||Number(day)>31||!Number.isInteger(Number(day))))throw Error('Informe um dia entre 1 e 31.');
+   if(date&&!/^\d{4}-\d{2}-\d{2}$/.test(date))throw Error('Data de fechamento inválida.');
+   snapshot();if(day)s.cardClosings[card]=Number(day);else delete s.cardClosings[card];
+   if(date)s.invoiceClosingDates[card+'|'+cycle]=date;else delete s.invoiceClosingDates[card+'|'+cycle];
+   closeModal();commit('Fechamento do cartão atualizado.');
+  }else if(name==='saveQuickCategory'){
+   const [kind,id]=editTarget.split(':',2),item=kind==='movement'?s.movements.find(x=>x.id===id):s.entries.find(x=>x.id===id);
+   const cat=formVal(form,'category');if(!item||!categories.includes(cat))throw Error('Categoria inválida.');
+   snapshot();item.category=cat;closeModal();commit('Categoria atualizada. O total da fatura foi preservado.');
+  }else if(name==='saveNotification'){
+   const n=s.inbox.find(x=>x.id===editTarget);if(!n||n.status!=='pending')throw Error('Notificação não disponível.');
+   const ty=formVal(form,'notifType'),amount=validateMoney(formVal(form,'amount')),date=formVal(form,'date'),description=formVal(form,'description').trim(),category=formVal(form,'category'),budgetKey=formVal(form,'budgetKey');
+   if(!amount||!date||!description)throw Error('Confirme data, valor e descrição.');snapshot();
+   if(ty==='card'){
+    const card=formVal(form,'notifCard'),month=formVal(form,'notifCycle');if(!card||!month)throw Error('Escolha cartão e mês da fatura.');
+    const invoice=invoiceForCard(month,card);
+    if(invoice)s.movements.unshift({id:'mov-notif-'+V(),invoice:invoice.id,date,description,cents:amount,category,budgetKey,sourceType:'notificacao',installment:'',deleted:false});
+    else s.entries.push({id:'manual-card-notif-'+V(),month,type:'despesa',category,description,cents:amount,card,budgetKey,installment:'',dueDate:date,status:'previsto',includeInProjection:true,source:'Notificação revisada'});
+   }else{s.ledger.push({id:'cash-notif-'+V(),date,cents:ty==='in'?amount:-amount,category,description,budgetKey:ty==='out'?budgetKey:'',budgetCycle:cycleForDate(date)});}
+   n.status='approved';n.approvedAt=new Date().toISOString();closeModal();commit('Movimentação confirmada.');
+  }else if(name==='saveTransaction'){
+   const old=s.movements.find(x=>x.id===editTarget),oldFuture=s.entries.find(x=>x.id===editTarget&&x.card),invId=formVal(form,'invoice'),invoice=s.invoices.find(x=>x.id===invId);if(!invoice)throw Error('Escolha um cartão.');
+   const amount=validateMoney(formVal(form,'amount'));if(amount===0)throw Error('Informe valor diferente de zero.');
+   const date=formVal(form,'date'),description=formVal(form,'description').trim(),billCycle=formVal(form,'billingCycle'),budgetKey=formVal(form,'budgetKey');if(!description||!billCycle)throw Error('Informe descrição e mês de referência.');
+   snapshot();
+   const values={description,cents:amount,category:formVal(form,'category'),installment:formVal(form,'installment'),budgetKey};
+   if(oldFuture){Object.assign(oldFuture,values,{card:invoice.card,month:billCycle,dueDate:date,includeInProjection:true});}
+   else if(old){Object.assign(old,values,{date,invoice:invId,cycle:billCycle});}
+   else if(invoiceForCard(billCycle,invoice.card)){
+    s.movements.unshift({id:'mov-'+V(),invoice:invoiceForCard(billCycle,invoice.card).id,date, ...values,note:'Adicionado manualmente',deleted:false,sourceType:'manual'});
+   }else{
+    s.entries.push({id:'manual-card-'+V(),month:billCycle,type:'despesa',category:values.category,description,cents:amount,card:invoice.card,budgetKey,installment:values.installment, dueDate:date,status:'previsto',includeInProjection:true,source:'Compra de cartão informada manualmente'});
+   }
+   closeModal();commit('Compra registrada. O valor informado da fatura não foi alterado automaticamente.');
+  }else if(name==='saveInvoice'){
+   let invoice=s.invoices.find(x=>x.id===editTarget),newInvoice=editTarget.startsWith('new:');
+   const target=validateMoney(formVal(form,'invoiceTotal'));if(target<0)throw Error('O valor da fatura não pode ser negativo.');
+   const dueDate=formVal(form,'dueDate'),month=s.cardViewCycle,card=newInvoice?(s.invoices.find(x=>x.id===editTarget.slice(4))?.card||selectedCard):invoice?.card;
+   if(!card)throw Error('Cartão não identificado.');snapshot();
+   if(newInvoice){invoice={id:'fatura-manual-'+V(),card,cycle:month,amountCents:target,manualDeltaCents:0,paid:false,estimated:formVal(form,'estimated')==='true',dueDate};s.invoices.push(invoice)}
+   else{invoice.manualDeltaCents=target-invoice.amountCents;invoice.dueDate=dueDate;invoice.estimated=formVal(form,'estimated')==='true';}
+   closeModal();commit('Total da fatura salvo sem alterar os lançamentos individuais.');
+  }else if(name==='saveReceivable'){
+   const amount=validateMoney(formVal(form,'amount'));if(amount<=0)throw Error('Informe valor positivo.');let a=Number(formVal(form,'currentInstallment')),b=Number(formVal(form,'totalInstallments'));if(a<1||b<a||b>120)throw Error('Numeração das parcelas inválida.');const r=s.receivables.find(x=>x.id===editTarget),data={description:formVal(form,'description').trim(),person:formVal(form,'person'),amountCents:amount,firstCycle:formVal(form,'firstCycle'),currentInstallment:a,totalInstallments:b,dateConfirmed:checked(form,'dateConfirmed')};if(!data.description)throw Error('Informe uma descrição.');snapshot();if(r)Object.assign(r,data);else s.receivables.push({id:'rec-'+V(),...data,linkedMovementId:'',paidCycles:[]});closeModal();commit('Recebimento compartilhado salvo.');
+  }else if(name==='receiveInstallment'){
+   const r=s.receivables.find(x=>x.id===editTarget),cycle=formVal(form,'receiveCycle'),amount=validateMoney(formVal(form,'amount'));if(!r||!cycle||amount<=0)throw Error('Dados inválidos.');if((r.paidCycles||[]).includes(cycle))throw Error('Esta parcela já está recebida.');snapshot();r.paidCycles.push(cycle);s.ledger.push({id:'cash-rec-'+V(),ref:'receive-'+r.id+'-'+cycle,date:formVal(form,'date'),cents:amount,category:'Reembolso compartilhado',description:`${r.description} · ${cycleLabel(cycle)}`});closeModal();commit('Recebimento registrado no caixa.');
+  }else if(name==='saveSalary'){
+   const cycle=formVal(form,'salaryCycle'),amount=validateMoney(formVal(form,'amount')),date=formVal(form,'date');if(amount<=0||!cycle||!date)throw Error('Confira o valor líquido e a data.');
+   const existing=salaryRecord(cycle);snapshot();
+   if(existing){Object.assign(existing,{date,cents:amount});const led=s.ledger.find(x=>x.id==='salary-'+cycle);if(led)Object.assign(led,{date,cents:amount});else s.ledger.push({id:'salary-'+cycle,date,cents:amount,category:'Salário',description:'Salário líquido · '+cycleLabel(cycle)})}
+   else{s.salaryHistory.push({cycle,date,cents:amount});s.ledger.push({id:'salary-'+cycle,date,cents:amount,category:'Salário',description:'Salário líquido · '+cycleLabel(cycle)})}
+   closeModal();commit('Salário confirmado no caixa e substituído na projeção.');
+  }else if(name==='saveCash'){
+   const newCash=validateMoney(formVal(form,'cash')),change=newCash-liveCash();snapshot();if(change)s.ledger.push({id:'cash-adjust-'+V(),date:formVal(form,'date'),cents:change,category:'Ajuste de saldo',description:'Conferência manual do caixa'});closeModal();commit(change?'Saldo ajustado com registro no histórico.':'Saldo conferido, sem alteração.');
+  }else if(name==='saveVaultMovement'){
+   let amount=validateMoney(formVal(form,'amount')),type=formVal(form,'type');if(amount<=0)throw Error('Informe um valor positivo.');if(type==='withdraw'&&amount>vaultBalance())throw Error('O resgate não pode exceder o saldo do cofre.');if(type==='deposit'&&amount>liveCash())throw Error('O aporte não pode exceder seu caixa atual.');const signed=type==='withdraw'?-amount:amount;snapshot();const id='vault-'+V();s.vault.movements.push({id,type,cents:signed,date:formVal(form,'date'),note:formVal(form,'note')});if(type==='deposit'||type==='withdraw')s.ledger.push({id:'cash-'+id,ref:id,date:formVal(form,'date'),cents:-signed,category:'Transferência para cofre',description:type==='deposit'?'Aporte ao cofre':'Resgate do cofre'});closeModal();commit('Cofre atualizado.');
+  }else if(name==='saveVaultSettings'){
+   const goal=validateMoney(formVal(form,'goal')),monthly=validateMoney(formVal(form,'monthlyDeposit')),rate=Number(String(formVal(form,'annualRate')).replace(',','.'));if(goal<0||monthly<0||!Number.isFinite(rate)||rate<=-100||rate>200)throw Error('Confira valores e taxa anual.');snapshot();Object.assign(s.vault,{goalCents:goal,monthlyPlannedCents:monthly,estimatedAnnualRatePct:rate,targetCycle:formVal(form,'targetCycle'),startCycle:formVal(form,'startCycle')});closeModal();commit('Meta e projeção do cofre atualizadas.');
+  }else if(name==='saveLoan'){
+   const status=formVal(form,'loanStatus'),net=validateMoney(formVal(form,'loanNet')),payment=validateMoney(formVal(form,'loanPayment')),duration=Number(formVal(form,'loanMonths'));if(net<=0||payment<=0||duration<=0||duration>360)throw Error('Confira os valores da contratação.');snapshot();const old=s.loan,releaseDate=formVal(form,'loanReleaseDate');let event=s.ledger.find(x=>x.id==='cash-loan-registered');
+   if(status==='active'){
+    if(event){event.cents=net;event.date=releaseDate}
+    else s.ledger.push({id:'cash-loan-registered',date:releaseDate,cents:net,category:'Crédito FUNCEF',description:'Valor líquido de empréstimo efetivamente liberado'});
+   }else if(event){s.ledger=s.ledger.filter(x=>x.id!=='cash-loan-registered')}
+   s.loan={status,option:formVal(form,'loanOption'),netCents:net,paymentCents:payment,durationMonths:duration,releaseDate,startCycle:formVal(form,'loanStart'),description:s.loanOptions.find(x=>x.id===formVal(form,'loanOption'))?.label||'Contrato registrado'};closeModal();commit(status==='active'?'Empréstimo liberado registrado e projeção atualizada.':'Contrato pendente registrado; caixa permanece igual.');
+  }else if(name==='saveSettings'){
+   const salary=validateMoney(formVal(form,'salaryNet')),bonus=validateMoney(formVal(form,'bonus')),diversion=validateMoney(formVal(form,'diversion')),cycles=Number(formVal(form,'cycles')),growth=Number(String(formVal(form,'obraGrowth')).replace(',','.'));if(salary<=0||bonus<0||diversion<0||cycles<3||cycles>24||!Number.isFinite(growth)||growth< -50||growth>100)throw Error('Confira os parâmetros informados.');snapshot();s.salaryNetCents=salary;Object.assign(s.settings,{bonusCents:bonus,diversionMonthlyCents:diversion,includeTravel:checked(form,'includeTravel'),includeVacation:checked(form,'includeVacation'),obraGrowthPct:growth,projectionCycles:cycles});closeModal();commit('Projeção recalculada com as novas premissas.');
+  }else if(name==='saveExpense'){
+   const old=s.entries.find(e=>e.id===editTarget),type=formVal(form,'type'),status=formVal(form,'status'),amount=validateMoney(formVal(form,'amount')),date=formVal(form,'date'),descr=formVal(form,'description').trim(),category=formVal(form,'category'),budgetKey=formVal(form,'budgetKey');if(amount<=0||!descr)throw Error('Informe descrição e valor positivo.');
+   snapshot();
+   if(old){Object.assign(old,{month:cycleForDate(date),type,category,description:descr,cents:amount,status:'previsto',dueDate:date,budgetKey});}
+   else if(status==='realizado'){s.ledger.push({id:'cash-manual-'+V(),date,cents:type==='despesa'?-amount:amount,category,description:descr,budgetKey:type==='despesa'?budgetKey:'',budgetCycle:cycleForDate(date)})}
+   else{s.entries.push({id:'manual-'+V(),month:cycleForDate(date),type,category,description:descr,cents:amount,status:'previsto',includeInProjection:true,budgetKey,source:'Inclusão manual',dueDate:date,card:''})}
+   closeModal();commit('Lançamento registrado.');
+  }else if(name==='confirm'){
+   if(confirmAction?.yes){const cb=confirmAction.yes;confirmAction=null;cb();closeModal()}else closeModal();
+  }
+ }catch(err){alert(err?.message||'Não foi possível salvar.');}
+}
+
+async function exportSecureBackup(){
+ if(!crypto?.subtle){alert('Este navegador não permite criptografia aqui. Não exporte um arquivo sem senha; abra pelo Safari ou Chrome em contexto seguro.');return;}
+ const password=prompt('Crie uma senha para criptografar este backup (mínimo 10 caracteres). Ela NÃO será guardada.');if(password===null)return;
+ if(password.length<10){alert('Use uma senha de pelo menos 10 caracteres.');return;}
+ const again=prompt('Confirme a senha do backup.');if(password!==again){alert('As senhas não coincidem.');return;}
+ try{const encoder=new TextEncoder(),salt=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(12));
+ const base=await crypto.subtle.importKey('raw',encoder.encode(password),'PBKDF2',false,['deriveKey']);
+ const key=await crypto.subtle.deriveKey({name:'PBKDF2',hash:'SHA-256',salt,iterations:250000},base,{name:'AES-GCM',length:256},false,['encrypt']);
+ const bytes=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM',iv},key,encoder.encode(JSON.stringify(s))));
+ const toB64=a=>{let binary="";for(let p=0;p<a.length;p+=8192)binary+=String.fromCharCode(...a.subarray(p,p+8192));return btoa(binary)};
+ const data=JSON.stringify({format:'MEU-FINANCEIRO-AESGCM-V1',kdf:'PBKDF2-SHA256',rounds:250000,salt:toB64(salt),iv:toB64(iv),ciphertext:toB64(bytes)},null,2);
+ const url=URL.createObjectURL(new Blob([data],{type:'application/json'})),link=document.createElement('a');link.href=url;link.download='Meu_Financeiro_Protegido_'+new Date().toISOString().slice(0,10)+'.mfb';document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),3000);toast('Backup criptografado gerado. Guarde a senha com segurança.');
+ }catch(e){alert('Erro ao criptografar: '+e.message)}
+}
+async function importSecureOrLegacy(raw){let obj;try{obj=JSON.parse(raw)}catch(e){alert('Arquivo não é um backup JSON válido.');return;}
+ if(obj?.format!=='MEU-FINANCEIRO-AESGCM-V1'){importBackup(raw);return;}
+ if(!crypto?.subtle){alert('Criptografia indisponível. Abra em navegador seguro.');return;}
+ const password=prompt('Senha do backup protegido:');if(password===null)return;
+ try{const fromB64=v=>Uint8Array.from(atob(v),c=>c.charCodeAt(0)),enc=new TextEncoder(),base=await crypto.subtle.importKey('raw',enc.encode(password),'PBKDF2',false,['deriveKey']);const key=await crypto.subtle.deriveKey({name:'PBKDF2',hash:'SHA-256',salt:fromB64(obj.salt),iterations:obj.rounds},base,{name:'AES-GCM',length:256},false,['decrypt']);const bytes=await crypto.subtle.decrypt({name:'AES-GCM',iv:fromB64(obj.iv)},key,fromB64(obj.ciphertext));importBackup(new TextDecoder().decode(bytes));}catch(e){alert('Não foi possível abrir: senha incorreta ou arquivo corrompido.');}
+}
+
+function exportBackup(){const data=JSON.stringify(s,null,2),blob=new Blob([data],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='Meu_Financeiro_Backup_'+new Date().toISOString().slice(0,10)+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);toast('Backup JSON sem senha gerado.')}
+function importDelta(raw){
+ try{
+  const obj=JSON.parse(raw);if(obj?.format!=='MEU-FINANCEIRO-DELTA-V1'||!Array.isArray(obj.entries))throw Error('Arquivo não é um pacote incremental compatível.');
+  if(obj.entries.length>600)throw Error('Pacote muito grande.');
+  const existing=new Set(s.entries.map(x=>x.id)),fresh=[],seen=new Set();
+  for(const e of obj.entries){
+   if(!e||typeof e!=='object'||!/^[-a-z0-9_]{5,100}$/i.test(e.id||'')||!/^\d{4}-\d{2}$/.test(e.month||'')||!Number.isSafeInteger(e.cents)||e.cents<=0||e.cents>1e9||typeof e.card!=='string'||!e.card.trim()||e.card.length>100||!e.description||String(e.description).length>180)throw Error('Uma parcela possui dados inválidos.');
+   if(existing.has(e.id)||seen.has(e.id))continue;
+   seen.add(e.id);fresh.push({id:e.id,month:e.month,type:'despesa',category:canonicalCategory(e.category)||'Parcelamentos e encargos',description:String(e.description),cents:e.cents,card:e.card,installment:String(e.installment||''),status:'previsto',includeInProjection:true,source:'Importação privada',dueDate:''});
+  }
+  if(!fresh.length){alert('Todas as parcelas deste arquivo já estão cadastradas. Nenhuma duplicidade foi criada.');return;}
+  ask('Importar somente novos lançamentos',`Adicionar ${fresh.length} parcelas à sua base atual? Isso preserva os registros já salvos, sem substituir faturas bancárias.`,()=>{snapshot();s.entries.push(...fresh);commit(fresh.length+' parcelas acrescentadas sem substituir os dados atuais.');});
+ }catch(e){alert('Não foi possível importar: '+e.message)}
+}
+function importBackup(raw){try{let obj=JSON.parse(raw);if(!obj ||typeof obj!=='object'||!Array.isArray(obj.entries))throw Error('Formato de backup inválido.');if(obj.version!==4){if(!Array.isArray(obj.invoices)||!Array.isArray(obj.invoiceMovements))throw Error('Formato anterior incompleto.');let next=clone(SEED);next.entries=obj.entries;next.invoices=obj.invoices.map(i=>({...i,paid:false,manualDeltaCents:0}));next.movements=obj.invoiceMovements.map((t,j)=>({...t,id:'mov-legacy-'+j,deleted:false,category:t.category||'Outros / a classificar'}));obj=next;}
+ obj.inbox ||= [];obj.salaryHistory ||= [];obj.cardViewCycle ||= '2026-11';obj.cardClosings ||= {};obj.invoiceClosingDates ||= {};obj.whatIf ||= {option:'45-fixo',payLosango:true,payNubankSmall:false,payNubankLarge:false,payCards:false,startCycle:'2026-12'};obj.settings ||= {};obj.settings.budgetOverrides ||= {}; if(!Array.isArray(obj.receivables)||!Array.isArray(obj.movements)||!obj.vault||!obj.loan)throw Error('Backup incompleto.');ask('Importar backup','A importação substituirá o estado atual deste navegador. Exporte uma cópia primeiro, caso tenha alterações não salvas.',()=>{snapshot();s=clone(obj);closeModal();commit('Backup importado com sucesso.');});
+ }catch(e){alert('Não foi possível importar: '+e.message)}}
+function payEntry(id){const e=s.entries.find(x=>x.id===id);if(!e||e.status==='pago')return;const val=e.category==='Lazer'&&e.description==='Diversão'?s.settings.diversionMonthlyCents:e.cents;ask('Registrar pagamento',`Confirmar pagamento de ${e.description} no valor de ${m(val)}? O valor será descontado do caixa atual e sairá da projeção.`,()=>{snapshot();e.status='pago';s.ledger.push({id:'cash-entry-'+e.id,date:localToday(),cents:-val,category:e.category,description:e.description});commit('Conta marcada como paga.')})}
+function deleteTransaction(id){const t=s.movements.find(x=>x.id===id);if(!t)return;const inv=s.invoices.find(i=>i.id===t.invoice);
+ ask('Remover item do detalhamento',`Excluir “${t.description}” (${m(t.cents)}) do detalhamento? O total da fatura informado pelo banco permanecerá igual.`,()=>{snapshot();t.deleted=true;commit('Lançamento removido do detalhamento; fatura preservada.');toast('Lançamento removido.',true)});
+}
+function deleteEntry(id){const e=s.entries.find(x=>x.id===id);if(!e||e.status==='excluido')return;ask('Excluir previsão',`Excluir “${e.description}” (${m(e.cents)}) da projeção? Faturas bancárias já informadas não serão alteradas.`,()=>{snapshot();e.status='excluido';commit('Previsão excluída.');toast('Previsão excluída.',true)})}
+function deleteReceivable(id){const r=s.receivables.find(x=>x.id===id);if(!r)return;ask('Excluir recebimento futuro',`Excluir a programação “${r.description}”? Valores já recebidos no histórico do caixa serão preservados.`,()=>{snapshot();s.receivables=s.receivables.filter(x=>x.id!==id);commit('Programação excluída.');toast('Programação excluída.',true)})}
+function payInvoice(id){const inv=s.invoices.find(x=>x.id===id);if(!inv||inv.paid)return;ask('Confirmar pagamento da fatura',`Registrar que você PAGOU ${m(currentInvoice(inv))} de ${inv.card} agora? O aplicativo descontará essa quantia do caixa, e a cobrança deixará de aparecer na projeção.`,()=>{snapshot();inv.paid=true;s.ledger.push({id:'pay-'+id,date:localToday(),ref:'invoice-'+id,cents:-currentInvoice(inv),category:'Pagamento de fatura',description:'Pagamento '+inv.card});commit('Pagamento registrado.');toast('Fatura paga registrada.',true)})}
+function reopenInvoice(id){const inv=s.invoices.find(x=>x.id===id);if(!inv||!inv.paid)return;ask('Reabrir fatura',`Voltar a fatura ${inv.card} ao status pendente? O pagamento que foi registrado pelo aplicativo também será revertido do caixa.`,()=>{snapshot();inv.paid=false;s.ledger=s.ledger.filter(e=>e.id!=='pay-'+id);commit('Fatura reaberta.');})}
+function payoffLosango(){if(s.losango.paid)return;ask('Registrar quitação da Losango',`Você realmente pagou ${m(s.losango.payoffCents)} à vista? Isso reduzirá o caixa e removerá futuras parcelas da Losango da projeção.`,()=>{snapshot();s.losango.paid=true;s.ledger.push({id:'pay-losango',date:'2026-11-23',cents:-s.losango.payoffCents,category:'Quitação de dívida',description:'Quitação Losango à vista · 23/11'});commit('Losango marcada como quitada.');})}
+function payoffNubank(id){const l=s.nubankLoans.find(x=>x.id===id);if(!l||l.paid)return;ask('Quitar contrato Nubank',`Você realmente quitou o contrato de ${m(l.monthlyCents)} por mês, pagando ${m(l.payoffCents)} à vista? O pagamento sairá do caixa, e as futuras parcelas desse contrato deixarão de ser projetadas.`,()=>{snapshot();l.paid=true;s.ledger.push({id:'pay-'+id,date:localToday(),cents:-l.payoffCents,category:'Quitação de dívida',description:'Quitação antecipada '+l.name});commit('Quitação Nubank registrada.');})}
+function onClick(e){const b=e.target.closest('[data-act]');if(!b)return;const act=b.dataset.act,id=b.dataset.id||'';
+ if(act==='nav'){setPage(b.dataset.page);return}
+ if(act==='currentCycle'){s.referenceCycle=activeCycle();s.settings.referenceCycleManual=false;detailCycle=s.referenceCycle;save();render();return}
+ if(act==='cardCyclePrev'){s.cardViewCycle=cycShift(s.cardViewCycle,-1);save();render();return}
+ if(act==='cardCycleNext'){s.cardViewCycle=cycShift(s.cardViewCycle,1);save();render();return}
+ if(act==='selectCard'){selectedCard=id;render();return}
+ if(act==='insightTab'){insightView=id;render();return}
+ if(act==='editCategory'){showModal('quickCategory',id);return}
+ if(act==='activityFilter'){activityFilter=id;render();return}
+ if(act==='editEntry'){const e=s.entries.find(x=>x.id===id);if(e){if(e.card){showModal('transaction',id)}else showModal('expense',id)}return}
+ if(act==='deleteEntry'){deleteEntry(id);return}
+if(act==='open'){showModal(b.dataset.modal,id);return}if(act==='closeModal'){closeModal();return}if(act==='card'){const iv=s.invoices.find(x=>x.id===id);if(iv){selectedCard=iv.card;s.cardViewCycle=iv.cycle}else{selectedCard=id}setPage('cards');return}if(act==='scrollToConsolidated'){document.querySelector('#consolidado')?.scrollIntoView({behavior:'smooth'});return}
+ if(act==='export'){exportSecureBackup();return}if(act==='exportAnalysis'){if(!window.confirm('Esta exportação NÃO terá senha e conterá seu histórico financeiro. Gere apenas para enviar privadamente nesta conversa, nunca publique no GitHub. Continuar?'))return;exportBackup();return}
+ if(act==='importDelta'){$('#importDeltaFile')?.click();return}
+ if(act==='addNotifications'){const v=$('#notificationPaste')?.value||'';if(!v.trim())return alert('Cole ao menos uma notificação.');addNotificationText(v);return}
+ if(act==='importNotificationsFile'){$('#notificationFile')?.click();return}
+ if(act==='reviewNotification'){showModal('notification',id);return}
+ if(act==='ignoreNotification'){const n=s.inbox.find(x=>x.id===id);if(n){snapshot();n.status='ignored';commit('Notificação ignorada.')}return}if(act==='import'){$('#importBackup').click();return}
+ if(act==='undo'){if(lastUndo){s=lastUndo;lastUndo=null;commit('Última alteração desfeita.')}return}
+ if(act==='deleteTx'){deleteTransaction(id);return}if(act==='deleteReceivable'){deleteReceivable(id);return}
+ if(act==='askPayInvoice'){payInvoice(id);return}if(act==='unpayInvoice'){reopenInvoice(id);return}
+ if(act==='askPayEntry'){payEntry(id);return}if(act==='askPayLosango'){payoffLosango();return}if(act==='askPayNubank'){payoffNubank(id);return}
+}
+function onChange(e){const el=e.target;
+ if(el.dataset.field==='cardScope'){cardScope=el.value;render();return}
+ if(el.dataset.field==='insightCard'){insightCard=el.value;render();return}
+ if(el.dataset.field==='whatIfHorizon'){s.whatIf.horizon=Number(el.value);save();render();return}
+ if(el.dataset.field==='whatIfLoan'){s.whatIf.option=el.value;save();render();return}
+ if(el.dataset.field==='whatIfStart'){s.whatIf.startCycle=el.value;save();render();return}
+ if(['whatIfLosango','whatIfNubankSmall','whatIfNubankLarge','whatIfCards'].includes(el.dataset.field)){
+  const key={whatIfLosango:'payLosango',whatIfNubankSmall:'payNubankSmall',whatIfNubankLarge:'payNubankLarge',whatIfCards:'payCards'}[el.dataset.field];s.whatIf[key]=el.checked;save();render();return;
+ }
+ if(el.dataset.field==='cycle'){s.referenceCycle=el.value;s.settings.referenceCycleManual=true;detailCycle=el.value;save();render();return}
+ if(el.dataset.field==='loanOption'){
+  s.loan.option=el.value;save();const chosen=s.loanOptions.find(x=>x.id===el.value);if(modalName==='loan'&&chosen){$('#loanNet').value=fmt(chosen.netCents/100);$('#loanPayment').value=fmt(chosen.installmentCents/100);$('#loanMonths').value=chosen.months;}else render();return
+ }
+}
+document.addEventListener('click',onClick);
+document.addEventListener('change',onChange);
+document.addEventListener('submit',e=>{if(e.target.id==='modalForm'){e.preventDefault();submitForm(e.target,e.target.dataset.submit)}});
+document.addEventListener('change',async e=>{if(e.target.id==='notificationFile'){const f=e.target.files?.[0];if(f)addNotificationText(await f.text());e.target.value=''}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modalName)closeModal()});
+document.addEventListener('click',e=>{if(e.target.matches('[data-overlay]'))closeModal()});
+document.addEventListener('change',async e=>{if(e.target.id==='importDeltaFile'){
+ const f=e.target.files?.[0];if(f)importDelta(await f.text());e.target.value='';
+}});
+document.addEventListener('change',async e=>{if(e.target.id==='importBackup'){const f=e.target.files?.[0];if(f)await importSecureOrLegacy(await f.text())}});
+function acceptShortcutLink(){
+ try{
+  const hash=window?.location?.hash||'';
+  if(!hash.startsWith('#mov='))return;
+  const msg=decodeURIComponent(hash.slice(5));
+  if(window.history?.replaceState)window.history.replaceState(null,'',window.location.pathname+window.location.search);
+  if(!msg||msg.length>900||!/(R\$\s*[\d.,]+\d{2})/.test(msg))return alert('Notificação recebida sem valor em reais. Confira o texto no Atalhos.');
+  if(/(?:c[oó]digo de acesso|c[oó]digo de seguran[cç]a|senha|otp|token|verifica[cç][aã]o|autentica[cç][aã]o)/i.test(msg))return alert('Mensagem de segurança ignorada.');
+  addNotificationText(msg.replace(/[\r\n]+/g,' ').trim());setPage('activity');
+ }catch(e){alert('Não foi possível interpretar o link do Atalhos.');}
+}
+render();acceptShortcutLink();
+window?.addEventListener?.('hashchange',acceptShortcutLink);
+})();
+</script></body></html>
