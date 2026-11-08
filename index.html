@@ -7,6 +7,26 @@
 
 
 .notif-outer{background:transparent}.notif-body{padding:15px}.notif-body textarea{min-height:90px;resize:vertical;width:100%;border:1px solid var(--line);border-radius:12px;padding:13px;background:var(--surface);color:var(--ink);font:inherit}.notif-item{border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:10px;display:flex;align-items:center;justify-content:space-between;gap:12px}.notif-item p{font-size:13px;margin:5px 0;overflow-wrap:anywhere}.notif-item small{color:var(--sub)}.notif-item .row{flex-shrink:0}@media(max-width:650px){.notif-item{flex-direction:column;align-items:stretch}.notif-item .row{justify-content:flex-end}}
+
+/* Análise de cartões V7: uma única área de exploração */
+.insight-toolbar{display:flex;gap:12px;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;margin-bottom:10px}
+.insight-toolbar>div:first-child{flex:1;min-width:185px}.insight-toolbar select{max-width:360px;margin-top:5px;width:100%}
+.insight-period{display:flex;gap:4px;flex-direction:column;text-align:right}.insight-period strong{font-size:12px}
+.insight-tabs{display:flex;gap:7px;overflow-x:auto;scrollbar-width:thin;padding:4px 0 10px;white-space:nowrap}
+.insight-tabs button{background:#f4f7fb;border:1px solid #dce5ef;color:#355371;border-radius:999px;padding:10px 13px;font-size:12px;font-weight:750;cursor:pointer;flex-shrink:0}
+.insight-tabs button.on{background:var(--navy);color:white;border-color:var(--navy)}
+.insight-summary{display:flex;align-items:center;justify-content:space-between;padding:14px;background:#eff5fb;border-radius:12px;margin:2px 0 15px;gap:10px;font-size:12px}
+.insight-summary b{font-size:17px;white-space:nowrap}
+.insight-group-caption{display:block;font-size:10px;color:var(--sub);font-weight:450;margin-top:3px}
+.insight-inner{padding:0 4px 4px}.insight-action-row{display:flex;flex-wrap:wrap;gap:9px;align-items:center}
+.insight-description{display:flex;flex-direction:column;gap:4px;min-width:0;flex:1;overflow-wrap:anywhere}
+.insight-description strong{color:var(--ink);font-weight:650}.insight-description small{display:block}
+.insight-side{display:flex;gap:8px;align-items:center;flex-shrink:0}
+.btn-classify{font-size:11px;padding:6px 8px;white-space:nowrap;line-height:1}
+.btn-classify svg{width:13px;height:13px}
+.insight-rank{display:flex;align-items:center;border-bottom:1px solid var(--line)}
+.insight-rank .insight-row{flex:1;border:0}.rank-n{padding-left:8px;font-size:11px;font-weight:800;color:var(--sub);min-width:25px}
+@media(max-width:650px){.insight-side{align-items:flex-end;flex-direction:column;gap:5px}.btn-classify{padding:7px 9px}.item-actions{flex-wrap:wrap;justify-content:flex-end}.item-actions>.amount{width:100%;text-align:right}.insight-summary{align-items:flex-start;flex-wrap:wrap}.insight-toolbar select{max-width:100%}}
 </style></head><body><div id="app"></div><script>const SEED={"version":4,"schema":"meu-financeiro-offline-v4","name":"Meu Financeiro — privado","openedAt":"","openingCents":0,"salaryNetCents":0,"oldFuncefInstallmentCents":0,"oldFuncefEnd":"2028-02","lastSaved":null,"referenceCycle":"2026-11","entries":[],"invoices":[],"movements":[],"receivables":[],"loanOptions":[{"id":"nenhum","label":"Sem empréstimo","netCents":0,"installmentCents":0,"months":0,"totalCents":0}],"nubankLoans":[],"losango":{"payoffCents":0,"offerDate":"","paid":true},"loan":{"status":"none","option":"nenhum","netCents":0,"paymentCents":0,"durationMonths":0,"releaseDate":"","startCycle":"2026-12","description":""},"ledger":[],"vault":{"goalCents":0,"targetCycle":"2028-03","estimatedAnnualRatePct":0,"monthlyPlannedCents":0,"startCycle":"2027-01","movements":[]},"settings":{"includeTravel":false,"diversionMonthlyCents":0,"bonusCents":0,"bonusStatus":"estimativa","includeVacation":false,"projectionCycles":12,"obraGrowthPct":0,"budgetOverrides":{}},"sourceNotes":[],"salaryHistory":[],"inbox":[],"whatIf":{"option":"nenhum","payLosango":false,"payNubankSmall":false,"payNubankLarge":false,"payCards":false,"startCycle":"2026-12"}};
 
 (()=>{
@@ -23,6 +43,7 @@ s.whatIf ||= {option:'45-fixo',payLosango:true,payNubankSmall:false,payNubankLar
 s.settings ||= {};
 s.settings.budgetOverrides ||= {};
 
+let insightView='categoria',insightCard='todos';
 let page='home',selectedCard='c6',activityFilter='all',modalName='',editTarget='',confirmAction=null,lastUndo=null,snackTimer=null,detailCycle=s.referenceCycle||'2026-11',activeChart='geral';
 const $=q=>document.querySelector(q),h=v=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;');
 const BRL=new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}),INT=new Intl.NumberFormat('pt-BR');
@@ -93,10 +114,32 @@ function cardLines(cycle,card){
 function cardAdjustments(cycle,card){const i=invoiceForCard(cycle,card);return i?activeMovements(i.id).filter(x=>x.cents<0):[];}
 function cardMonthlyTotal(cycle,card){const i=invoiceForCard(cycle,card);return i?currentInvoice(i):sumBy(cardLines(cycle,card),x=>x.valueCents);}
 function cardTotalForCycle(cycle){return sumBy(billCards(),c=>cardMonthlyTotal(cycle,c))}
-function inferredCategory(x){const n=String(x.description||'').toLowerCase();if(x.category&&!['cartões','cartao','não classificado','outros'].includes(String(x.category).toLowerCase()))return x.category;
- if(/uber|brb|bus|99 |mobilid|passagem/.test(n))return 'Transporte';if(/airbnb|hotel|viage|ticket/.test(n))return 'Viagens';if(/mercado|pizza|restaur|outback|giraffas|food|lanch|cafe/.test(n))return 'Alimentação';if(/wellhub|drogaria|farmac|saúde/.test(n))return 'Saúde';if(/netshoes|shein|zara|renner|cea|c&a|moda/.test(n))return 'Vestuário';if(/lightroom|google|assinatura|one/.test(n))return 'Assinaturas';if(/parcela|renegocia|fatura/.test(n))return 'Parcelamentos';return 'Outros';}
+function inferredCategory(x){
+ const n=String(x.description||'').toLowerCase(),raw=String(x.category||'').trim(),cat=raw.toLowerCase();
+ // Descrições herdadas como "Outros" podem conter parcelamentos de fatura:
+ // reconhecê-los sem editar o lançamento nem sua fatura bancária.
+ if(raw&&!['cartões','cartao','não classificado','outros','outros / a classificar','parcelas futuras dos cartões'].includes(cat))return raw==='Parcelamentos'?'Parcelamentos e encargos':raw;
+ if(/parcelamento.*fatura|parcelamento de fatura|renegocia[cç][aã]o de pend[eê]ncias|fatura.*parcelad/.test(n))return 'Parcelamentos e encargos';
+ if(/uber|brb|bus|99 |mobilid|passagem/.test(n))return 'Transporte';
+ if(/airbnb|hotel|viage|ticket/.test(n))return 'Viagem e eventos';
+ if(/mercado|pizza|restaur|outback|giraffas|food|lanch|cafe/.test(n))return 'Alimentação e lazer';
+ if(/wellhub|drogaria|farmac|sa[uú]de/.test(n))return 'Saúde e bem-estar';
+ if(/netshoes|shein|zara|renner|cea|c&a|moda/.test(n))return 'Compras e vestuário';
+ if(/lightroom|google|assinatura|one/.test(n))return 'Serviços e assinaturas';
+ return 'Outros / a classificar';
+}
+function merchantName(x){
+ const d=String(x.description||'Outros').replace(/\s*·\s*\d+\/\d+.*$/,'').replace(/\s*\(m[ií]nimo identificado\)$/i,'').trim();
+ if(/parcelamento.*fatura|fatura.*parcelad/i.test(d))return 'Parcelamento de fatura';
+ return d||'Outros';
+}
+function classifyButton(x){return `<button class="btn btn-sm btn-classify" data-act="editCategory" data-id="${h(x.kind+':'+x.id)}" title="Alterar categoria deste lançamento">${ic('tag')} Categoria</button>`}
+function insightDetailRow(x){return `<div class="insight-row insight-action-row"><div class="insight-description"><strong>${h(x.description)}</strong><small>${h(x.card)}${x.installment?' · '+h(x.installment):''} · ${h(inferredCategory(x))}</small></div><div class="insight-side"><b>${m(x.valueCents)}</b>${classifyButton(x)}</div></div>`}
+function insightGroup(title,val,rows,caption=''){
+ return `<details class="finance-details"><summary><span>${h(title)}${caption?`<small class="insight-group-caption">${h(caption)}</small>`:''}</span><b>${m(val)}</b></summary><div class="insight-inner">${rows.map(insightDetailRow).join('')||'<p class="caption">Sem lançamentos detalhados.</p>'}</div></details>`
+}
 function cardLineHTML(x){const isFuture=x.kind==='entry', action=isFuture?'editEntry':'open';const data=isFuture?`data-act="editEntry"`:`data-act="open" data-modal="transaction"`;
- return `<div class="item"><div class="item-left"><div class="item-avatar">${ic('tag')}</div><div><div class="item-label">${h(x.description)}</div><div class="item-sub">${h(inferredCategory(x))}${x.installment?' · '+h(x.installment):''}${x.dueDate?' · '+fmtDate(x.dueDate):x.date?' · '+fmtDate(x.date):''}${x.budgetKey?' · abate '+h(BUDGETS.find(z=>z[0]===x.budgetKey)?.[1]||'orçamento'):''}</div></div></div><div class="item-actions"><strong class="amount">${m(x.valueCents)}</strong><button class="iconbtn" ${data} data-id="${h(x.id)}" aria-label="Editar">${ic('edit')}</button><button class="iconbtn danger" data-act="${isFuture?'deleteEntry':'deleteTx'}" data-id="${h(x.id)}" aria-label="Excluir">${ic('trash')}</button></div></div>`}
+ return `<div class="item"><div class="item-left"><div class="item-avatar">${ic('tag')}</div><div><div class="item-label">${h(x.description)}</div><div class="item-sub">${h(inferredCategory(x))}${x.installment?' · '+h(x.installment):''}${x.dueDate?' · '+fmtDate(x.dueDate):x.date?' · '+fmtDate(x.date):''}${x.budgetKey?' · abate '+h(BUDGETS.find(z=>z[0]===x.budgetKey)?.[1]||'orçamento'):''}</div></div></div><div class="item-actions"><strong class="amount">${m(x.valueCents)}</strong>${classifyButton(x)}<button class="iconbtn" ${data} data-id="${h(x.id)}" aria-label="Editar">${ic('edit')}</button><button class="iconbtn danger" data-act="${isFuture?'deleteEntry':'deleteTx'}" data-id="${h(x.id)}" aria-label="Excluir">${ic('trash')}</button></div></div>`}
 function salaryHoliday(d){const [y,mm,dd]=d.split('-').map(Number);const fixed=[ '01-01','04-21','05-01','09-07','10-12','11-02','11-15','11-20','12-25'];return fixed.includes(`${String(mm).padStart(2,'0')}-${String(dd).padStart(2,'0')}`);}
 function salaryPayDate(cycle){let [y,mm]=cycle.split('-').map(Number);let d=new Date(Date.UTC(y,mm-1,20));for(let z=0;z<7;z++){const iso=d.toISOString().slice(0,10);if(![0,6].includes(d.getUTCDay())&&!salaryHoliday(iso))return iso;d.setUTCDate(d.getUTCDate()+1);}return d.toISOString().slice(0,10)}
 function salaryRecord(cycle){return s.salaryHistory.find(x=>x.cycle===cycle)}
@@ -128,16 +171,38 @@ function catTotals(ms){const map={};for(const t of ms){if(t.cents<=0||t.deleted)
 function catBars(entries,max=7){if(!entries.length)return '<div class="empty">Nenhuma compra categorizada nesta seleção.</div>';const largest=Math.max(1,entries[0][1]);return entries.slice(0,max).map(([cat,val],n)=>`<div class="cat-row"><div class="item-label" style="font-size:12px">${h(cat)}</div><div class="cat-amount">${m(val)}</div><div class="bar"><div class="bar-fill" style="width:${Math.max(2,val/largest*100)}%;background:${['#1e668f','#3189a9','#57a3bd','#7bb8c6','#9bc7d4','#aab8c9'][Math.min(n,5)]}"></div></div></div>`).join('')}
 function renderCards(){
  const cyc=s.cardViewCycle||s.referenceCycle||'2026-11',cards=billCards(),selected=cards.includes(selectedCard)?selectedCard:cards[0],selectedRows=cardLines(cyc,selected),selectedInvoice=invoiceForCard(cyc,selected);
- const selectedTotal=cardMonthlyTotal(cyc,selected),all=cards.flatMap(c=>cardLines(cyc,c)),allSpend=sumBy(all,x=>x.valueCents),big=all.slice().sort((a,b)=>b.valueCents-a.valueCents)[0],catMap=new Map(),storeMap=new Map();
- for(const x of all){const cat=inferredCategory(x);catMap.set(cat,(catMap.get(cat)||0)+x.valueCents);const store=x.description||'Outro';storeMap.set(store,(storeMap.get(store)||0)+x.valueCents)}
- const categories=[...catMap].sort((a,b)=>b[1]-a[1]),stores=[...storeMap].sort((a,b)=>b[1]-a[1]);
- return `<div class="card pad"><div class="section-heading"><h2>Faturas por mês</h2><button class="btn btn-sm" data-act="open" data-modal="transaction">${ic('plus')} Lançar compra</button></div><div class="period-nav"><button class="btn btn-sm" data-act="cardCyclePrev" aria-label="Mês anterior">${ic('back')}</button><div class="period-current">${cycleLabel(cyc)} · ${cyc.slice(0,4)}<span class="tiny">Ciclo salarial / faturamento</span></div><button class="btn btn-sm" data-act="cardCycleNext" aria-label="Mês seguinte">${ic('arrow')}</button></div><div class="card-selector">${cards.map(c=>`<button class="card-choice ${c===selected?'selected':''}" data-act="selectCard" data-id="${h(c)}"><span class="choice-name">${h(c)}</span><div class="choice-val">${m(cardMonthlyTotal(cyc,c))}</div><div class="choice-date">${invoiceForCard(cyc,c)?'Fatura informada':'Parcelas conhecidas'}</div></button>`).join('')}</div></div>
- <div class="section grid g3"><div class="card pad"><div class="metric-label">Total previsto dos cartões</div><div class="metric-value smallval">${m(cardTotalForCycle(cyc))}</div><div class="metric-note">Faturas informadas ou mínimo de parcelas identificadas</div></div><div class="card pad"><div class="metric-label">Compras detalhadas</div><div class="metric-value smallval">${m(allSpend)}</div><div class="metric-note">Somente compras/parcelas listadas, sem pagamentos</div></div><div class="card pad"><div class="metric-label">Maior compra identificada</div><div class="metric-value smallval">${big?m(big.valueCents):'—'}</div><div class="metric-note">${big?h(big.description):'Sem compras identificadas'}</div></div></div>
- <div class="section card pad"><div class="section-heading"><div><h2>${h(selected)} · ${cycleLabel(cyc)}</h2><p class="caption">${selectedInvoice?`Fatura de ${m(selectedTotal)} ${selectedInvoice.estimated?'(valor estimado)':'(valor informado)'}`:`Parcelas futuras já conhecidas: ${m(selectedTotal)} · valor mínimo, sujeito a novas compras`}</p></div><button class="btn btn-sm" data-act="open" data-modal="invoice" data-id="${selectedInvoice?.id||'new:'+cardBase(selected)}">${ic('edit')} Definir total da fatura</button></div>
- <div class="list">${selectedRows.length?selectedRows.map(cardLineHTML).join(''):'<div class="empty">Sem compras detalhadas neste mês. Você pode adicionar uma ou navegar para outros meses.</div>'}</div>
- ${cardAdjustments(cyc,selected).length?`<details class="finance-details"><summary>Ver pagamentos, créditos e estornos registrados (${cardAdjustments(cyc,selected).length})</summary><div class="list">${cardAdjustments(cyc,selected).map(x=>`<div class="item"><div><div class="item-label">${h(x.description)}</div><div class="item-sub">${fmtDate(x.date)}</div></div><strong class="positive">${m(x.cents)}</strong></div>`).join('')}</div><p class="caption">Esses pagamentos não são novos gastos e não alteram o total informado pelo banco quando você editar o detalhamento.</p></details>`:''}
+ const selectedTotal=cardMonthlyTotal(cyc,selected),all=cards.flatMap(c=>cardLines(cyc,c)),allSpend=sumBy(all,x=>x.valueCents),big=all.slice().sort((a,b)=>b.valueCents-a.valueCents)[0];
+ const filtered=insightCard==='todos'?all:all.filter(x=>x.card===insightCard),filteredSpend=sumBy(filtered,x=>x.valueCents),grouped=new Map();
+ const tabs=[['categoria','Categorias'],['estabelecimentos','Estabelecimentos'],['parcelamentos','Parcelamentos'],['cartoes','Cartões'],['maiores','Maiores compras']];
+ const filteredByCategory=filtered.filter(x=>inferredCategory(x)==='Parcelamentos e encargos'||/parcelamento.*fatura|fatura.*parcelad|renegocia[cç][aã]o de pend[eê]ncias/i.test(x.description||''));
+ const rowsFor=(keyfn,list=filtered)=>{const grouped=new Map();for(const x of list){let k=keyfn(x);if(!grouped.has(k))grouped.set(k,[]);grouped.get(k).push(x)}return [...grouped].map(([label,rows])=>({label,rows,total:sumBy(rows,r=>r.valueCents)})).sort((a,b)=>b.total-a.total)};
+ let insightBody='';
+ if(insightView==='categoria'){
+  const groups=rowsFor(inferredCategory);
+  insightBody=groups.map(({label,rows,total})=>insightGroup(label,total,rows,`${(total/Math.max(1,filteredSpend)*100).toFixed(1).replace('.',',')}% dos gastos detalhados`)).join('');
+ }else if(insightView==='estabelecimentos'){
+  insightBody=rowsFor(merchantName).map(({label,rows,total})=>insightGroup(label,total,rows,`${rows.length} lançamento(s)`)).join('');
+ }else if(insightView==='parcelamentos'){
+  const xs=filtered.filter(x=>/parcelamento|renegocia|fatura.*parcelad/i.test(x.description||''));
+  const gr=rowsFor(x=>x.card,xs);
+  insightBody=`<p class="caption">Parcelamentos de fatura e renegociações, separados das compras comuns. Não são pagamentos recebidos.</p>`+(gr.map(({label,rows,total})=>insightGroup(label,total,rows,`${rows.length} parcela(s) identificada(s)`)).join('')||'<p class="caption">Não há parcelamentos de fatura identificados neste ciclo.</p>');
+ }else if(insightView==='cartoes'){
+  insightBody=cards.filter(c=>insightCard==='todos'||c===insightCard).sort((a,b)=>cardMonthlyTotal(cyc,b)-cardMonthlyTotal(cyc,a)).map(c=>insightGroup(c,cardMonthlyTotal(cyc,c),cardLines(cyc,c),invoiceForCard(cyc,c)?'Total da fatura informada':'Parcelas futuras conhecidas')).join('');
+ }else{
+  insightBody=filtered.slice().sort((a,b)=>b.valueCents-a.valueCents).slice(0,20).map((x,i)=>`<div class="insight-rank"><span class="rank-n">${i+1}</span>${insightDetailRow(x)}</div>`).join('');
+ }
+ const options=cards.map(c=>`<option value="${h(c)}" ${insightCard===c?'selected':''}>${h(c)}</option>`).join('');
+ return `<div class="card pad"><div class="section-heading"><h2>Faturas por mês</h2><button class="btn btn-sm" data-act="open" data-modal="transaction">${ic('plus')} Lançar compra</button></div><div class="period-nav"><button class="btn btn-sm" data-act="cardCyclePrev" aria-label="Mês anterior">${ic('back')}</button><div class="period-current">${cycleLabel(cyc)} · ${cyc.slice(0,4)}<span class="tiny">Referência salarial / faturamento</span></div><button class="btn btn-sm" data-act="cardCycleNext" aria-label="Mês seguinte">${ic('arrow')}</button></div><div class="card-selector">${cards.map(c=>`<button class="card-choice ${c===selected?'selected':''}" data-act="selectCard" data-id="${h(c)}"><span class="choice-name">${h(c)}</span><div class="choice-val">${m(cardMonthlyTotal(cyc,c))}</div><div class="choice-date">${invoiceForCard(cyc,c)?'Fatura informada':'Parcelas conhecidas'}</div></button>`).join('')}</div></div>
+ <div class="section grid g3"><div class="card pad"><div class="metric-label">Total previsto dos cartões</div><div class="metric-value smallval">${m(cardTotalForCycle(cyc))}</div><div class="metric-note">Faturas informadas ou parcelas conhecidas</div></div><div class="card pad"><div class="metric-label">Lançamentos detalhados</div><div class="metric-value smallval">${all.length}</div><div class="metric-note">Compras e parcelas identificadas nesta referência</div></div><div class="card pad"><div class="metric-label">Maior lançamento</div><div class="metric-value smallval">${big?m(big.valueCents):'—'}</div><div class="metric-note">${big?h(big.description):'Sem compras detalhadas'}</div></div></div>
+ <div class="section card pad"><div class="section-heading"><div><h2>${h(selected)} · ${cycleLabel(cyc)}</h2><p class="caption">${selectedInvoice?`Fatura: ${m(selectedTotal)} ${selectedInvoice.estimated?'(estimativa)':'(informada pelo banco)'}`:`Parcelas futuras identificadas: ${m(selectedTotal)} · mínimo, sujeito a novas compras`}</p></div><button class="btn btn-sm" data-act="open" data-modal="invoice" data-id="${selectedInvoice?.id||'new:'+cardBase(selected)}">${ic('edit')} Valor da fatura</button></div>
+ <div class="list">${selectedRows.length?selectedRows.map(cardLineHTML).join(''):'<div class="empty">Sem compras detalhadas neste mês. Adicione uma ou navegue para outros meses.</div>'}</div>
  <div class="row" style="flex-wrap:wrap;gap:8px;margin-top:16px"><button class="btn btn-primary" data-act="open" data-modal="transaction">${ic('plus')} Adicionar neste mês</button>${selectedInvoice?`<button class="btn btn-sm" data-act="${selectedInvoice.paid?'unpayInvoice':'askPayInvoice'}" data-id="${selectedInvoice.id}">${selectedInvoice.paid?'Reabrir fatura':'Confirmar pagamento da fatura'}</button>`:''}</div></div>
- <div class="section card pad"><div class="section-heading"><h2>Consolidado de cartões</h2><span class="chip">Explorar por gasto</span></div><p class="caption">Selecione uma categoria, estabelecimento ou cartão para expandir. Valores de compras detalhadas, não pagamentos. As parcelas futuras listadas são um mínimo conhecido.</p><div class="grid g2"><div><p class="subheading">Onde gastou mais</p>${categories.length?categories.map(([cat,val])=>`<details class="finance-details"><summary><span>${h(cat)}</span><b>${m(val)}</b></summary>${all.filter(x=>inferredCategory(x)===cat).sort((a,b)=>b.valueCents-a.valueCents).map(x=>`<div class="insight-row"><span>${h(x.description)} <small>· ${h(x.card)}</small></span><b>${m(x.valueCents)}</b></div>`).join('')}</details>`).join(''):'<p class="caption">Ainda não há detalhes para esse ciclo.</p>'}</div><div><p class="subheading">Maiores estabelecimentos</p>${stores.slice(0,10).map(([name,val])=>`<details class="finance-details"><summary><span>${h(name)}</span><b>${m(val)}</b></summary>${all.filter(x=>x.description===name).map(x=>`<div class="insight-row"><span>${h(x.card)} · ${h(x.installment||'À vista')}</span><b>${m(x.valueCents)}</b></div>`).join('')}</details>`).join('')}<p class="subheading" style="margin-top:15px">Total por cartão</p>${cards.map(c=>`<details class="finance-details"><summary><span>${h(c)}</span><b>${m(cardMonthlyTotal(cyc,c))}</b></summary>${cardLines(cyc,c).sort((a,b)=>b.valueCents-a.valueCents).slice(0,12).map(x=>`<div class="insight-row"><span>${h(x.description)}</span><b>${m(x.valueCents)}</b></div>`).join('')||'<p class="caption">Sem compras detalhadas.</p>'}</details>`).join('')}</div></div></div>`;
+ <div class="section card pad" id="consolidado"><div class="section-heading"><div><h2>Análise dos gastos</h2><p class="caption" style="margin:4px 0 0">Uma análise, vários filtros — sem repetir o mesmo consolidado.</p></div><span class="chip">${all.length} itens</span></div>
+ <div class="insight-toolbar"><div><label for="insightCardSelect">Analisar</label><select id="insightCardSelect" data-field="insightCard"><option value="todos" ${insightCard==='todos'?'selected':''}>Todos os cartões</option>${options}</select></div><div class="insight-period"><span class="tiny">Referência</span><strong>${cycleLabel(cyc)}</strong></div></div>
+ <div class="insight-tabs" role="group" aria-label="Como analisar os gastos">${tabs.map(([id,label])=>`<button class="${insightView===id?'on':''}" data-act="insightTab" data-id="${id}" aria-pressed="${insightView===id}">${label}</button>`).join('')}</div>
+ <div class="insight-summary"><span>${insightCard==='todos'?'Compras detalhadas de todos os cartões':h(insightCard)}</span><b>${m(filteredSpend)}</b></div>
+ ${insightBody||'<p class="caption">Sem compras detalhadas neste período.</p>'}
+ <p class="caption" style="margin-top:14px">As categorias são editáveis pelo botão <b>Categoria</b>. Pagamentos de fatura já realizados não são novas despesas. O total de uma fatura informada pelo banco só muda se você o editar.</p></div>`;
 }
 function renderReceivables(){const cycle=s.referenceCycle,totalRemain=s.receivables.reduce((a,r)=>a+(r.totalInstallments-r.currentInstallment+1-(r.paidCycles||[]).length)*r.amountCents,0),monthConfirmed=nextReceivableTotal(cycle,true),uncert=s.receivables.filter(x=>!x.dateConfirmed).length;
  return `<div class="grid g3"><div class="card pad"><div class="metric-label">Total futuro compartilhado</div><div class="metric-value smallval positive">${m(totalRemain)}</div><div class="metric-note">Soma nominal das parcelas cadastradas ainda não recebidas.</div></div><div class="card pad"><div class="metric-label">A receber · ${cycleLabel(cycle)}</div><div class="metric-value smallval">${m(monthConfirmed)}</div><div class="metric-note">Somente parcelas com mês inicial confirmado.</div></div><div class="card pad"><div class="metric-label">Datas a confirmar</div><div class="metric-value smallval">${uncert}</div><div class="metric-note">Não consideradas no saldo futuro até a confirmação.</div></div></div>
@@ -158,7 +223,7 @@ function renderPlan(){let proj=projected(s.settings.projectionCycles),opt=s.loan
 function loanSelect(id){return `<select id="${id}" data-field="loanOption">${s.loanOptions.filter(x=>x.id!=='nenhum').map(x=>`<option value="${x.id}" ${s.loan.option===x.id?'selected':''}>${h(x.label)}</option>`).join('')}</select>`}
 function notificationLines(text){return text.split(/\r?\n/).map(x=>x.trim()).filter(x=>x.length>10).slice(0,250).map(x=>{
  let parts=x.split('|'),date=new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,10),app='',body=x;
- if(parts.length>=3&&/^\d{4}-\d\d-\d\d$/.test(parts[0].trim())){date=parts.shift().trim();app=parts.shift().trim();body=parts.join('|').trim()}
+ if(parts.length>=3&&/^\d{4}-\d\d-\d\d$/.test(parts[0].trim())){date=parts.shift().trim();app=parts.shift().trim();body=parts.join('|').trim()}else if(parts.length>=2&&/^(Nubank|C6(?: Black)?|Sicoob|Mercado Pago|BRB|Renner|C&A(?: Pay)?)$/i.test(parts[0].trim())){app=parts.shift().trim();body=parts.join('|').trim()}
  const dm=body.match(/(?:R\$\s*)([\d.,]+\d{2})/i),amount=dm?cents(dm[1]):0;
  const bank=app||(['Nubank','C6','Sicoob','Mercado Pago','Renner','C&A'].find(v=>body.toLowerCase().includes(v.toLowerCase()))||'Não identificado');
  const normalized=[date,bank,body].join('|').replace(/\s+/g,' ').toLowerCase();
@@ -166,7 +231,7 @@ function notificationLines(text){return text.split(/\r?\n/).map(x=>x.trim()).fil
 });}
 function addNotificationText(text){const found=notificationLines(text),known=new Set(s.inbox.map(x=>x.normalized));let added=0;for(const n of found){if(known.has(n.normalized))continue;known.add(n.normalized);s.inbox.push(n);added++}commit(added+' notificações recebidas para revisão; '+(found.length-added)+' repetidas ignoradas.');}
 function renderInbox(){const pending=s.inbox.filter(x=>x.status==='pending'),others=s.inbox.filter(x=>x.status!=='pending').length;
- return `<details class="finance-details notif-outer" ${pending.length?'open':''}><summary><span>${ic('inbox')} Notificações e lançamentos enviados por aqui</span><span class="chip ${pending.length?'warn':'dim'}">${pending.length} para revisar</span></summary><div class="notif-body"><p class="caption">Cole notificações recebidas ou informações que organizamos no chat. Cada linha vira uma sugestão. Só entra no orçamento após sua confirmação. Formato opcional: <code>2026-11-07|C6|Compra R$ 58,40 em Mercado</code>.</p><textarea id="notificationPaste" rows="3" placeholder="Cole uma notificação por linha, com o valor em R$..."></textarea><div class="row" style="gap:8px;flex-wrap:wrap;margin:10px 0"><button class="btn btn-primary btn-sm" data-act="addNotifications">${ic('plus')} Revisar texto</button><button class="btn btn-sm" data-act="importNotificationsFile">${ic('upload')} Importar arquivo .txt</button><input type="file" id="notificationFile" accept=".txt,text/plain,.csv" hidden></div>${pending.length?pending.slice(-30).reverse().map(x=>`<div class="notif-item"><div><strong>${hEsc(x.app)}</strong><p>${hEsc(x.body)}</p><small>${hEsc(x.date)} · ${x.amount?m(x.amount):'Valor a conferir'}</small></div><div class="row" style="gap:5px"><button class="btn btn-primary btn-sm" data-act="reviewNotification" data-id="${hEsc(x.id)}">Revisar</button><button class="iconbtn" data-act="ignoreNotification" data-id="${hEsc(x.id)}" aria-label="Ignorar">${ic('trash')}</button></div></div>`).join(''):'<p class="caption">Nenhuma notificação pendente.</p>'}<p class="caption">${others} já revisadas ou ignoradas. Não é necessário informar senhas, CPF ou números de conta.</p></div></details>`;
+ return `<details class="finance-details notif-outer" ${pending.length?'open':''}><summary><span>${ic('inbox')} Notificações e lançamentos enviados por aqui</span><span class="chip ${pending.length?'warn':'dim'}">${pending.length} para revisar</span></summary><div class="notif-body"><p class="caption">Cole notificações recebidas ou informações que organizamos no chat. Cada linha vira uma sugestão. Só entra no orçamento após sua confirmação. Formato opcional: <code>2026-11-07|C6|Compra R$ 58,40 em Mercado</code>. O Atalhos do iPhone também pode abrir este aplicativo com <code>#mov=</code> seguido de uma notificação codificada na URL. O texto será recebido aqui, como <b>pendente</b>, não como gasto confirmado.</p><textarea id="notificationPaste" rows="3" placeholder="Cole uma notificação por linha, com o valor em R$..."></textarea><div class="row" style="gap:8px;flex-wrap:wrap;margin:10px 0"><button class="btn btn-primary btn-sm" data-act="addNotifications">${ic('plus')} Revisar texto</button><button class="btn btn-sm" data-act="importNotificationsFile">${ic('upload')} Importar arquivo .txt</button><input type="file" id="notificationFile" accept=".txt,text/plain,.csv" hidden></div>${pending.length?pending.slice(-30).reverse().map(x=>`<div class="notif-item"><div><strong>${hEsc(x.app)}</strong><p>${hEsc(x.body)}</p><small>${hEsc(x.date)} · ${x.amount?m(x.amount):'Valor a conferir'}</small></div><div class="row" style="gap:5px"><button class="btn btn-primary btn-sm" data-act="reviewNotification" data-id="${hEsc(x.id)}">Revisar</button><button class="iconbtn" data-act="ignoreNotification" data-id="${hEsc(x.id)}" aria-label="Ignorar">${ic('trash')}</button></div></div>`).join(''):'<p class="caption">Nenhuma notificação pendente.</p>'}<p class="caption">${others} já revisadas ou ignoradas. Não é necessário informar senhas, CPF ou números de conta.</p></div></details>`;
 }
 function hEsc(value){return h(String(value??''))}
 function renderActivity(){const cycle=s.referenceCycle,rec=salaryRecord(cycle),entries=breakdownExpense(cycle),ledger=s.ledger.filter(x=>x.date&&cycleForDate(x.date)===cycle).slice().reverse(),cats=BUDGETS.map(([key,name])=>({key,name,base:budgetBase(cycle,key),used:budgetUsed(cycle,key),remaining:budgetRest(cycle,key)})),futureCards=billCards().filter(c=>cardLines(cycle,c).length||invoiceForCard(cycle,c));
@@ -188,7 +253,14 @@ const categories=['Alimentação e lazer','Compras e vestuário','Transporte','S
 function showModal(name,id=''){modalName=name;editTarget=id;renderModal()}
 function closeModal(){modalName='';editTarget='';const host=$('#modalHost');if(host)host.innerHTML=''}
 function renderModal(){const host=$('#modalHost');if(!host||!modalName)return;let title='',body='',footer='',submit='';let v=null;
- if(modalName==='transaction'){
+ if(modalName==='quickCategory'){
+  const [kind,id]=editTarget.split(':',2);v=kind==='movement'?s.movements.find(x=>x.id===id):s.entries.find(x=>x.id===id);
+  if(!v){closeModal();return;}
+  title='Alterar categoria';submit='saveQuickCategory';
+  const opts=[...new Set([...categories,'Alimentação','Vestuário','Saúde','Viagens','Assinaturas','Parcelamentos'])];
+  const current=inferredCategory(v);if(!opts.includes(current))opts.push(current);
+  body=`<p class="small"><b>${h(v.description)}</b><br>${m(v.cents)} · ${h(v.installment||'Compra à vista')}</p><div class="form-grid">${selectField('Categoria da compra','category',opts.map(c=>[c,c]),current)}</div><p class="caption">A nova categoria muda apenas a análise do gasto. Não altera o valor da fatura, seu saldo em caixa nem outros lançamentos.</p>`;
+ }else if(modalName==='transaction'){
   v=s.movements.find(x=>x.id===editTarget)||s.entries.find(x=>x.id===editTarget&&x.card);const card=v?.invoice||cardBase(v?.card||'')||((editTarget&&s.invoices.some(x=>x.id===editTarget))?editTarget:selectedCard);title=v?'Editar lançamento do cartão':'Adicionar lançamento no cartão';submit='saveTransaction';body=`<div class="form-grid">${selectField('Cartão','invoice',s.invoices.map(x=>[x.id,x.card]),card)}${field('Data da compra','date',v?.date||'2026-11-07','date')}${field('Descrição','description',v?.description||'','text','required')}${field('Valor em R$ (negativo para crédito)','amount',v?fmt(v.cents/100):'','text','inputmode="decimal" required')}${selectField('Categoria','category',categories.map(c=>[c,c]),v?.category||categories[7])}${field('Parcela (ex.: 2/10)','installment',v?.installment||'','text')}${field('Ciclo da fatura','billingCycle',v?.cycle||v?.month||s.cardViewCycle||'2026-11','month')}${selectField('Abater do orçamento?','budgetKey',budgetOptions(),v?.budgetKey||'')}</div><div class="infostrip" style="margin-top:15px">${ic('info')} A compra altera o detalhamento e os parcelamentos futuros conhecidos, mas NÃO modifica automaticamente um total de fatura informado pelo banco. Para isso, edite o valor da fatura separadamente.</div>`;
  }else if(modalName==='invoice'){
   v=editTarget.startsWith('new:')?null:(s.invoices.find(x=>x.id===editTarget)||s.invoices[0]);const selCard=v?.card||s.invoices.find(x=>x.id===editTarget.slice(4))?.card||selectedCard;title=`Editar fatura ${selCard}`;submit='saveInvoice';body=`<div class="form-grid">${field('Valor total previsto (R$)','invoiceTotal',fmt((v?currentInvoice(v):cardMonthlyTotal(s.cardViewCycle,selCard))/100),'text','inputmode="decimal" required')}${field('Vencimento','dueDate',v?.dueDate||cycShift(s.cardViewCycle,1)+'-01','date')}${selectField('Confiabilidade','estimated',[['false','Informado pelo banco'],['true','Estimativa para conferência']],String(v?.estimated??true))}</div><p class="caption">É o valor total que o banco informa (ou sua estimativa). Compras detalhadas não alteram essa quantia automaticamente.</p>`;
@@ -226,7 +298,11 @@ function checked(form,k){return !!form.elements.namedItem(k)?.checked}
 function validateMoney(value){if(!String(value).trim())throw Error('Informe um valor válido.');let c=cents(value);if(!Number.isFinite(c))throw Error('Valor inválido.');return c}
 function submitForm(form,name){
  try{
-  if(name==='saveNotification'){
+  if(name==='saveQuickCategory'){
+   const [kind,id]=editTarget.split(':',2),item=kind==='movement'?s.movements.find(x=>x.id===id):s.entries.find(x=>x.id===id);
+   const cat=formVal(form,'category');if(!item||!categories.includes(cat)&&!['Alimentação','Vestuário','Saúde','Viagens','Assinaturas','Parcelamentos',item.category].includes(cat))throw Error('Categoria inválida.');
+   snapshot();item.category=cat;closeModal();commit('Categoria atualizada. O total da fatura foi preservado.');
+  }else if(name==='saveNotification'){
    const n=s.inbox.find(x=>x.id===editTarget);if(!n||n.status!=='pending')throw Error('Notificação não disponível.');
    const ty=formVal(form,'notifType'),amount=validateMoney(formVal(form,'amount')),date=formVal(form,'date'),description=formVal(form,'description').trim(),category=formVal(form,'category'),budgetKey=formVal(form,'budgetKey');
    if(!amount||!date||!description)throw Error('Confirme data, valor e descrição.');snapshot();
@@ -337,6 +413,8 @@ function onClick(e){const b=e.target.closest('[data-act]');if(!b)return;const ac
  if(act==='cardCyclePrev'){s.cardViewCycle=cycShift(s.cardViewCycle,-1);save();render();return}
  if(act==='cardCycleNext'){s.cardViewCycle=cycShift(s.cardViewCycle,1);save();render();return}
  if(act==='selectCard'){selectedCard=id;render();return}
+ if(act==='insightTab'){insightView=id;render();return}
+ if(act==='editCategory'){showModal('quickCategory',id);return}
  if(act==='activityFilter'){activityFilter=id;render();return}
  if(act==='editEntry'){const e=s.entries.find(x=>x.id===id);if(e){if(e.card){showModal('transaction',id)}else showModal('expense',id)}return}
  if(act==='deleteEntry'){deleteEntry(id);return}
@@ -352,6 +430,7 @@ if(act==='open'){showModal(b.dataset.modal,id);return}if(act==='closeModal'){clo
  if(act==='askPayEntry'){payEntry(id);return}if(act==='askPayLosango'){payoffLosango();return}if(act==='askPayNubank'){payoffNubank(id);return}
 }
 function onChange(e){const el=e.target;
+ if(el.dataset.field==='insightCard'){insightCard=el.value;render();return}
  if(el.dataset.field==='whatIfLoan'){s.whatIf.option=el.value;save();render();return}
  if(el.dataset.field==='whatIfStart'){s.whatIf.startCycle=el.value;save();render();return}
  if(['whatIfLosango','whatIfNubankSmall','whatIfNubankLarge','whatIfCards'].includes(el.dataset.field)){
@@ -369,6 +448,18 @@ document.addEventListener('change',async e=>{if(e.target.id==='notificationFile'
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modalName)closeModal()});
 document.addEventListener('click',e=>{if(e.target.matches('[data-overlay]'))closeModal()});
 document.addEventListener('change',async e=>{if(e.target.id==='importBackup'){const f=e.target.files?.[0];if(f)await importSecureOrLegacy(await f.text())}});
-render();
+function acceptShortcutLink(){
+ try{
+  const hash=window?.location?.hash||'';
+  if(!hash.startsWith('#mov='))return;
+  const msg=decodeURIComponent(hash.slice(5));
+  if(window.history?.replaceState)window.history.replaceState(null,'',window.location.pathname+window.location.search);
+  if(!msg||msg.length>900||!/(R\$\s*[\d.,]+\d{2})/.test(msg))return alert('Notificação recebida sem valor em reais. Confira o texto no Atalhos.');
+  if(/(?:c[oó]digo de acesso|c[oó]digo de seguran[cç]a|senha|otp|token|verifica[cç][aã]o|autentica[cç][aã]o)/i.test(msg))return alert('Mensagem de segurança ignorada.');
+  addNotificationText(msg.replace(/[\r\n]+/g,' ').trim());setPage('activity');
+ }catch(e){alert('Não foi possível interpretar o link do Atalhos.');}
+}
+render();acceptShortcutLink();
+window?.addEventListener?.('hashchange',acceptShortcutLink);
 })();
 </script></body></html>
