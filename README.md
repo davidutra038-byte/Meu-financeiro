@@ -76,3 +76,11 @@ A atualização parte do aplicativo de produção e preserva seus seis módulos,
 O formato de backup permanece na versão 4. Use a interface atual para os novos tratamentos do saldo; backups anteriores continuam importáveis.
 
 Validação adicional: `node scripts/accounting-smoke.js index.html`. Uma comparação local com a base original também verifica preservação dos registros e das projeções, sem publicar os dados dessa base.
+
+## Interface V13.1 — vínculo com despesas previstas
+
+- O seletor passa a usar as previsões efetivamente cadastradas no ciclo escolhido, em vez de uma lista fixa de cinco despesas.
+- O vínculo mostra o valor previsto, utilizado e restante; registros ainda a conferir recebem essa indicação.
+- Uma previsão não pode ser vinculada a si mesma. Vínculos novos são validados para o ciclo correto, e identificadores existentes são preservados ao renomear uma previsão.
+- O ciclo salarial e a referência da fatura usam listas legíveis no celular.
+- Testes cobrem fontes personalizadas, troca de ciclo, edições e o abatimento sem duplicar a despesa na projeção.
