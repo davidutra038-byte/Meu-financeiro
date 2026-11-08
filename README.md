@@ -223,3 +223,9 @@ Novas receitas previstas, incluindo as confirmadas a partir de sugestões do Cha
 A edição de uma programação compartilhada atualiza as parcelas pendentes e preserva os eventos de recebimento anteriores. Mudanças que deslocariam a identidade de uma parcela já recebida são recusadas antes de qualquer gravação. Mês inicial, valor e numeração passam por validação.
 
 Validação: `node scripts/receivable-edit-smoke.js index.html`. Cobre cadastro, descoberta, edição, persistência, dois tipos de recebíveis, projeções, integridade de identificadores e preservação do histórico financeiro.
+
+### V21 — busca e ações do dia
+
+Busca geral por descrição, pessoa, cartão, categoria ou valor em todos os meses, com acesso ao editor original. Excluídos e créditos arquivados não reaparecem. A tela Hoje reúne atalhos, Resolver primeiro com edição direta, progresso da meta e categorias que abrem seus lançamentos. Gastos vinculados descontam o restante previsto no gráfico, sem somar pagamentos de faturas. A revisão abre todos os meses para alcançar pendências anteriores. Nenhuma migração ou alteração automática de valores.
+
+Validação: `node scripts/discovery-smoke.js index.html` e demais testes de regressão.
