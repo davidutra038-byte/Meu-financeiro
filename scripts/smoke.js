@@ -98,14 +98,14 @@ if(file.includes('v11')||file==='index.html'&&source.includes('function budgetIs
  assert.equal(d.entries[0].status,'nao_realizado','Unused bill must not become paid');
  assert.equal(d.ledger.length,0,'Unused bill cannot change cash');
  expense.status='pago';
- context.__test.submitForm(fakeForm(expense),'saveExpense');
+ context.__test.setTarget('test-luz');context.__test.submitForm(fakeForm(expense),'saveExpense');
  assert.equal(d.entries[0].status,'pago');
  assert.equal(d.ledger.length,1);
  assert.equal(d.ledger[0].cents,-9000);
- context.__test.submitForm(fakeForm(expense),'saveExpense');
+ context.__test.setTarget('test-luz');context.__test.submitForm(fakeForm(expense),'saveExpense');
  assert.equal(d.ledger.length,1,'Editing paid item must not add duplicate cash movement');
  expense.status='previsto';
- context.__test.submitForm(fakeForm(expense),'saveExpense');
+ context.__test.setTarget('test-luz');context.__test.submitForm(fakeForm(expense),'saveExpense');
  assert.equal(d.ledger.length,0,'Reopened paid item must reverse linked cash movement');
  assert.equal(d.entries[0].status,'previsto');
 }
