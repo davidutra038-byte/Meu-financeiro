@@ -29,4 +29,12 @@ jobs:
               print(file,'syntax and privacy OK')
           PY
       - name: Run synthetic simulation tests
-        run: node scripts/smoke.js review-v9.html
+        run: node scripts/smoke.js index.html
+      - name: Package source for independent review
+        run: zip -j Meu_Financeiro_V9_Para_Claude.zip index.html AVALIACAO_CLAUDE.md README.md
+      - name: Upload downloadable app
+        uses: actions/upload-artifact@v4
+        with:
+          name: Meu-Financeiro-V9-para-Claude
+          path: Meu_Financeiro_V9_Para_Claude.zip
+          retention-days: 30
