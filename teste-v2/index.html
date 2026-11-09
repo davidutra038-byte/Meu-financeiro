@@ -199,7 +199,7 @@ const defaultApp=()=>({version:1,createdAt:new Date().toISOString(),modifiedAt:n
 const fresh=()=>({schema:'meu-financeiro-offline-v4',version:4,name:'Meu Financeiro',openedAt:nowDate(),openingCents:0,salaryNetCents:0,referenceCycle:cycleOf(nowDate()),entries:[],invoices:[],movements:[],receivables:[],ledger:[],vault:{goalCents:5000000,targetCycle:'2028-03',monthlyPlannedCents:0,movements:[]},settings:{includeTravel:false,entrySchedules:{}},cardClosings:{},cardDueRules:{},appVNext:defaultApp()});
 const validate=raw=>{if(!raw||!Array.isArray(raw.entries)||!Array.isArray(raw.invoices)||!Array.isArray(raw.movements))throw Error('O arquivo não tem a estrutura de um backup do Meu Financeiro.');const x=structuredClone(raw);x.entries=x.entries||[];x.invoices=x.invoices||[];x.movements=x.movements||[];x.ledger=x.ledger||[];x.receivables=x.receivables||[];x.vault=x.vault||{goalCents:5000000,movements:[]};x.vault.movements=x.vault.movements||[];x.settings=x.settings||{};x.cardClosings=x.cardClosings||{};x.cardDueRules=x.cardDueRules||{};x.appVNext={...defaultApp(),...(x.appVNext||{})};x.appVNext.recurrences=x.appVNext.recurrences||[];x.appVNext.cardLimits=x.appVNext.cardLimits||{};x.appVNext.cashLog=x.appVNext.cashLog||[];if(new Set(x.entries.map(e=>e.id)).size!==x.entries.length)throw Error('O backup contém IDs de lançamentos duplicados; importação interrompida.');return x};
 const load=()=>{try{const raw=localStorage.getItem(STORE);if(raw){data=validate(JSON.parse(raw));ui.mode=data.appVNext.mode||'cycle';ui.cardMonth=data.cardViewCycle||monthOf(nowDate());ui.selectedCard=data.settings?.selectedCard||'';return}}catch(err){console.error('Falha ao ler dados',err);toast('Dados locais inválidos. Importe um backup seguro.')}data=null};
-const save=()=>{if(!data)return;data.appVNext.modifiedAt=new Date().toISOString();try{localStorage.setItem(STORE,JSON.stringify(data))}catch(err){alert('Falha ao salvar no navegador. Exporte seu backup agora. '+err.message)}};
+const save=()=>{if(!data)return false;data.appVNext.modifiedAt=new Date().toISOString();try{localStorage.setItem(STORE,JSON.stringify(data));return true}catch(err){alert('Falha ao salvar no navegador. Exporte seu backup agora. '+err.message);return false}};
 const toast=msg=>{document.querySelector('.message')?.remove();const n=document.createElement('div');n.className='message';n.textContent=msg;document.body.append(n);setTimeout(()=>n.remove(),3800)};
 const activeEntry=e=>e.status!=='nao_realizado'&&e.status!=='cancelado'&&e.includeInProjection!==false&&!(e.optionalTravel&&!data?.settings?.includeTravel);
 const isPastPaid=e=>e.status==='pago'||e.status==='recebido';
@@ -858,7 +858,7 @@ function applyBillPayment(r,amount,date,already){
 function settleBill(fd){
  const kind=String(fd.get('kind')),id=String(fd.get('id')),r=paymentRow(kind,id),amount=fromMoney(fd.get('amount')),date=String(fd.get('paidDate')),already=fd.has('already');
  if(!r)throw Error('Esse compromisso não está mais pendente. Atualize a tela.');
- applyBillPayment(r,amount,date,already);ui.billSelected=ui.billSelected.filter(k=>k!==kind+':'+id);save();closeModal();render();toast('Pagamento confirmado. Caixa e projeções atualizados.');
+ const prior=structuredClone(data);try{applyBillPayment(r,amount,date,already);if(!save())throw Error('Não foi possível gravar o pagamento no navegador. O registro anterior foi preservado.');}catch(err){data=prior;throw err;}ui.billSelected=ui.billSelected.filter(k=>k!==kind+':'+id);closeModal();render();toast('Pagamento confirmado. Caixa e projeções atualizados.');
 }
 function bulkPaymentModal(){
  const chosen=[...new Set(ui.billSelected)].map(key=>{const colon=key.indexOf(':');return colon>0?paymentRow(key.slice(0,colon),key.slice(colon+1)):null}).filter(Boolean);
@@ -883,7 +883,7 @@ function settleBulk(fd){
  if(!rows.length||rows.some(r=>!r))throw Error('Algum compromisso não está mais pendente. Atualize a página.');
  const before=structuredClone(data);
  try{for(const r of rows)applyBillPayment(r,r.cents,date,already);}catch(err){data=before;throw err;}
- ui.billSelected=[];save();closeModal();render();toast(rows.length+' pagamentos confirmados e projeções recalculadas.');
+ if(!save()){data=before;throw Error('Não foi possível gravar os pagamentos no navegador. Os registros anteriores foram preservados.');}ui.billSelected=[];closeModal();render();toast(rows.length+' pagamentos confirmados e projeções recalculadas.');
 }
 
 function entryModal(entryId=null,reqType='despesa'){
