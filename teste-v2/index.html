@@ -33,6 +33,23 @@
 .global-small-note{color:var(--sub);font-size:11px;line-height:1.5;margin-top:12px}
 @media(max-width:1000px){.global-columns{grid-template-columns:1fr}.global-chart-col{order:-1}}
 @media(max-width:600px){.global-compact{padding:15px!important}.global-bars{height:155px}.global-month-bars{height:116px}.global-category-summary{align-items:flex-start}.global-total{font-size:21px}.global-category-summary .small{max-width:240px}.global-chart-header{gap:8px}.global-chart-subtitle{font-size:12px}.global-month{padding-left:2px;padding-right:2px}.global-month-bars{gap:2px}.global-month-label{font-size:10px}.global-legend{font-size:10px}}
+
+.global-drilldown{border-bottom:1px solid var(--line);margin:0;padding:0!important}
+.global-drilldown>summary{list-style:none;cursor:pointer;padding:12px 0;border-radius:8px}
+.global-drilldown>summary::-webkit-details-marker,.spending-merchant>summary::-webkit-details-marker{display:none}
+.global-drilldown[open]>summary{background:#f6f9fb;padding:12px 8px}
+.global-drilldown>.global-drill-body{padding:0 0 11px;border-top:1px solid var(--line)}
+.global-tap-hint{font-size:10px;color:var(--sub);margin-top:6px}
+.spending-merchant{border-bottom:1px solid var(--line)}.spending-merchant>summary{display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer;padding:13px 3px;font-size:12px;list-style:none}
+.spending-merchant>summary span{font-weight:700;min-width:0;overflow-wrap:anywhere}
+.spending-merchant>summary small{font-size:10px;color:var(--sub);display:block;font-weight:400;margin-top:4px}
+.spending-merchant>summary strong{white-space:nowrap;font-variant-numeric:tabular-nums}
+.spending-merchant-rows{background:#f7f9fb;border-radius:9px;padding:0 10px}
+.spending-detail-row{padding:11px 0;display:flex;justify-content:space-between;gap:12px;align-items:flex-start;border-bottom:1px solid var(--line);font-size:12px}
+.spending-detail-row:last-child{border-bottom:0}
+.spending-description{min-width:0}.spending-description strong{font-size:12px;display:block;overflow-wrap:anywhere}.spending-description span{font-size:11px;display:block;color:var(--sub);line-height:1.5;margin-top:3px}
+.spending-detail-right{text-align:right;white-space:nowrap}.spending-detail-right>strong{font-variant-numeric:tabular-nums;display:block}.spending-detail-right>small{font-size:10px;color:var(--sub)}.spending-edit{border:0;background:none;color:var(--blue);font-size:11px;font-weight:700;padding:6px 0 0;cursor:pointer}
+
 </style></head><body><div id="root"></div><noscript>Ative JavaScript.</noscript><script>/* Meu Financeiro | Protótipo funcional VNext 1.0
    Interface pública sem dados; dados permanecem no navegador ou nos arquivos exportados.
    Importação não destrutiva da versão offline-v4. Valores sempre em centavos. */
@@ -178,15 +195,39 @@ function currentPeriod(){return projection(1).periods[0]}
 function goalsAmount(){return (data.vault?.movements||[]).reduce((n,m)=>n+safeN(m.cents),0)}
 function projectedBalance7(){const end=parseISO(nowDate());end.setDate(end.getDate()+7);const limit=`${end.getFullYear()}-${z(end.getMonth()+1)}-${z(end.getDate())}`;let total=0;for(const e of projectedEvents())if(e.projectDate<=limit)total+=(e.type==='receita'?1:-1)*safeN(e.cents);return actualCash().cash+total;}
 function coming(days=30){const end=parseISO(nowDate());end.setDate(end.getDate()+days);const limit=`${end.getFullYear()}-${z(end.getMonth()+1)}-${z(end.getDate())}`;return projectedEvents().filter(e=>e.type==='despesa'&&e.projectDate<=limit).sort((a,b)=>a.projectDate.localeCompare(b.projectDate));}
-function spendingByCategory(k=cycleKey()){
- const sums=new Map(),officialMonths=new Set(data.invoices.map(i=>`${i.card}|${monthOf(invoiceDate(i))}`));
+
+function purchaseMerchant(x){
+ let n=String(x.establishment||x.merchant||x.description||'Sem estabelecimento').trim();
+ n=n.replace(/\s*·\s*(?:parcela|compra)\s+[A-Z0-9]+.*$/i,'').replace(/\s*·\s*\d{1,3}\s*\/\s*\d{1,3}.*$/,'').replace(/\s*\(mínimo identificado\)$/i,'').trim();
+ if(/^brb mobilidade/i.test(n))return 'BRB Mobilidade';
+ if(/^uber(?:\s|$)/i.test(n))return 'Uber';
+ if(/parcelamento.*fatura|fatura.*parcelad/i.test(n))return 'Parcelamento de fatura';
+ return n||'Sem estabelecimento';
+}
+function invoiceByRef(card,ref){return data.invoices.find(i=>!i.deleted&&i.card===card&&(i.cycle||cycleOf(invoiceDate(i)))===ref)||null}
+function spendingRecords(){
+ const list=[];
  for(const e of canonicalEntries()){
-  if(e.type!=='despesa'||e.category==='Faturas de cartão'||isPastPaid(e)&&dueDateEntry(e).date<nowDate().slice(0,7)+'-01')continue;
-  if(modeKey(dueDateEntry(e).date)!==k)continue;if(e.card&&officialMonths.has(`${e.card}|${monthOf(dueDateEntry(e).date)}`))continue;
-  sums.set(e.category,(sums.get(e.category)||0)+safeN(e.cents));}
- for(const m of data.movements){if(m.deleted||m.excludedFromInvoiceDetails||!m.date||modeKey(m.date)!==k||!m.cents||m.cents<0)continue;
-  sums.set(m.category||'Outros',(sums.get(m.category||'Outros')||0)+safeN(m.cents));}
- return [...sums].sort((a,b)=>b[1]-a[1]);}
+  if(e.type!=='despesa'||!activeEntry(e)||e.deleted||e.category==='Faturas de cartão'||String(e.id||'').startsWith('fatura-')||safeN(e.cents)<=0)continue;
+  if(e.card&&invoiceByRef(e.card,e.month)&&e.financialKind!=='loan')continue;
+  const d=dueDateEntry(e),date=parseISO(e.date)?e.date:d.date;if(!parseISO(date))continue;
+  list.push({kind:'entry',id:e.id,ref:e.month||cycleOf(date),date,category:e.category||'Outros / a classificar',merchant:purchaseMerchant(e),description:e.description||'',card:e.card||'',cents:safeN(e.cents),installment:e.installment||'',estimated:d.estimated,status:e.status||'',source:e});
+ }
+ for(const m of data.movements){
+  if(m.deleted||m.excludedFromInvoiceDetails||m.invoiceRecordVisibility==='archive-only'||safeN(m.cents)<=0)continue;
+  const invoice=data.invoices.find(i=>i.id===m.invoice&&!i.deleted);
+  const card=invoice?.card||mapCardId(m.invoice||'');
+  const date=parseISO(m.date)?m.date:(invoice?invoiceDate(invoice):'');
+  if(!parseISO(date))continue;
+  list.push({kind:'movement',id:m.id,ref:invoice?.cycle||cycleOf(date),date,category:m.category||'Outros / a classificar',merchant:purchaseMerchant(m),description:m.description||'',card,cents:safeN(m.cents),installment:m.installment||'',estimated:!parseISO(m.date),status:'registrado',source:m});
+ }
+ return list;
+}
+function spendingByCategory(k=cycleKey()){const sums=new Map();for(const r of spendingRecords()){if(modeKey(r.date)!==k)continue;sums.set(r.category,(sums.get(r.category)||0)+r.cents)}return [...sums].sort((a,b)=>b[1]-a[1]);}
+function spendingRowsForPeriods(periods){const keys=new Set(periods.map(p=>p.key));return spendingRecords().filter(r=>keys.has(modeKey(r.date)));}
+function groupSpending(items,keyFn){const groups=new Map();for(const item of items){const key=keyFn(item)||'Outros';if(!groups.has(key))groups.set(key,[]);groups.get(key).push(item)}return [...groups].map(([name,rows])=>({name,rows,total:rows.reduce((n,r)=>n+r.cents,0)})).sort((a,b)=>b.total-a.total||a.name.localeCompare(b.name,'pt-BR'));}
+function spendingDetailRow(r){return `<div class="spending-detail-row"><div class="spending-description"><strong>${esc(r.description)}</strong><span>${fullDate(r.date)}${r.card?' · '+esc(r.card):' · Conta/dinheiro'}${r.installment?' · '+esc(r.installment):''}${r.estimated?' · estimado':''}</span></div><div class="spending-detail-right"><strong>${money(r.cents)}</strong>${r.source?.virtual?'<small>Previsão automática</small>':`<button type="button" class="spending-edit" data-act="edit-${r.kind}" data-id="${esc(r.id)}">Editar</button>`}</div></div>`;}
+function spendingMerchantGroups(records){return groupSpending(records,r=>r.merchant).map(g=>`<details class="spending-merchant"><summary><span>${esc(g.name)}<small>${g.rows.length} ${g.rows.length===1?'lançamento':'lançamentos'}</small></span><strong>${money(g.total)}</strong></summary><div class="spending-merchant-rows">${g.rows.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(spendingDetailRow).join('')}</div></details>`).join('');}
 function cardListFor(month=ui.cardMonth){const set=new Set([...data.invoices.map(i=>i.card),...allCards()]);return [...set].map(card=>{
  const inv=data.invoices.filter(i=>i.card===card&&(i.cycle||cycleOf(invoiceDate(i)))===month&&!i.deleted);
  const amt=inv.reduce((n,i)=>n+invoiceAmt(i),0);
@@ -302,18 +343,20 @@ function selectedGlobal(){
   cats:[...cats].sort((a,b)=>b[1]-a[1]),negativePeriods:periods.filter(p=>p.closing<0)};
 }
 
+
 function globalCategoryPanel(g){
- const total=g.cats.reduce((n,[,v])=>n+v,0), n=g.cats.length, shown=ui.globalCategoriesExpanded?g.cats:g.cats.slice(0,4), rest=g.cats.slice(4);
- const row=([name,sum],i)=>{
-  const pct=total?sum/total*100:0;
-  return `<div class="global-category-item"><div class="global-category-top"><div class="global-cat-name"><span class="global-cat-rank">${i+1}</span><span>${esc(name)}</span></div><strong>${money(sum)}</strong></div><div class="global-category-bottom"><div class="global-bar"><span style="width:${Math.min(100,pct).toFixed(2)}%"></span></div><span class="global-pct">${pct.toFixed(1).replace('.',',')}%</span></div></div>`;
+ const records=spendingRowsForPeriods(g.periods),groups=groupSpending(records,r=>r.category),total=records.reduce((n,r)=>n+r.cents,0),n=groups.length;
+ const shown=ui.globalCategoriesExpanded?groups:groups.slice(0,4),rest=groups.slice(4);
+ const row=(group,i)=>{
+  const pct=total?group.total/total*100:0;
+  return `<details class="global-category-item global-drilldown"><summary><div class="global-category-top"><div class="global-cat-name"><span class="global-cat-rank">${i+1}</span><span>${esc(group.name)}</span></div><strong>${money(group.total)}</strong></div><div class="global-category-bottom"><div class="global-bar"><span style="width:${Math.min(100,pct).toFixed(2)}%"></span></div><span class="global-pct">${pct.toFixed(1).replace('.',',')}%</span></div><div class="global-tap-hint">${group.rows.length} lançamentos · Toque para detalhar</div></summary><div class="global-drill-body">${spendingMerchantGroups(group.rows)}</div></details>`;
  };
  return section('Onde estão os gastos',`<div class="card pad global-compact">
  <div class="global-category-summary"><div><div class="global-total">${money(total)}</div><div class="small">${n} categorias classificadas · ${fullDate(g.startDate)} a ${fullDate(g.endDate)}</div></div>
  <button type="button" class="global-info-button" data-act="global-category-info" aria-expanded="${ui.globalCategoriesInfo}">${ui.globalCategoriesInfo?'Ocultar explicação':'Sobre os valores'}</button></div>
- ${ui.globalCategoriesInfo?'<div class="global-category-explain">Os valores reúnem gastos classificados e compras registradas no cartão, inclusive históricos do intervalo. São diferentes das saídas projetadas de caixa, que consideram as faturas no vencimento.</div>':''}
+ ${ui.globalCategoriesInfo?'<div class="global-category-explain">Mostra compras e despesas classificadas por data do registro ou vencimento previsto. Compras no cartão não são novamente abatidas do caixa, pois o desembolso ocorre ao pagar a fatura. O detalhamento pode ser parcial.</div>':''}
  ${n?shown.map(row).join(''):empty('Nenhuma categoria com gasto no intervalo.')}
- ${!ui.globalCategoriesExpanded&&rest.length?`<div class="global-others"><span>Outras ${rest.length} categorias</span><strong>${money(rest.reduce((n,[,v])=>n+v,0))}</strong></div>`:''}
+ ${!ui.globalCategoriesExpanded&&rest.length?`<div class="global-others"><span>Outras ${rest.length} categorias</span><strong>${money(rest.reduce((n,g)=>n+g.total,0))}</strong></div>`:''}
  ${n>4?`<button type="button" class="global-show-all" data-act="global-categories-toggle">${ui.globalCategoriesExpanded?'Mostrar principais categorias':'Ver todas as '+n+' categorias'} <span aria-hidden="true">${ui.globalCategoriesExpanded?'⌃':'⌄'}</span></button>`:''}
  </div>`);
 }
