@@ -138,6 +138,13 @@
 .bill-bulk-bar .btn{min-height:36px}
 @media(max-width:650px){.bill-filters{grid-template-columns:1fr}.bill-item-main{gap:8px}.bill-item-value strong{font-size:12px}.bill-item-copy strong{font-size:12px}.bill-item-actions .btn{flex:1;max-width:145px}.bill-status-tabs button{padding:8px 2px;font-size:11px}}
 
+
+.bill-payment-summary{display:flex;flex-direction:column;gap:6px;padding:12px;background:#f2f7fa;border-radius:10px;font-size:13px;font-weight:650}
+.bill-payment-summary strong{font-size:19px;font-variant-numeric:tabular-nums}.bill-payment-summary small{font-size:11px;color:var(--sub);font-weight:400}
+.bulk-payment-items{max-height:250px;overflow-y:auto;border:1px solid var(--line);border-radius:10px;padding:0 10px}
+.bulk-payment-items>div{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px;padding:9px 0;border-bottom:1px solid var(--line)}.bulk-payment-items>div:last-child{border-bottom:0}
+.bulk-payment-items strong{white-space:nowrap;font-variant-numeric:tabular-nums}
+
 </style></head><body><div id="root"></div><noscript>Ative JavaScript.</noscript><script>/* Meu Financeiro | Protótipo funcional VNext 1.0
    Interface pública sem dados; dados permanecem no navegador ou nos arquivos exportados.
    Importação não destrutiva da versão offline-v4. Valores sempre em centavos. */
@@ -773,6 +780,76 @@ function openModal(title,body,buttons='<button class="btn" type="button" data-ac
 function closeModal(){$('.modal')?.close()}
 const opt=(values,selected)=>values.map(([v,t])=>`<option value="${esc(v)}" ${v===selected?'selected':''}>${esc(t)}</option>`).join('');
 const field=(label,name,type,value='',attrs='')=>`<div class="field"><label for="f-${esc(name)}">${esc(label)}</label><input class="input" id="f-${esc(name)}" name="${esc(name)}" type="${type}" value="${esc(value)}" ${attrs}></div>`;
+
+function paymentRow(kind,id){
+ if(kind==='entry'){const e=data.entries.find(x=>x.id===id);if(!e||e.type!=='despesa'||e.card||isPastPaid(e)||!activeEntry(e))return null;
+  const d=dueDateEntry(e);return {kind,id,description:e.description,cents:projectedEntryCents(e),due:d.date,source:e};}
+ if(kind==='invoice'){const i=data.invoices.find(x=>x.id===id);if(!i||i.deleted||i.paid)return null;
+  return {kind,id,description:'Fatura '+i.card,cents:invoiceAmt(i),due:invoiceDate(i),source:i};}
+ return null;
+}
+function paymentModal(kind,id){
+ const r=paymentRow(kind,id);
+ if(!r)return toast('Esse compromisso já foi resolvido ou é apenas uma previsão sem fatura confirmada.');
+ const past=r.due<(data.openedAt||nowDate()),date=nowDate();
+ const html=`<form id="modal-form" data-form="settle-bill" class="formgrid">
+ <input name="kind" type="hidden" value="${esc(kind)}"><input name="id" type="hidden" value="${esc(id)}">
+ <div class="field full"><label>Compromisso</label><div class="bill-payment-summary">${esc(r.description)}<strong>${money(r.cents)}</strong><small>Vencimento cadastrado: ${fullDate(r.due)}</small></div></div>
+ ${field('Valor efetivamente pago (R$)','amount','text',(r.cents/100).toFixed(2).replace('.',','),'required inputmode="decimal"')}
+ ${field('Data em que pagou','paidDate','date',date,'required max="'+nowDate()+'"')}
+ <label class="checklabel full"><input type="checkbox" name="already" ${past?'checked':''}> Este pagamento já estava incluído no saldo bancário inicial</label>
+ <div class="notice blue full">Ao confirmar, este compromisso deixará de aparecer como pendente e o saldo, os relatórios e as projeções serão recalculados. Não desconte novamente algo já incluído no saldo bancário.</div>
+ </form>`;
+ openModal('Confirmar pagamento',html,'<button class="btn" data-act="close-modal">Cancelar</button><button class="btn primary" type="submit" form="modal-form">Confirmar pagamento</button>');
+}
+function applyBillPayment(r,amount,date,already){
+ if(!r||!Number.isSafeInteger(amount)||amount<=0||amount>1000000000000||!parseISO(date)||date>nowDate())throw Error('Valor e data do pagamento devem ser válidos e não podem estar no futuro.');
+ if(r.kind==='entry'){
+  const e=data.entries.find(x=>x.id===r.id);if(!e||isPastPaid(e)||e.card)throw Error('A despesa já foi paga ou não permite pagamento direto.');
+  if(safeN(e.cents)!==amount&&e.plannedCents===undefined)e.plannedCents=safeN(e.cents);
+  e.cents=amount;e.paidAt=date;e.status='pago';e.alreadyInBalance=already;e.includeInProjection=true;
+  if(isConstructionEntry(e))e.constructionFixed=true;
+  entryCashSync(e,already);
+ }else if(r.kind==='invoice'){
+  const i=data.invoices.find(x=>x.id===r.id);if(!i||i.paid||i.deleted)throw Error('A fatura já foi paga ou não existe.');
+  i.paid=true;i.paidAt=date;i.estimated=false;
+  i.confirmedPaidAmountCents=amount;i.manualDeltaCents=amount-safeN(i.amountCents);
+  const lid=`vnext-invoice-${i.id}`;
+  data.ledger=data.ledger.filter(l=>l.id!==lid);
+  data.ledger.push({id:lid,date,cents:-amount,affectsCash:!already,description:'Pagamento da fatura '+i.card,category:'Faturas de cartão',relatedInvoiceId:i.id,vnext:true});
+ }else throw Error('Tipo de pagamento não suportado.');
+}
+function settleBill(fd){
+ const kind=String(fd.get('kind')),id=String(fd.get('id')),r=paymentRow(kind,id),amount=fromMoney(fd.get('amount')),date=String(fd.get('paidDate')),already=fd.has('already');
+ if(!r)throw Error('Esse compromisso não está mais pendente. Atualize a tela.');
+ applyBillPayment(r,amount,date,already);ui.billSelected=ui.billSelected.filter(k=>k!==kind+':'+id);save();closeModal();render();toast('Pagamento confirmado. Caixa e projeções atualizados.');
+}
+function bulkPaymentModal(){
+ const chosen=[...new Set(ui.billSelected)].map(key=>{const colon=key.indexOf(':');return colon>0?paymentRow(key.slice(0,colon),key.slice(colon+1)):null}).filter(Boolean);
+ const inRange=new Set(billedInMonth().map(r=>r.kind+':'+r.id));const safe=chosen.filter(r=>inRange.has(r.kind+':'+r.id));
+ if(!safe.length)return toast('Selecione uma ou mais contas a pagar nesta referência.');
+ const total=safe.reduce((n,r)=>n+r.cents,0);
+ const html=`<form id="modal-form" data-form="settle-bulk" class="formgrid">
+ <div class="field full"><div class="bill-payment-summary"><strong>${safe.length} contas selecionadas · ${money(total)}</strong><small>Confira os itens: marcar em lote significa que todos estes pagamentos realmente ocorreram.</small></div></div>
+ <div class="full bulk-payment-items">${safe.map(r=>`<div><span>${esc(r.description)}</span><strong>${money(r.cents)}</strong></div>`).join('')}</div>
+ ${field('Data efetiva dos pagamentos','paidDate','date',nowDate(),'required max="'+nowDate()+'"')}
+ <label class="checklabel full"><input name="already" type="checkbox"> Estes pagamentos já estavam incluídos no saldo bancário inicial</label>
+ <p class="small full">Todos os itens serão confirmados pelos valores cadastrados acima. Para valores ou datas diferentes, confirme individualmente. Faturas são contabilizadas uma vez.</p>
+ <label class="checklabel full"><input type="checkbox" name="confirmed" required> Confirmo que TODOS os pagamentos listados realmente ocorreram</label>
+ </form>`;
+ openModal('Confirmar pagamentos selecionados',html,'<button class="btn" data-act="close-modal">Cancelar</button><button class="btn primary" type="submit" form="modal-form">Confirmar todos</button>');
+}
+function settleBulk(fd){
+ if(!fd.has('confirmed'))throw Error('É preciso confirmar que todos os pagamentos foram realizados.');
+ const date=String(fd.get('paidDate')),already=fd.has('already');if(!parseISO(date)||date>nowDate())throw Error('Informe a data real dos pagamentos.');
+ const inRange=new Set(billedInMonth().map(r=>r.kind+':'+r.id));
+ const rows=[...new Set(ui.billSelected)].filter(key=>inRange.has(key)).map(key=>{const ix=key.indexOf(':');return paymentRow(key.slice(0,ix),key.slice(ix+1))});
+ if(!rows.length||rows.some(r=>!r))throw Error('Algum compromisso não está mais pendente. Atualize a página.');
+ const before=structuredClone(data);
+ try{for(const r of rows)applyBillPayment(r,r.cents,date,already);}catch(err){data=before;throw err;}
+ ui.billSelected=[];save();closeModal();render();toast(rows.length+' pagamentos confirmados e projeções recalculadas.');
+}
+
 function entryModal(entryId=null,reqType='despesa'){
  const e=entryId?byIdEntry(entryId):null;if(entryId&&!e)return toast('Lançamento não encontrado.');const edit=!!e;
  const oldHistorical=e&&isPastPaid(e)&&(e.dueDate||dueDateEntry(e).date)<(data.openedAt||nowDate());const alreadyChecked=!!(e?.alreadyInBalance||oldHistorical||data.ledger.some(l=>(l.id===`cash-entry-${e?.id}`||l.id===`vnext-cash-${e?.id}`)&&l.affectsCash===false));
@@ -843,6 +920,11 @@ document.addEventListener('click',async ev=>{const b=ev.target.closest('[data-ac
  if(act==='export-plain'){download(JSON.stringify(data,null,2),`Meu_Financeiro_Nova_Versao_${nowDate()}.json`);toast('Backup JSON exportado sem criptografia.');return}
  if(act==='export-encrypted'){await exportEncrypted();return}
  if(act==='new'){entryModal(null,b.dataset.type||'despesa');return}if(!data)return;
+ if(act==='pay-bill'){paymentModal(b.dataset.kind,b.dataset.id);return}
+ if(act==='bill-filter'){ui.billFilter=b.dataset.filter;ui.billSelected=[];render();return}
+ if(act==='bill-new'){entryModal(null,'despesa');return}
+ if(act==='bill-bulk'){bulkPaymentModal();return}
+ if(act==='bill-show-overdue'){ui.billMonth=shift(ui.billMonth,-1);ui.billFilter='pending';ui.billSelected=[];render();return}
  if(act==='edit-entry'){entryModal(b.dataset.id);return}if(act==='edit-movement'){movementModal(b.dataset.id);return}if(act==='edit-invoice'){invoiceModal(b.dataset.id);return}if(act==='edit-card'){cardModal(b.dataset.card);return}if(act==='select-card'){ui.selectedCard=b.dataset.card;render();return}
  if(act==='card-insight-tab'){const allowed=['categoria','merchant','parts','cards','largest','all'];if(allowed.includes(b.dataset.view)){ui.cardInsightView=b.dataset.view;render()}return}
  if(act==='edit-receivable'){receivableModal(b.dataset.id);return}
@@ -861,9 +943,12 @@ document.addEventListener('click',async ev=>{const b=ev.target.closest('[data-ac
  if(act==='expenses-more'){ui.expenseLimit+=40;render();return}
  if(act.startsWith('delete-')){deletion(act.slice(7),b.dataset.id);return}
 });
-document.addEventListener('submit',ev=>{const form=ev.target.closest('form[data-form]');if(!form)return;ev.preventDefault();const fd=new FormData(form),kind=form.dataset.form;try{if(kind==='entry')handleEntry(fd);else if(kind==='obra-plan')handleObraPlan(fd);else if(kind==='movement')handleMovement(fd);else if(kind==='invoice')handleInvoice(fd);else if(kind==='card')handleCard(fd);else if(kind==='receivable')handleReceivable(fd);else if(kind==='recurrence')handleRecurrence(fd);else if(kind==='goal')handleGoal(fd);else if(kind==='vault')handleVault(fd);else if(kind==='reconcile')handleReconcile(fd);}catch(err){console.error(err);alert('Falha ao salvar: '+err.message)}});
+document.addEventListener('submit',ev=>{const form=ev.target.closest('form[data-form]');if(!form)return;ev.preventDefault();const fd=new FormData(form),kind=form.dataset.form;try{if(kind==='entry')handleEntry(fd);else if(kind==='settle-bill')settleBill(fd);else if(kind==='settle-bulk')settleBulk(fd);else if(kind==='obra-plan')handleObraPlan(fd);else if(kind==='movement')handleMovement(fd);else if(kind==='invoice')handleInvoice(fd);else if(kind==='card')handleCard(fd);else if(kind==='receivable')handleReceivable(fd);else if(kind==='recurrence')handleRecurrence(fd);else if(kind==='goal')handleGoal(fd);else if(kind==='vault')handleVault(fd);else if(kind==='reconcile')handleReconcile(fd);}catch(err){console.error(err);alert('Falha ao salvar: '+err.message)}});
 document.addEventListener('change',ev=>{const f=ev.target,what=f?.dataset?.change;if(!what)return;
  if(what==='method'){$('#card-form-fields')?.classList.toggle('hide',f.value!=='card');return}
+ if(what==='bill-month'){ui.billMonth=f.value;ui.billSelected=[];render();return}
+ if(what==='bill-mode'){ui.billMode=f.value;ui.billSelected=[];render();return}
+ if(what==='bill-select'){const key=f.dataset.billKey;if(f.checked&&!ui.billSelected.includes(key))ui.billSelected.push(key);else if(!f.checked)ui.billSelected=ui.billSelected.filter(v=>v!==key);const count=$('#bill-bulk-count');if(count)count.textContent=ui.billSelected.length+' selecionadas';return}
  if(what==='plan-horizon'){ui.planHorizon=Number(f.value);ui.planSelectedMonth='';render();return}
  if(what==='plan-month'){ui.planSelectedMonth=f.value;render();return}
  if(what==='card-insight-card'){ui.cardInsightCard=f.value;render();return}if(what==='card-insight-scope'){ui.cardInsightScope=f.value;render();return}
