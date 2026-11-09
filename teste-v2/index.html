@@ -62,6 +62,18 @@
 .spending-insight-group{padding:0 3px}.spending-insight-body{min-height:45px}
 @media(max-width:560px){.insight-controls{grid-template-columns:1fr}.spending-tabs{margin-left:-3px;margin-right:-3px}}
 
+
+.installments-top{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;background:#f5f8fa;border-radius:12px;padding:12px;margin-bottom:12px}
+.installments-top>div{display:flex;flex-direction:column;gap:3px}.installments-top strong{font-weight:800;font-size:15px}.installments-top span{font-size:11px;color:var(--sub)}
+.installment-month{border-bottom:1px solid var(--line)}.installment-month>summary,.installment-sequence>summary{cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0;list-style:none}
+.installment-month>summary::-webkit-details-marker,.installment-sequence>summary::-webkit-details-marker{display:none}.installment-month>summary>span:first-child{min-width:0}
+.installment-month>summary strong,.installment-sequence>summary strong{font-size:12px}.installment-month summary small,.installment-sequence summary small{display:block;color:var(--sub);font-weight:400;font-size:11px;margin-top:5px}
+.installment-month-total{text-align:right;min-width:0}.installment-month-content{background:#f8fafb;padding:12px;border-radius:10px;margin-bottom:12px}
+.installment-month-note{color:var(--sub);font-size:12px;line-height:1.6}.installment-month-note strong{color:var(--ink)}
+.installment-sequence{border-bottom:1px solid var(--line)}.installment-sequence>summary>span{min-width:0;overflow-wrap:anywhere}.installment-sequence>summary>strong{white-space:nowrap}
+.installment-records{background:#fff;border-radius:10px;padding:0 10px}.installment-records>div{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 0;border-bottom:1px solid var(--line);font-size:12px}.installment-records>div:last-child{border-bottom:0}
+@media(max-width:480px){.installments-top{padding:10px;gap:8px}.installment-month>summary strong{font-size:11px}.installment-month-total strong{font-size:11px}}
+
 </style></head><body><div id="root"></div><noscript>Ative JavaScript.</noscript><script>/* Meu Financeiro | Protótipo funcional VNext 1.0
    Interface pública sem dados; dados permanecem no navegador ou nos arquivos exportados.
    Importação não destrutiva da versão offline-v4. Valores sempre em centavos. */
@@ -368,6 +380,50 @@ function cards(){const all=cardListFor(),selected=ui.selectedCard||all[0]?.card,
  ${invs.map(i=>`<div class="row"><div class="grow"><div class="row-main">Fatura ${esc(i.card)} · ${esc(i.cycle||monthOf(invoiceDate(i)))}</div><div class="row-sub">Vencimento ${fullDate(invoiceDate(i))} · ${i.estimated?'Estimativa':'Total registrado'}${i.manualDeltaCents?` · ajuste ${money(i.manualDeltaCents)}`:''}</div></div><div class="right"><div class="row-amount">${money(invoiceAmt(i))}</div>${statusPill(i.paid?'pago':'previsto')}</div><button class="btn sm" data-act="edit-invoice" data-id="${esc(i.id)}">Editar</button></div>`).join('')}
  ${future.length?`<div class="notice blue" style="margin-top:12px">Parcelamentos conhecidos sem fatura bancária cadastrada: ${money(future.reduce((n,e)=>n+e.cents,0))}. Isso é uma previsão mínima, não a fatura completa.</div>`:''}
  <div class="hr"></div><div class="flex between wrap"><h2 style="margin:0">Compras vinculadas ao cartão</h2><span class="small">Itens não substituem o total confirmado</span></div>${future.length?future.flatMap(e=>e.items||[]).slice(0,60).map(e=>`<div class="row"><div class="grow"><div class="row-main">${esc(e.description)}</div><div class="row-sub">${fullDate(e.dueDate)} · ${esc(e.category)}</div></div><strong class="row-amount">${money(e.cents)}</strong><button class="btn sm" data-act="edit-entry" data-id="${esc(e.id)}">Editar</button></div>`).join(''):''}${details.length?details.slice(0,60).map(m=>`<div class="row"><div class="grow"><div class="row-main">${esc(m.description)}</div><div class="row-sub">${fullDate(m.date)} · ${esc(m.category||'Sem categoria')} ${m.installment?' · '+esc(m.installment):''}</div></div><strong class="row-amount">${money(m.cents)}</strong><button class="btn sm" data-act="edit-movement" data-id="${esc(m.id)}">Editar</button></div>`).join(''):empty('Sem detalhes de compra informados para este cartão.')}</div></div>${cardInsightsPanel()}`}
+
+function installmentEndingGroups(){
+ const groups=new Map(),current=cycleKey();
+ for(const r of spendingRecords()){
+  if(r.ref<current)continue;const part=parseInstallment(r);if(!part||part.total<=1||r.source?.status==='nao_realizado')continue;
+  const end=shift(r.ref,part.total-part.number);
+  const raw=String(r.description||'').replace(/\s*·\s*parcela\s*\d+\s*\/\s*\d+.*$/i,'').replace(/\bparcela\s*(?:prevista\s*)?\d+\s*\/\s*\d+/i,'').replace(/\s*·\s*\d+\s*\/\s*\d+/,'').replace(/\s*\(mínimo identificado\)$/i,'').trim();
+  const name=raw||r.merchant||'Parcelamento';
+  const explicit=r.source?.series||r.source?.installmentGroupId||r.source?.loanId||'';
+  const key=explicit?'explicit:'+explicit+'|'+end:'estimated:'+r.card+'|'+name.toLowerCase()+'|'+r.cents+'|'+part.total+'|'+end;
+  if(!groups.has(key))groups.set(key,{key,name,card:r.card||'',end,total:part.total,rows:[],ambiguous:!explicit});
+  groups.get(key).rows.push({...r,part});
+ }
+ const sequences=[...groups.values()].map(g=>{
+  const start=Math.min(...g.rows.map(r=>r.part.number));
+  const expected=g.total-start+1;const seen=new Map();
+  for(const r of g.rows){if(!seen.has(r.part.number))seen.set(r.part.number,[]);seen.get(r.part.number).push(r)}
+  const complete=seen.size===expected&&Array.from({length:expected},(_,i)=>start+i).every(num=>{
+   const rows=seen.get(num)||[];
+   return rows.length===1&&shift(rows[0].ref,g.total-num)===g.end;
+  });
+  const last=seen.get(g.total)||[],endAmount=last.length===1?last[0].cents:0;
+  return {...g,firstNumber:start,remaining:expected,known:g.rows.reduce((n,r)=>n+r.cents,0),complete,release:complete?endAmount:0,lastAmount:endAmount};
+ }).sort((a,b)=>a.end.localeCompare(b.end)||a.name.localeCompare(b.name,'pt-BR'));
+ const endGroups=new Map();
+ for(const g of sequences){if(!endGroups.has(g.end))endGroups.set(g.end,{cycle:g.end,items:[],release:0,known:0,confirmed:0,partial:0,lastAmounts:0});const x=endGroups.get(g.end);x.items.push(g);x.known+=g.known;x.release+=g.release;x.lastAmounts+=g.lastAmount;x.confirmed+=g.complete?1:0;x.partial+=g.complete?0:1;}
+ return [...endGroups.values()].sort((a,b)=>a.cycle.localeCompare(b.cycle));
+}
+function installmentTimelinePanel(limit=24){
+ const groups=installmentEndingGroups().slice(0,limit),count=groups.reduce((n,g)=>n+g.items.length,0),
+ complete=groups.reduce((n,g)=>n+g.confirmed,0),partial=groups.reduce((n,g)=>n+g.partial,0);
+ if(!groups.length)return section('Quando as parcelas terminam',`<div class="card pad"><p class="small">Nenhuma sequência parcelada futura com numeração identificada nos dados atuais.</p></div>`);
+ return section('Quando as parcelas terminam',`<div class="card pad">
+ <div class="installments-top"><div><strong>${count} sequências</strong><span>${groups.length} meses de término identificados</span></div><div><strong>${complete} completas</strong><span>${partial} dependem de conferência</span></div></div>
+ <p class="small">Consulte quando terminam os parcelamentos conhecidos. Somente sequências com todas as parcelas restantes cadastradas entram na previsão de redução mensal. Os valores já compõem despesas e faturas; não são deduzidos novamente.</p>
+ ${groups.map(g=>`<details class="installment-month"><summary><span><strong>${esc(monthLabel(g.cycle))}</strong><small>${g.items.length} ${g.items.length===1?'parcelamento termina':'parcelamentos terminam'}</small></span><span class="installment-month-total"><strong>${g.release?money(g.release)+'/mês':'A conferir'}</strong><small>${g.release?'Redução mensal comprovada':'Sem redução comprovada'}</small></span></summary>
+ <div class="installment-month-content">
+ <div class="installment-month-note">Últimas parcelas conhecidas: <strong>${money(g.lastAmounts)}</strong>. Redução mensal após esta referência: <strong>${money(g.release)}</strong> (${g.confirmed} sequência(s) completas). ${g.partial?'Há '+g.partial+' sequência(s) parciais.':''}</div>
+ ${g.items.map(t=>`<details class="installment-sequence"><summary><span><strong>${esc((t.card?t.card+' · ':'')+t.name)}</strong><small>${t.rows.length} parcela(s) cadastrada(s) · ${t.complete?'calendário completo':'calendário parcial'}</small></span><strong>${t.complete?money(t.release)+'/mês':'Conferir'}</strong></summary>
+ <div class="installment-records">${t.rows.slice().sort((a,b)=>a.ref.localeCompare(b.ref)||a.part.number-b.part.number).map(r=>`<div><span>${esc(monthLabel(r.ref))} · ${r.part.number}/${r.part.total}</span><strong>${money(r.cents)}</strong></div>`).join('')}</div>
+ <p class="small">${t.complete?'Após a última parcela, esta sequência deixa de comprometer '+money(t.release)+' por mês, se não houver novas compras.':'Existem parcelas ainda não identificadas; a data final é uma estimativa pela numeração disponível e não é seguro afirmar quanto ficará livre.'}</p></details>`).join('')}
+ </div></details>`).join('')}
+ </div>`);
+}
 function plan(){const p=projection(12),rec=recurGroups(),manual=data.appVNext.recurrences||[],neg=p.periods.filter(m=>m.closing<0),fut=p.periods.slice(0,6);
  return `<div class="grid g3"><div class="card kpi"><div class="kpi-label">Horizonte do planejamento</div><div class="kpi-val">12 períodos</div><div class="kpi-foot">A partir de ${monthLabel(cycleKey())}</div></div><div class="card kpi"><div class="kpi-label">Períodos com saldo negativo</div><div class="kpi-val ${neg.length?'negative':''}">${neg.length}</div><div class="kpi-foot">Com base nos registros disponíveis</div></div><div class="card kpi"><div class="kpi-label">Menor saldo projetado</div><div class="kpi-val ${p.minimum<0?'negative':''}">${money(p.minimum)}</div><div class="kpi-foot">${fullDate(p.minDate)}</div></div></div>
  ${section('Simulador de compra',`<div class="card pad"><p class="small">Compare a projeção atual com uma compra hipotética sem gravar qualquer despesa.</p>${simulator()}</div>`)}
