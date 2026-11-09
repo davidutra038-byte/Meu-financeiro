@@ -153,6 +153,7 @@
 
 .expense-row-actions{display:flex;gap:7px;justify-content:flex-end;flex-wrap:wrap}
 @media(max-width:760px){.expense-mobile-footer{flex-wrap:wrap;align-items:center}.expense-row-actions .btn{font-size:11px;padding:8px 9px;min-height:32px}.plan-event-right button{font-size:11px}}
+.budget-summary{background:#f3f8fb;border-radius:11px;padding:14px;margin-bottom:8px}.budget-summary>div{display:flex;flex-direction:column;gap:5px}.budget-summary strong{font-size:20px}.budget-summary span{font-size:11px;color:var(--sub)}.budget-row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}.budget-row>div:first-child{min-width:0}.budget-row strong{display:block;font-size:12px}.budget-row span{display:block;font-size:11px;color:var(--sub);margin-top:5px}.budget-row>div:last-child{text-align:right;white-space:nowrap}.budget-row button{display:block;margin-left:auto}@media(max-width:480px){.budget-row{gap:8px}.budget-row>div:last-child strong{font-size:11px}}
 </style></head><body><div id="root"></div><noscript>Ative JavaScript.</noscript><script>/* Meu Financeiro | Protótipo funcional VNext 1.0
    Interface pública sem dados; dados permanecem no navegador ou nos arquivos exportados.
    Importação não destrutiva da versão offline-v4. Valores sempre em centavos. */
@@ -204,7 +205,18 @@ const activeEntry=e=>e.status!=='nao_realizado'&&e.status!=='cancelado'&&e.inclu
 const isPastPaid=e=>e.status==='pago'||e.status==='recebido';
 const isSalaryEntry=e=>e?.type==='receita'&&(String(e.id||'').startsWith('salario-liquido-')||String(e.id||'').startsWith('virtual-salary-')||/^sal[aá]rio\b/i.test(String(e.description||'')));
 const payrollDue=m=>effectiveBusinessDate(dateAt(m,20));
+
+function isVariableBudget(e){
+ if(!e||e.type!=='despesa')return false;
+ const name=String(e.description||'').trim().toLocaleLowerCase('pt-BR');
+ if(!['diversão','passagem','cabelo'].includes(name))return false;
+ return (String(e.id||'').startsWith('xl-')&&e.confidence==='planilha anterior')||(e.virtual&&String(e.id||'').startsWith('virtual-legacy-'));
+}
+function budgetDate(e){return effectiveBusinessDate(dateAt(e.month,20));}
+function variableBudgetsForRange(start,end){return getEvents().filter(e=>e.kind==='entry'&&isVariableBudget(e.source)&&e.date>=start&&e.date<=end);}
+
 function dueDateEntry(e){
+ if(isVariableBudget(e)&&!isPastPaid(e)&&e.month)return {date:budgetDate(e),estimated:true,budget:true};
  const salary=isSalaryEntry(e)&&!isPastPaid(e)&&e.month;
  if(salary){const day20=dateAt(e.month,20);if(!e.dueDate||e.dueDate===day20){const adjusted=payrollDue(e.month);return {date:adjusted,estimated:true,originalDate:day20,shifted:day20!==adjusted};}}
  if(e.dueDate&&parseISO(e.dueDate)){
@@ -385,7 +397,7 @@ function homeInstallmentPreview(){
 }
 
 function homeDueRow(e){
- const kind=e.kind||'',src=e.source,actionable=(kind==='entry'&&!src?.virtual&&src?.id)||kind==='invoice'&&src?.id;
+ const kind=e.kind||'',src=e.source,actionable=(kind==='entry'&&!src?.virtual&&!isVariableBudget(src)&&src?.id)||kind==='invoice'&&src?.id;
  const display=e.date||e.projectDate,isOverdue=display<nowDate();
  return `<div class="home-due-item"><div class="home-due-head"><div><strong>${esc(e.description||'Compromisso')}</strong><span>${isOverdue?'Vencida em ':'Vence '}${fullDate(display)}${e.estimated?' · estimado':''}</span></div><strong>${money(e.cents)}</strong></div>
  <div class="home-due-actions">${actionable?`<button class="btn sm primary" data-act="pay-bill" data-kind="${kind}" data-id="${esc(src.id)}">Marcar pago</button>`:''}
@@ -394,7 +406,7 @@ function homeDueRow(e){
  ${kind==='cardproject'||src?.virtual?`<button class="btn sm secondary" data-act="page" data-page="bills">Conferir previsão</button>`:''}</div></div>`;
 }
 
-function home(){const p=projection(6),cp=p.periods[0],cash=actualCash().cash,goal=safeN(data.vault?.goalCents||0),saved=goalsAmount(),payroll=payrollCycleSummary(),nextDate=payroll?.nextDate||'',next=nextDate?projectedEvents().filter(e=>e.type==='despesa'&&e.projectDate<nextDate):coming(30),co=coming(30),totalUntil=next.reduce((n,e)=>n+e.cents,0);
+function home(){const p=projection(6),cp=p.periods[0],cash=actualCash().cash,goal=safeN(data.vault?.goalCents||0),saved=goalsAmount(),payroll=payrollCycleSummary(),nextDate=payroll?.nextDate||'',next=nextDate?projectedEvents().filter(e=>e.type==='despesa'&&e.projectDate<nextDate):coming(30),co=coming(30).filter(e=>!(e.kind==='entry'&&isVariableBudget(e.source))),totalUntil=next.reduce((n,e)=>n+e.cents,0);
  const alerts=[];if(p.minimum<0)alerts.push(`<div class="notice red">${ico('alert')} <strong>Risco de saldo negativo:</strong> ${money(p.minimum)} em ${fullDate(p.minDate)}. Confira vencimentos e receitas ainda não confirmados.</div>`);
  if(next.some(x=>x.estimated))alerts.push(`<div class="notice blue">Há compromissos com data estimada. Eles entram na projeção, mas precisam ser confirmados.</div>`);
  return `<div class="grid g2"><div class="hero"><div class="hero-title">Caixa atual calculado</div><div class="hero-big num">${money(cash)}</div><div class="small">Saldo de referência em ${fullDate(data.openedAt)} + movimentações de caixa posteriores</div><div class="hero-bottom"><div><span class="small">Contas até o próximo salário ${nextDate?'('+fullDate(nextDate)+')':''}</span><strong>${money(totalUntil)}</strong></div><div><span class="small">Caixa até o próximo salário</span><strong class="${payroll?.untilSalary<0?'negative':''}">${payroll?money(payroll.untilSalary):'Sem previsão de salário'}</strong></div></div></div><div class="card pad"><div class="flex between"><h2 style="margin:0">Cofre do apartamento</h2><span class="pill">Meta pessoal</span></div><div class="kpi-val">${money(saved)} <span class="small">de ${money(goal)}</span></div><div class="goalbar"><span style="width:${goal>0?Math.min(100,Math.max(0,saved/goal*100)):0}%"></span></div><div class="flex between small"><span>${goal>0?(saved/goal*100).toFixed(1).replace('.',','):'0'}% da meta</span><span>Até ${esc(monthLabel(data.vault?.targetCycle))}</span></div><div class="hr"></div><button class="btn sm secondary" data-act="page" data-page="goals">Ver cofre e aportes ${ico('chevron')}</button></div></div>
@@ -454,7 +466,7 @@ function dueBillRecords(){
  for(const e of getEvents()){
   if(e.type!=='despesa'||!parseISO(e.date))continue;
   if(e.kind==='entry'){
-   if(e.source?.card)continue;
+   if(e.source?.card||isVariableBudget(e.source))continue;
    add({kind:'entry',id:e.source?.id||'',date:e.date,description:e.description,cents:safeN(e.cents),category:e.category||'Outros',status:'previsto',virtual:!!e.source?.virtual,estimated:e.estimated,source:e.source});
   }else if(e.kind==='invoice'){
    add({kind:'invoice',id:e.source.id,date:e.date,description:e.description,cents:safeN(e.cents),category:'Faturas de cartão',status:'previsto',card:e.card,estimated:e.estimated,source:e.source});
@@ -509,7 +521,7 @@ function bills(){
  payable=filtered.filter(r=>r.status!=='pago'&&(r.kind==='invoice'||r.kind==='entry')&&!r.virtual),range=billMonthRange();
  const overdue=dueBillRecords().filter(r=>r.status!=='pago'&&r.date<range.start&&r.date<nowDate()&&r.kind!=='forecast'&&!r.virtual);
  const revenues=getEvents().filter(r=>r.type==='receita'&&r.date>=range.start&&r.date<=range.end);
- const income=revenues.reduce((n,r)=>n+safeN(r.cents),0);
+ const income=revenues.reduce((n,r)=>n+safeN(r.cents),0),budgets=variableBudgetsForRange(range.start,range.end),reserved=budgets.reduce((n,e)=>n+safeN(e.cents),0);
  return `<div class="card pad bills-head">
  <div><h2 style="margin:0 0 5px">Conferir contas</h2><p class="small" style="margin:0">Boletos, compromissos e faturas em um único lugar. Confirmar um pagamento atualiza automaticamente o caixa e todas as projeções.</p></div>
  <div class="bill-filters"><div class="field"><label>Referência</label><input type="month" class="input" value="${esc(ui.billMonth)}" data-change="bill-month"></div><div class="field"><label>Visualizar</label><select data-change="bill-mode"><option value="calendar" ${ui.billMode==='calendar'?'selected':''}>Mês calendário</option><option value="cycle" ${ui.billMode==='cycle'?'selected':''}>Ciclo 20–19</option></select></div></div>
@@ -524,15 +536,18 @@ function bills(){
  ${filtered.length?filtered.map(r=>billRow(r,true)).join(''):empty('Não há contas com este filtro.')}
  ${payable.length?`<div class="bill-bulk-bar"><span id="bill-bulk-count">${ui.billSelected.filter(k=>payable.some(r=>r.kind+':'+r.id===k)).length} selecionadas</span><button type="button" class="btn sm secondary" data-act="bill-bulk">Confirmar selecionadas</button></div>`:''}
  <p class="small" style="margin:12px 0 0">Compras no cartão não são cobradas novamente: somente o pagamento da fatura reduz o caixa. Previsões sem fatura bancária precisam ser conferidas antes de marcar como pagas.</p>
- </div>`;
+ </div>
+ ${budgets.length?section('Orçamentos variáveis · não são boletos',`<div class="card pad"><div class="budget-summary"><div><strong>${money(reserved)}</strong><span>Valor reservado no planejamento do período · já entra na previsão de caixa</span></div></div>
+ ${budgets.map(e=>`<div class="budget-row"><div><strong>${esc(e.description)}</strong><span>${fullDate(e.date)} · provisão de gastos, não vencimento de boleto</span></div><div><strong>${money(e.cents)}</strong>${e.source?.virtual?'':`<button type="button" class="spending-edit" data-act="edit-entry" data-id="${esc(e.source.id)}">Ajustar orçamento</button>`}</div></div>`).join('')}
+ <p class="small" style="margin:12px 0 0">Esses valores representam limites previstos para gastos variáveis. Não use “Marcar pago” para eles. O uso efetivo de cada orçamento ainda precisa ser conciliado com os lançamentos reais para evitar sobreposição.</p></div>`):''}`;
 }
 
 function expenses(){
  const rows=expenseRows(),shown=rows.slice(0,ui.expenseLimit),
  total=rows.filter(e=>e.status!=='nao_realizado'&&e.status!=='cancelado').reduce((n,e)=>n+safeN(e.cents),0);
  const head=`<div class="flex between wrap" style="margin-bottom:15px"><div><h2 style="margin:0 0 4px">Compras e compromissos</h2><div class="small">Use a ordenação para priorizar movimentações recentes ou próximos pagamentos.</div></div><button class="btn primary" data-act="new" data-type="despesa">${ico('plus')} Nova despesa</button></div>`;
- const table=`<div class="tbl-wrap expenses-desktop"><table><thead><tr><th>Despesa</th><th>Data / competência</th><th>Pagamento</th><th>Situação</th><th style="text-align:right">Valor</th><th></th></tr></thead><tbody>${shown.map(e=>`<tr><td><strong>${esc(e.description)}</strong><span class="small">${esc(e.category||'Sem categoria')}${e.installment?' · '+esc(e.installment):''}</span></td><td>${e.dateInfo.date?fullDate(e.dateInfo.date):'Sem data'}${e.dateInfo.estimated?'<span class="small">Estimativa</span>':''}<span class="small">${esc(e.month||'')}</span></td><td>${esc(e.card||'Conta / dinheiro')}</td><td>${statusPill(e.status)}</td><td class="td-money">${money(e.cents)}</td><td class="td-actions">${e.rowType==='entry'&&!e.card&&e.status==='previsto'?'<button class="table-action" data-act="pay-bill" data-kind="entry" data-id="'+esc(e.id)+'">Marcar pago</button>':''}<button class="table-action" data-act="edit-${e.rowType}" data-id="${esc(e.id)}">Editar</button></td></tr>`).join('')}</tbody></table></div>`;
- const mobile=`<div class="expenses-mobile">${shown.map(e=>`<div class="expense-mobile-row"><div class="flex between expense-mobile-top"><div class="expense-mobile-heading">${esc(e.description)}</div><strong class="expense-mobile-amount">${money(e.cents)}</strong></div><div class="expense-mobile-detail">${esc(e.category||'Sem categoria')}${e.installment?' · '+esc(e.installment):''}</div><div class="expense-mobile-detail">${e.dateInfo.date?fullDate(e.dateInfo.date):'Sem data'}${e.dateInfo.estimated?' · estimada':''} · ${esc(e.card||'Conta / dinheiro')}</div><div class="expense-mobile-footer">${statusPill(e.status)}<div class="expense-row-actions">${e.rowType==='entry'&&!e.card&&e.status==='previsto'?'<button type="button" class="btn sm primary" data-act="pay-bill" data-kind="entry" data-id="'+esc(e.id)+'">Marcar pago</button>':''}<button type="button" class="btn sm" data-act="edit-${e.rowType}" data-id="${esc(e.id)}">Editar</button></div></div></div>`).join('')}</div>`;
+ const table=`<div class="tbl-wrap expenses-desktop"><table><thead><tr><th>Despesa</th><th>Data / competência</th><th>Pagamento</th><th>Situação</th><th style="text-align:right">Valor</th><th></th></tr></thead><tbody>${shown.map(e=>`<tr><td><strong>${esc(e.description)}</strong><span class="small">${esc(e.category||'Sem categoria')}${e.installment?' · '+esc(e.installment):''}</span></td><td>${e.dateInfo.date?fullDate(e.dateInfo.date):'Sem data'}${e.dateInfo.estimated?'<span class="small">Estimativa</span>':''}<span class="small">${esc(e.month||'')}</span></td><td>${esc(e.card||'Conta / dinheiro')}</td><td>${statusPill(e.status)}</td><td class="td-money">${money(e.cents)}</td><td class="td-actions">${e.rowType==='entry'&&!e.card&&e.status==='previsto'&&!isVariableBudget(e)?'<button class="table-action" data-act="pay-bill" data-kind="entry" data-id="'+esc(e.id)+'">Marcar pago</button>':''}<button class="table-action" data-act="edit-${e.rowType}" data-id="${esc(e.id)}">Editar</button></td></tr>`).join('')}</tbody></table></div>`;
+ const mobile=`<div class="expenses-mobile">${shown.map(e=>`<div class="expense-mobile-row"><div class="flex between expense-mobile-top"><div class="expense-mobile-heading">${esc(e.description)}</div><strong class="expense-mobile-amount">${money(e.cents)}</strong></div><div class="expense-mobile-detail">${esc(e.category||'Sem categoria')}${e.installment?' · '+esc(e.installment):''}</div><div class="expense-mobile-detail">${e.dateInfo.date?fullDate(e.dateInfo.date):'Sem data'}${e.dateInfo.estimated?' · estimada':''} · ${esc(e.card||'Conta / dinheiro')}</div><div class="expense-mobile-footer">${statusPill(e.status)}<div class="expense-row-actions">${e.rowType==='entry'&&!e.card&&e.status==='previsto'&&!isVariableBudget(e)?'<button type="button" class="btn sm primary" data-act="pay-bill" data-kind="entry" data-id="'+esc(e.id)+'">Marcar pago</button>':''}<button type="button" class="btn sm" data-act="edit-${e.rowType}" data-id="${esc(e.id)}">Editar</button></div></div></div>`).join('')}</div>`;
  return `<div class="card pad">${head}${filtersExpenses()}<div class="expense-resultbar"><span class="pill">${rows.length} registros na seleção</span><strong class="num">Soma dos itens: ${money(total)}</strong></div>
  <div class="notice blue" style="margin:12px 0">Soma das compras e compromissos filtrados, não do desembolso de caixa. Compras do cartão já integram suas faturas. ${ui.expensePeriod==='all'?'A seleção inclui todos os períodos, inclusive futuros.':''}</div>
  ${rows.length?table+mobile:empty('Não há lançamentos com estes filtros.')}
@@ -641,7 +656,7 @@ function planEventRow(e){
  if(kind==='entry'&&e.source&&!e.source.virtual)action=`<button class="spending-edit" data-act="edit-entry" data-id="${esc(e.source.id)}">Editar</button>`;
  else if(kind==='invoice'&&e.source)action=`<button class="spending-edit" data-act="edit-invoice" data-id="${esc(e.source.id)}">Ver fatura</button>`;
  else if(kind==='cardproject')action='<button class="spending-edit" data-act="page" data-page="cards">Ver cartões</button>';
- if(kind==='entry'&&e.source&&!e.source.virtual&&!e.source.card&&!isPastPaid(e.source))action='<button class="spending-edit" data-act="pay-bill" data-kind="entry" data-id="'+esc(e.source.id)+'">Marcar pago</button>'+action;
+ if(kind==='entry'&&e.source&&!e.source.virtual&&!e.source.card&&!isPastPaid(e.source)&&!isVariableBudget(e.source))action='<button class="spending-edit" data-act="pay-bill" data-kind="entry" data-id="'+esc(e.source.id)+'">Marcar pago</button>'+action;
  if(kind==='invoice'&&e.source&&!e.source.paid)action='<button class="spending-edit" data-act="pay-bill" data-kind="invoice" data-id="'+esc(e.source.id)+'">Marcar pago</button>'+action;
  return `<div class="plan-event-row"><div><strong>${esc(e.description||e.category||'Lançamento')}</strong><small>${fullDate(date)}${e.estimated?' · estimado':''}${e.card?' · '+esc(e.card):''}</small></div><div class="plan-event-right"><strong>${money(e.cents)}</strong>${action}</div></div>`;
 }
@@ -803,7 +818,7 @@ const opt=(values,selected)=>values.map(([v,t])=>`<option value="${esc(v)}" ${v=
 const field=(label,name,type,value='',attrs='')=>`<div class="field"><label for="f-${esc(name)}">${esc(label)}</label><input class="input" id="f-${esc(name)}" name="${esc(name)}" type="${type}" value="${esc(value)}" ${attrs}></div>`;
 
 function paymentRow(kind,id){
- if(kind==='entry'){const e=data.entries.find(x=>x.id===id);if(!e||e.type!=='despesa'||e.card||isPastPaid(e)||!activeEntry(e))return null;
+ if(kind==='entry'){const e=data.entries.find(x=>x.id===id);if(!e||e.type!=='despesa'||e.card||isPastPaid(e)||!activeEntry(e)||isVariableBudget(e))return null;
   const d=dueDateEntry(e);return {kind,id,description:e.description,cents:projectedEntryCents(e),due:d.date,source:e};}
  if(kind==='invoice'){const i=data.invoices.find(x=>x.id===id);if(!i||i.deleted||i.paid)return null;
   return {kind,id,description:'Fatura '+i.card,cents:invoiceAmt(i),due:invoiceDate(i),source:i};}
