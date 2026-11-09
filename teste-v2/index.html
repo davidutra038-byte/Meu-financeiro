@@ -221,15 +221,15 @@ function expenseRows(){
  if(ui.expenseMethod==='cartao'&&!e.card||ui.expenseMethod==='conta'&&e.card||ui.expenseMethod==='parcelado'&&!e.installment||ui.expenseMethod==='avista'&&e.installment)return false;
  return true});
  const date=e=>String(e.dateInfo.date||'0000-00-00');
- const actual=e=>e.rowType==='movement'||['pago','recebido'].includes(e.status);
+ const actual=e=>!!e.dateInfo.date&&e.dateInfo.date<=nowDate()&&(e.rowType==='movement'||['pago','recebido'].includes(e.status));
  const desc=(a,b)=>String(a.description||'').localeCompare(String(b.description||''),'pt-BR');
  const sort=ui.expenseSort||'activity';const today=nowDate();
  rows.sort((a,b)=>{
   const aa=actual(a),bb=actual(b),da=date(a),db=date(b);
   if(sort==='activity'){if(aa!==bb)return aa?-1:1;if(aa)return db.localeCompare(da)||desc(a,b);const af=da>=today,bf=db>=today;if(af!==bf)return af?-1:1;return (af?da.localeCompare(db):db.localeCompare(da))||desc(a,b)}
-  if(sort==='upcoming'){const af=da>=today,bf=db>=today;if(af!==bf)return af?-1:1;return (af?da.localeCompare(db):db.localeCompare(da))||desc(a,b)}
-  if(sort==='date-asc')return da.localeCompare(db)||desc(a,b);
-  if(sort==='date-desc')return db.localeCompare(da)||desc(a,b);
+  if(sort==='upcoming'){if(!a.dateInfo.date||!b.dateInfo.date)return (!a.dateInfo.date?1:0)-(!b.dateInfo.date?1:0);const af=da>=today,bf=db>=today;if(af!==bf)return af?-1:1;return (af?da.localeCompare(db):db.localeCompare(da))||desc(a,b)}
+  if(sort==='date-asc')return (!a.dateInfo.date?1:0)-(!b.dateInfo.date?1:0)||da.localeCompare(db)||desc(a,b);
+  if(sort==='date-desc')return (!a.dateInfo.date?1:0)-(!b.dateInfo.date?1:0)||db.localeCompare(da)||desc(a,b);
   if(sort==='value-desc')return safeN(b.cents)-safeN(a.cents)||db.localeCompare(da);
   if(sort==='value-asc')return safeN(a.cents)-safeN(b.cents)||db.localeCompare(da);
   return desc(a,b)||db.localeCompare(da);
