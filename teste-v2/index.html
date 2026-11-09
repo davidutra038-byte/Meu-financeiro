@@ -109,6 +109,20 @@
 .plan-end-alert>div{display:flex;flex-direction:column;gap:5px;min-width:0}.plan-end-alert>div:last-child{text-align:right}.plan-end-alert strong{font-size:12px}.plan-end-alert span{color:var(--sub);font-size:11px;line-height:1.45}
 @media(max-width:530px){.plan-end-alert{flex-direction:column}.plan-end-alert>div:last-child{text-align:left}}
 
+
+/* iPhone: opções sempre visíveis, sem faixa horizontal cortada */
+@media(max-width:760px){
+.spending-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;overflow:visible;margin:12px 0;padding:0}
+.spending-tabs button{width:100%;min-width:0;white-space:normal;overflow-wrap:anywhere;line-height:1.25;padding:10px 5px;font-size:12px}
+}
+.obra-base{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:15px 0}
+.obra-base>div{background:#f3f7f9;border:1px solid var(--line);border-radius:11px;padding:12px;display:flex;flex-direction:column;gap:6px}
+.obra-base span{color:var(--sub);font-size:11px}.obra-base strong{font-size:18px;font-variant-numeric:tabular-nums}
+.obra-form{display:grid;grid-template-columns:minmax(0,220px) auto;gap:12px;align-items:end;margin:10px 0 16px}
+.obra-projections>div{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);font-size:12px}
+.obra-projections strong{font-variant-numeric:tabular-nums}.obra-projections span{min-width:0;color:var(--sub)}
+@media(max-width:540px){.obra-base{gap:8px}.obra-base strong{font-size:15px}.obra-form{grid-template-columns:1fr}.obra-projections>div{grid-template-columns:minmax(0,1fr) auto}.obra-projections button{grid-column:1/-1;justify-self:start}}
+
 </style></head><body><div id="root"></div><noscript>Ative JavaScript.</noscript><script>/* Meu Financeiro | Protótipo funcional VNext 1.0
    Interface pública sem dados; dados permanecem no navegador ou nos arquivos exportados.
    Importação não destrutiva da versão offline-v4. Valores sempre em centavos. */
@@ -207,14 +221,43 @@ function canonicalEntries(){const raw=getAllEntries().filter(activeEntry),seen=n
  return [...regular,...seen.values()];}
 function invoiceAmt(i){return safeN(i.amountCents)+safeN(i.manualDeltaCents)}
 const invoiceDate=i=>{const raw=i.dueDateOverride||i.dueDate||dateAt(i.cycle||monthOf(nowDate()),data.cardDueRules?.[i.card]?.day||25);return i.paid?raw:effectiveBusinessDate(raw,false,data.cardDueRules?.[i.card]?.extraHolidays||[])};
+
+function isConstructionEntry(e){return !!e&&(String(e.id||'').startsWith('obra-')||e.forecastKind==='construction');}
+function obraBaseCycle(){const rows=data.entries.filter(isConstructionEntry).sort((a,b)=>String(a.month).localeCompare(String(b.month)));return rows[0]?.constructionBaseCycle||rows[0]?.month||'2026-11';}
+function obraBaseCents(){const base=obraBaseCycle();return safeN(data.entries.find(e=>isConstructionEntry(e)&&e.month===base)?.cents||0);}
+function obraRate(){return Number(data.settings?.obraGrowthPct)||0;}
+function projectedEntryCents(e){
+ const amount=safeN(e.cents);
+ if(!isConstructionEntry(e)||isPastPaid(e)||e.constructionFixed||e.confirmedAmount||e.confidence==='confirmado'||e.status==='confirmado')return amount;
+ const ref=e.constructionBaseCycle||obraBaseCycle(),month=e.month||monthOf(e.dueDate),months=(Number(month?.slice(0,4))-Number(ref.slice(0,4)))*12+Number(month?.slice(5,7))-Number(ref.slice(5,7));
+ if(!Number.isFinite(months)||months<=0)return amount;
+ const rate=obraRate(),computed=Math.round(amount*Math.pow(1+rate/100,Math.min(60,months)));
+ return Number.isSafeInteger(computed)&&computed>=0?computed:amount;
+}
+function obraProjectionPanel(){
+ const rows=data.entries.filter(e=>isConstructionEntry(e)&&!isPastPaid(e)&&activeEntry(e)).sort((a,b)=>String(a.month).localeCompare(String(b.month)));
+ if(!rows.length)return '';
+ const rate=obraRate(),base=obraBaseCycle(),nowM=monthOf(nowDate()),next=rows.filter(e=>e.month>=nowM).slice(0,6);
+ return section('Encargo de obra · previsão variável',`<div class="card pad">
+ <p class="small" style="margin-top:0">Hipótese de crescimento mensal informada no aplicativo anterior. Não é reajuste contratual garantido nem previsão oficial do banco. Cada boleto real pode substituir a estimativa daquele mês.</p>
+ <div class="obra-base"><div><span>Boleto-base · ${esc(monthLabel(base))}</span><strong>${money(obraBaseCents())}</strong></div><div><span>Taxa hipotética do plano</span><strong>${rate.toLocaleString('pt-BR',{maximumFractionDigits:2})}% ao mês</strong></div></div>
+ <form class="obra-form" data-form="obra-plan"><div class="field"><label for="obra-rate">Crescimento mensal estimado (%)</label><input id="obra-rate" class="input" type="number" name="rate" step="0.1" min="-50" max="100" required value="${esc(String(rate))}"></div><button type="submit" class="btn primary">Atualizar projeções</button></form>
+ <div class="obra-projections">${next.map(e=>`<div><span>${esc(monthLabel(e.month))}${e.constructionFixed?' · boleto confirmado':' · estimado'}</span><strong>${money(projectedEntryCents(e))}</strong><button class="spending-edit" type="button" data-act="edit-entry" data-id="${esc(e.id)}">Conferir boleto</button></div>`).join('')}</div>
+ <p class="small" style="margin-top:12px">As provisões anteriores permanecem armazenadas. O percentual altera somente o valor projetado dos meses elegíveis; não cria despesas nem modifica saldos de pagamentos realizados.</p>
+ </div>`);
+}
+function handleObraPlan(fd){const raw=String(fd.get('rate')||'').replace(',','.'),v=Number(raw);
+ if(!Number.isFinite(v)||v< -50||v>100)throw Error('Informe um percentual de -50% a 100%.');
+ data.settings.obraGrowthPct=v;save();render();toast('Previsões do encargo de obra atualizadas.');}
+
 function getEvents(){const events=[], invoicesByCardMonth=new Set();
  for(const i of data.invoices){if(i.deleted)continue;const date=invoiceDate(i);invoicesByCardMonth.add(`${i.card}|${monthOf(date)}`);if(!i.paid)events.push({id:`invoice:${i.id}`,date,kind:'invoice',type:'despesa',cents:invoiceAmt(i),description:`Fatura ${i.card}`,card:i.card,source:i,estimated:!!i.estimated,category:'Faturas de cartão'});}
  const cardSum=new Map();for(const e of canonicalEntries()){
   if(isPastPaid(e)||!activeEntry(e)||e.category==='Faturas de cartão'||e.id?.startsWith('fatura-'))continue;
   const t=dueDateEntry(e);const date=t.date;if(!parseISO(date))continue;
   if(e.card){const key=`${e.card}|${monthOf(date)}`;if(invoicesByCardMonth.has(key)&&!e.pendingInvoice)continue;
-   const cardkey=`${e.card}|${date}`;const v=cardSum.get(cardkey)||{id:`cardproject:${cardkey}`,date,kind:'cardproject',type:'despesa',cents:0,description:`Fatura prevista ${e.card}`,card:e.card,category:'Faturas de cartão',items:[],estimated:true};v.cents+=safeN(e.cents);v.items.push(e);cardSum.set(cardkey,v);
-  }else events.push({id:`entry:${e.id}`,date,kind:'entry',type:e.type,cents:safeN(e.cents),description:e.description,category:e.category,source:e,estimated:t.estimated});
+   const cardkey=`${e.card}|${date}`;const v=cardSum.get(cardkey)||{id:`cardproject:${cardkey}`,date,kind:'cardproject',type:'despesa',cents:0,description:`Fatura prevista ${e.card}`,card:e.card,category:'Faturas de cartão',items:[],estimated:true};v.cents+=projectedEntryCents(e);v.items.push(e);cardSum.set(cardkey,v);
+  }else events.push({id:`entry:${e.id}`,date,kind:'entry',type:e.type,cents:projectedEntryCents(e),description:e.description,category:e.category,source:e,estimated:t.estimated});
  }
  events.push(...cardSum.values());
  for(const r of data.receivables){const paid=new Set(r.paidCycles||[]);const start=r.firstCycle||monthOf(nowDate()),begin=Number(r.currentInstallment||1),end=Number(r.totalInstallments||1);for(let no=begin;no<=end;no++){
@@ -270,7 +313,7 @@ function spendingRecords(){
   if(e.type!=='despesa'||( !activeEntry(e)&&!isPastPaid(e))||e.deleted||e.category==='Faturas de cartão'||String(e.id||'').startsWith('fatura-')||safeN(e.cents)<=0)continue;
   if(e.card&&invoiceByRef(e.card,e.month)&&e.financialKind!=='loan')continue;
   const d=dueDateEntry(e),date=parseISO(e.date)?e.date:d.date;if(!parseISO(date))continue;
-  list.push({kind:'entry',id:e.id,ref:e.month||cycleOf(date),date,category:e.category||'Outros / a classificar',merchant:purchaseMerchant(e),description:e.description||'',card:e.card||'',cents:safeN(e.cents),installment:e.installment||'',estimated:d.estimated,status:e.status||'',source:e});
+  list.push({kind:'entry',id:e.id,ref:e.month||cycleOf(date),date,category:e.category||'Outros / a classificar',merchant:purchaseMerchant(e),description:e.description||'',card:e.card||'',cents:projectedEntryCents(e),installment:e.installment||'',estimated:d.estimated||isConstructionEntry(e)&&projectedEntryCents(e)!==safeN(e.cents),status:e.status||'',source:e});
  }
  for(const m of data.movements){
   if(m.deleted||m.excludedFromInvoiceDetails||m.invoiceRecordVisibility==='archive-only'||safeN(m.cents)<=0)continue;
@@ -526,6 +569,7 @@ function plan(){
  ${planMonthlyDetail(projectionData,selected.key)}
  ${installmentTimelinePanel(horizon)}
  ${planGoalCard()}
+ ${obraProjectionPanel()}
  <details class="card pad plan-collapsible section"><summary><span><strong>Simular uma compra</strong><small>Comparar antes de parcelar, sem gravar lançamentos</small></span></summary><div class="plan-extra-content">${simulator()}</div></details>
  ${planLoanComparison()}
  <details class="card pad plan-collapsible section"><summary><span><strong>Regras de receitas e despesas recorrentes</strong><small>${manual.length} regras novas · ${rec.length} sequências do backup</small></span></summary>
@@ -639,7 +683,7 @@ function entryModal(entryId=null,reqType='despesa'){
  const e=entryId?byIdEntry(entryId):null;if(entryId&&!e)return toast('Lançamento não encontrado.');const edit=!!e;
  const oldHistorical=e&&isPastPaid(e)&&(e.dueDate||dueDateEntry(e).date)<(data.openedAt||nowDate());const alreadyChecked=!!(e?.alreadyInBalance||oldHistorical||data.ledger.some(l=>(l.id===`cash-entry-${e?.id}`||l.id===`vnext-cash-${e?.id}`)&&l.affectsCash===false));
  const type=e?.type||reqType,method=e?.card?'card':'cash',amount=e?money(e.cents).replace('R$ ','').replace('R$ ',''):'',date=e?.dueDate||(!e?nowDate():dueDateEntry(e).date),stat=e?.status||'previsto',cards=allCards(),rec=e?.recurrenceId;
- const body=`<form id="modal-form" data-form="entry" class="formgrid"><input type="hidden" name="id" value="${esc(e?.id||'')}"><div class="field"><label>Natureza</label><select name="type" id="entry-type">${opt([['despesa','Despesa'],['receita','Receita']],type)}</select></div><div class="field"><label>Forma</label><select name="method" id="entry-method" data-change="method">${opt([['cash','Conta / dinheiro'],['card','Cartão de crédito']],method)}</select></div><div class="field full"><label>Descrição</label><input name="description" class="input" placeholder="Ex.: conta de luz" maxlength="160" required value="${esc(e?.description||'')}"></div>${field('Valor (R$)','amount','text',amount,'required inputmode="decimal" placeholder="Ex.: 189,90"')}${field('Data do pagamento / vencimento','date','date',date,'required')}
+ const body=`<form id="modal-form" data-form="entry" class="formgrid"><input type="hidden" name="id" value="${esc(e?.id||'')}"><div class="field"><label>Natureza</label><select name="type" id="entry-type">${opt([['despesa','Despesa'],['receita','Receita']],type)}</select></div><div class="field"><label>Forma</label><select name="method" id="entry-method" data-change="method">${opt([['cash','Conta / dinheiro'],['card','Cartão de crédito']],method)}</select></div><div class="field full"><label>Descrição</label><input name="description" class="input" placeholder="Ex.: conta de luz" maxlength="160" required value="${esc(e?.description||'')}"></div>${field('Valor (R$)','amount','text',amount,'required inputmode="decimal" placeholder="Ex.: 189,90"')}${isConstructionEntry(e)?`<label class="checklabel full"><input type="checkbox" name="constructionConfirmed" ${e.constructionFixed?'checked':''}> Valor deste boleto confirmado (não aplicar percentual sobre ele)</label>`:''}${field('Data do pagamento / vencimento','date','date',date,'required')}
  <div class="field"><label>Categoria</label><select name="category">${opt([...new Set([...categoryChoices,e?.category||''].filter(Boolean))].map(x=>[x,x]),e?.category||(type==='receita'?'Receitas':'Outros / a classificar'))}</select></div><div class="field"><label>Situação</label><select name="status">${opt(type==='receita'?[['previsto','Previsto'],['recebido','Recebido'],['nao_realizado','Não recebido']]:[['previsto','Previsto'],['pago','Pago'],['nao_realizado','Não realizado']],stat)}</select></div>
  <div class="field full ${method==='card'?'':'hide'}" id="card-form-fields"><div class="formgrid"><div class="field"><label>Cartão</label><select name="card">${opt(cards.map(x=>[x,x]),e?.card||cards[0])}</select></div><div class="field"><label>Parcelas</label><input class="input" name="parts" min="1" max="48" type="number" value="1" ${edit?'disabled':''}></div><label class="checklabel full"><input type="checkbox" name="included" ${edit&&!e?.pendingInvoice?'checked':''}> Esta compra já integra o total da fatura registrada pelo banco</label></div></div>
  <label class="checklabel full"><input type="checkbox" name="already" ${alreadyChecked?'checked':''}> Já está incluído no saldo bancário informado (não alterar caixa novamente)</label>
@@ -652,7 +696,7 @@ function handleEntry(fd){const eid=fd.get('id')||null,old=eid?byIdEntry(eid):nul
  if(method!=='card'&&['pago','recebido'].includes(status)&&date>nowDate())return alert('Um pagamento ou recebimento efetivado não pode ter data futura. Registre como previsto.');
  if(method==='card'&&type==='receita')return alert('Receita no cartão exige ajuste de fatura; registre como entrada na conta ou edite a fatura.');
  const card=method==='card'?fd.get('card'):'';if(method==='card'&&!card)return alert('Selecione um cartão.');
- if(old){const prevStatus=old.status,scope=fd.get('scope')||'one',targets=scope==='future'&&old.recurrenceId?data.entries.filter(x=>x.recurrenceId===old.recurrenceId&&x.month>=old.month):[old];for(const target of targets){const isFirst=target.id===old.id;target.cents=amount;target.category=cat;target.description=desc;target.type=type;target.card=card;target.status=isFirst?status:target.status;target.includeInProjection=true;target.pendingInvoice=method==='card'?!fd.has('included'):false;if(isFirst){target.dueDate=date;target.paidAt=isPastPaid(target)?date:'';target.alreadyInBalance=already;}entryCashSync(target,isFirst?already:(target.alreadyInBalance||false));}toast(`Lançamento atualizado${targets.length>1?` em ${targets.length} ocorrências`:''}.`);}
+ if(old){const prevStatus=old.status,scope=fd.get('scope')||'one',targets=scope==='future'&&old.recurrenceId?data.entries.filter(x=>x.recurrenceId===old.recurrenceId&&x.month>=old.month):[old];for(const target of targets){const isFirst=target.id===old.id;target.cents=amount;target.category=cat;target.description=desc;target.type=type;target.card=card;target.status=isFirst?status:target.status;target.includeInProjection=true;target.pendingInvoice=method==='card'?!fd.has('included'):false;if(isFirst&&isConstructionEntry(target))target.constructionFixed=fd.has('constructionConfirmed')||isPastPaid(target);if(isFirst){target.dueDate=date;target.paidAt=isPastPaid(target)?date:'';target.alreadyInBalance=already;}entryCashSync(target,isFirst?already:(target.alreadyInBalance||false));}toast(`Lançamento atualizado${targets.length>1?` em ${targets.length} ocorrências`:''}.`);}
  else if(method==='card'){
   const parts=Math.max(1,Math.min(48,Number(fd.get('parts')||1))),purchaseID=id(),firstDue=purchasedCardDue(card,date),firstMonth=monthOf(firstDue);
   for(let i=0;i<parts;i++){const mm=shift(firstMonth,i),due=cardDueDate(card,mm),c=Math.floor(amount/parts)+(i<amount%parts?1:0);data.entries.push({id:id(),month:cycleOf(due),type:'despesa',category:cat,description:parts>1?`${desc} · ${i+1}/${parts}`:desc,cents:c,card,status:'previsto',source:'Novo aplicativo · lançamento manual',dueDate:due,installment:parts>1?`${i+1}/${parts}`:'',series:purchaseID,pendingInvoice:!fd.has('included'),purchaseDate:date,confidence:'manual'});}toast(`Compra cadastrada em ${parts} parcela(s).`);
@@ -723,7 +767,7 @@ document.addEventListener('click',async ev=>{const b=ev.target.closest('[data-ac
  if(act==='expenses-more'){ui.expenseLimit+=40;render();return}
  if(act.startsWith('delete-')){deletion(act.slice(7),b.dataset.id);return}
 });
-document.addEventListener('submit',ev=>{const form=ev.target.closest('form[data-form]');if(!form)return;ev.preventDefault();const fd=new FormData(form),kind=form.dataset.form;try{if(kind==='entry')handleEntry(fd);else if(kind==='movement')handleMovement(fd);else if(kind==='invoice')handleInvoice(fd);else if(kind==='card')handleCard(fd);else if(kind==='receivable')handleReceivable(fd);else if(kind==='recurrence')handleRecurrence(fd);else if(kind==='goal')handleGoal(fd);else if(kind==='vault')handleVault(fd);else if(kind==='reconcile')handleReconcile(fd);}catch(err){console.error(err);alert('Falha ao salvar: '+err.message)}});
+document.addEventListener('submit',ev=>{const form=ev.target.closest('form[data-form]');if(!form)return;ev.preventDefault();const fd=new FormData(form),kind=form.dataset.form;try{if(kind==='entry')handleEntry(fd);else if(kind==='obra-plan')handleObraPlan(fd);else if(kind==='movement')handleMovement(fd);else if(kind==='invoice')handleInvoice(fd);else if(kind==='card')handleCard(fd);else if(kind==='receivable')handleReceivable(fd);else if(kind==='recurrence')handleRecurrence(fd);else if(kind==='goal')handleGoal(fd);else if(kind==='vault')handleVault(fd);else if(kind==='reconcile')handleReconcile(fd);}catch(err){console.error(err);alert('Falha ao salvar: '+err.message)}});
 document.addEventListener('change',ev=>{const f=ev.target,what=f?.dataset?.change;if(!what)return;
  if(what==='method'){$('#card-form-fields')?.classList.toggle('hide',f.value!=='card');return}
  if(what==='plan-horizon'){ui.planHorizon=Number(f.value);ui.planSelectedMonth='';render();return}
