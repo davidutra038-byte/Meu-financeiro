@@ -123,12 +123,27 @@
 .obra-projections strong{font-variant-numeric:tabular-nums}.obra-projections span{min-width:0;color:var(--sub)}
 @media(max-width:540px){.obra-base{gap:8px}.obra-base strong{font-size:15px}.obra-form{grid-template-columns:1fr}.obra-projections>div{grid-template-columns:minmax(0,1fr) auto}.obra-projections button{grid-column:1/-1;justify-self:start}}
 
+
+.bills-head{display:flex;flex-direction:column;gap:13px}.bill-filters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;max-width:600px}
+.bill-list-title{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.bill-status-tabs{display:flex;gap:5px;margin:16px 0 5px}.bill-status-tabs button{flex:1;min-width:0;font-size:12px}
+.bill-item{border-bottom:1px solid var(--line);padding:15px 0}.bill-item-main{display:flex;align-items:flex-start;gap:12px;min-width:0}
+.bill-item-copy{flex:1;min-width:0}.bill-item-copy strong{font-size:13px;display:block;line-height:1.45;overflow-wrap:anywhere}
+.bill-item-copy span{display:block;font-size:11px;line-height:1.55;color:var(--sub);margin-top:4px}
+.bill-item-value{text-align:right;flex-shrink:0;font-variant-numeric:tabular-nums}.bill-item-value strong{font-size:13px;white-space:nowrap}.bill-item-value small{display:block;color:var(--sub);font-size:10px;margin-top:4px}
+.bill-item-value small.negative{color:#bc5149}.bill-item-actions{display:flex;justify-content:flex-end;align-items:center;gap:7px;margin-top:9px;flex-wrap:wrap}
+.bill-item-actions .btn{font-size:11px;min-height:32px}.bill-select{margin-top:2px}.bill-select input{width:18px;height:18px}
+.bill-paid-pill{font-size:11px;color:#2d745e;background:#e7f6ef;padding:7px 10px;border-radius:8px}
+.bill-forecast-tag{font-size:11px;color:#a26d32}.bill-bulk-bar{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:12px;border-radius:10px;background:#f4f8fb;margin-top:14px;font-size:12px}
+.bill-bulk-bar .btn{min-height:36px}
+@media(max-width:650px){.bill-filters{grid-template-columns:1fr}.bill-item-main{gap:8px}.bill-item-value strong{font-size:12px}.bill-item-copy strong{font-size:12px}.bill-item-actions .btn{flex:1;max-width:145px}.bill-status-tabs button{padding:8px 2px;font-size:11px}}
+
 </style></head><body><div id="root"></div><noscript>Ative JavaScript.</noscript><script>/* Meu Financeiro | Protótipo funcional VNext 1.0
    Interface pública sem dados; dados permanecem no navegador ou nos arquivos exportados.
    Importação não destrutiva da versão offline-v4. Valores sempre em centavos. */
 (()=>{'use strict';
 const STORE='meu-financeiro-vnext-v2'; const MS=24*60*60*1000;
-const PAGES={home:['Início','Como estão minhas finanças'],expenses:['Despesas','Compras, contas e pagamentos'],receipts:['A receber','Entradas previstas e recebidas'],cards:['Cartões','Faturas, compras e vencimentos'],plan:['Planejamento','Compromissos, recorrências e cenários'],global:['Visão global','Seu panorama financeiro'],goals:['Minhas metas','Cofre e objetivos de poupança'],settings:['Configurações','Seus dados, datas e segurança']};
+const PAGES={home:['Início','Como estão minhas finanças'],bills:['Contas do mês','O que pagar e o que já foi pago'],expenses:['Despesas','Compras, contas e pagamentos'],receipts:['A receber','Entradas previstas e recebidas'],cards:['Cartões','Faturas, compras e vencimentos'],plan:['Planejamento','Compromissos, recorrências e cenários'],global:['Visão global','Seu panorama financeiro'],goals:['Minhas metas','Cofre e objetivos de poupança'],settings:['Configurações','Seus dados, datas e segurança']};
 const ICONS={home:'<path d="m3 10 9-7 9 7v10H3z"/><path d="M9 20v-7h6v7"/>',receipt:'<path d="M4 3h16v18l-4-2-4 2-4-2-4 2z"/><path d="M8 8h8M8 12h8"/>',wallet:'<rect x="3" y="5" width="18" height="15" rx="2"/><path d="M3 9h18"/><circle cx="16" cy="14.5" r="1"/>',card:'<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h5"/>',calendar:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18"/>',chart:'<path d="M3 3v18h18M7 17v-4M12 17V7M17 17v-8"/>',target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',settings:'<path d="M12 2v3m0 14v3M4.9 4.9 7 7m10 10 2.1 2.1M2 12h3m14 0h3M4.9 19.1 7 17M17 7l2.1-2.1"/><circle cx="12" cy="12" r="4"/>',plus:'<path d="M12 5v14M5 12h14"/>',chevron:'<path d="m9 18 6-6-6-6"/>',down:'<path d="m6 9 6 6 6-6"/>',search:'<circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/>',download:'<path d="M12 3v12m-5-5 5 5 5-5M4 18v3h16v-3"/>',edit:'<path d="M4 20h4L20 8l-4-4L4 16zM14 6l4 4"/>',more:'<circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/>',shield:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/>',alert:'<path d="M12 3 2 21h20zM12 9v5m0 3v1"/>',check:'<path d="M4 12 9 17 20 6"/>',trash:'<path d="M3 6h18M8 6V4h8v2m3 0-1 15H6L5 6m5 4v7m4-7v7"/>',upload:'<path d="M12 16V3m-5 5 5-5 5 5M4 17v4h16v-4"/>'};
 const ico=(n)=>`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[n]||ICONS.receipt}</svg>`;
 const $=s=>document.querySelector(s);const el=(s,root=document)=>root.querySelector(s);
@@ -163,7 +178,7 @@ const id=()=>`novo-${Date.now().toString(36)}-${Math.random().toString(36).slice
 const cycleKey=()=>modeKey(nowDate());
 const bStatus={previsto:'Previsto',pago:'Pago / recebido',recebido:'Recebido',nao_realizado:'Não realizado',cancelado:'Cancelado',registrado:'Compra registrada'};
 const categoryChoices=['Alimentação e lazer','Habitação','Transporte','Saúde e bem-estar','Comunicação','Vestuário','Serviços e assinaturas','Empréstimos','Encargos financeiros','Impostos e tributos','Viagem e eventos','Educação','Receitas','Outros / a classificar'];
-let data=null;let page='home';let modalMode='';let ui={mode:'cycle',selectedCard:'',cardMonth:monthOf(nowDate()),expenseQ:'',expensePeriod:'all',expenseStatus:'all',expenseMethod:'all',expenseCategory:'all',expenseCard:'all',expenseSort:'activity',expenseFiltersOpen:false,expenseLimit:40,cardInsightView:'categoria',cardInsightCard:'all',cardInsightScope:'ref',receiptQ:'',globalMonth:monthOf(nowDate()),horizon:12,globalStart:'',globalHorizon:1,globalCategoriesExpanded:false,globalCategoriesInfo:false,globalChartPage:0,globalSelected:0,planHorizon:12,planSelectedMonth:'',more:false,simAmount:'2400',simParts:6,simMethod:'credit',simCard:'',simFirst:''};
+let data=null;let page='home';let modalMode='';let ui={mode:'cycle',selectedCard:'',cardMonth:monthOf(nowDate()),expenseQ:'',expensePeriod:'all',expenseStatus:'all',expenseMethod:'all',expenseCategory:'all',expenseCard:'all',expenseSort:'activity',expenseFiltersOpen:false,expenseLimit:40,billMonth:monthOf(nowDate()),billMode:'calendar',billFilter:'pending',billSelected:[],cardInsightView:'categoria',cardInsightCard:'all',cardInsightScope:'ref',receiptQ:'',globalMonth:monthOf(nowDate()),horizon:12,globalStart:'',globalHorizon:1,globalCategoriesExpanded:false,globalCategoriesInfo:false,globalChartPage:0,globalSelected:0,planHorizon:12,planSelectedMonth:'',more:false,simAmount:'2400',simParts:6,simMethod:'credit',simCard:'',simFirst:''};
 const defaultApp=()=>({version:1,createdAt:new Date().toISOString(),modifiedAt:new Date().toISOString(),mode:'cycle',cardLimits:{},recurrences:[],cashLog:[],invoicePaidAt:{},newImports:0});
 const fresh=()=>({schema:'meu-financeiro-offline-v4',version:4,name:'Meu Financeiro',openedAt:nowDate(),openingCents:0,salaryNetCents:0,referenceCycle:cycleOf(nowDate()),entries:[],invoices:[],movements:[],receivables:[],ledger:[],vault:{goalCents:5000000,targetCycle:'2028-03',monthlyPlannedCents:0,movements:[]},settings:{includeTravel:false,entrySchedules:{}},cardClosings:{},cardDueRules:{},appVNext:defaultApp()});
 const validate=raw=>{if(!raw||!Array.isArray(raw.entries)||!Array.isArray(raw.invoices)||!Array.isArray(raw.movements))throw Error('O arquivo não tem a estrutura de um backup do Meu Financeiro.');const x=structuredClone(raw);x.entries=x.entries||[];x.invoices=x.invoices||[];x.movements=x.movements||[];x.ledger=x.ledger||[];x.receivables=x.receivables||[];x.vault=x.vault||{goalCents:5000000,movements:[]};x.vault.movements=x.vault.movements||[];x.settings=x.settings||{};x.cardClosings=x.cardClosings||{};x.cardDueRules=x.cardDueRules||{};x.appVNext={...defaultApp(),...(x.appVNext||{})};x.appVNext.recurrences=x.appVNext.recurrences||[];x.appVNext.cardLimits=x.appVNext.cardLimits||{};x.appVNext.cashLog=x.appVNext.cashLog||[];if(new Set(x.entries.map(e=>e.id)).size!==x.entries.length)throw Error('O backup contém IDs de lançamentos duplicados; importação interrompida.');return x};
@@ -340,8 +355,8 @@ function cardListFor(month=ui.cardMonth){const set=new Set([...data.invoices.map
 function cardDueDate(card,month){const rule=data.cardDueRules?.[card];return effectiveBusinessDate(dateAt(month,rule?.day||25),false,rule?.extraHolidays||[])}
 function purchasedCardDue(card,purchaseDate){const closing=Number(data.cardClosings?.[card]||0),rule=data.cardDueRules?.[card],day=Number(rule?.day||25),part=Number(purchaseDate.slice(8));const closeM=closing&&part>closing?shift(monthOf(purchaseDate),1):monthOf(purchaseDate);
  const dueM=closing?(day<=closing?shift(closeM,1):closeM):(day<part?shift(closeM,1):closeM);return cardDueDate(card,dueM);}
-function nav(){const btn=(p,i)=>`<button class="navbtn ${page===p?'active':''}" data-act="page" data-page="${p}">${ico(i)}<span>${PAGES[p][0]}</span></button>`;return `<aside class="side"><div class="brand"><div class="brand-mark">mf</div><div><strong>Meu Financeiro</strong><span>Seu dinheiro, com clareza</span></div></div><div><div class="side-group">MENU PRINCIPAL</div><nav>${btn('home','home')}${btn('expenses','receipt')}${btn('receipts','wallet')}${btn('cards','card')}${btn('plan','calendar')}${btn('global','chart')}${btn('goals','target')}${btn('settings','settings')}</nav></div><div class="side-bottom">${ico('shield')} Seus dados ficam neste navegador. Faça backups regularmente.</div></aside>`}
-function mobileNav(){const btn=(p,i,label)=>`<button class="${page===p?'active':''}" data-act="page" data-page="${p}">${ico(i)}${label}</button>`;return `<div class="mobilebar">${btn('home','home','Início')}${btn('expenses','receipt','Despesas')}<button class="plusmobile" data-act="new" aria-label="Novo lançamento">${ico('plus')}</button>${btn('cards','card','Cartões')}<button data-act="more" aria-expanded="${ui.more}">${ico('more')}Mais</button></div>${ui.more?`<div class="mobile-more">${['receipts','plan','global','goals','settings'].map(p=>`<button data-act="page" data-page="${p}">${PAGES[p][0]}</button>`).join('')}</div>`:''}`}
+function nav(){const btn=(p,i)=>`<button class="navbtn ${page===p?'active':''}" data-act="page" data-page="${p}">${ico(i)}<span>${PAGES[p][0]}</span></button>`;return `<aside class="side"><div class="brand"><div class="brand-mark">mf</div><div><strong>Meu Financeiro</strong><span>Seu dinheiro, com clareza</span></div></div><div><div class="side-group">MENU PRINCIPAL</div><nav>${btn('home','home')}${btn('bills','calendar')}${btn('expenses','receipt')}${btn('receipts','wallet')}${btn('cards','card')}${btn('plan','calendar')}${btn('global','chart')}${btn('goals','target')}${btn('settings','settings')}</nav></div><div class="side-bottom">${ico('shield')} Seus dados ficam neste navegador. Faça backups regularmente.</div></aside>`}
+function mobileNav(){const btn=(p,i,label)=>`<button class="${page===p?'active':''}" data-act="page" data-page="${p}">${ico(i)}${label}</button>`;return `<div class="mobilebar">${btn('home','home','Início')}${btn('bills','calendar','Contas')}<button class="plusmobile" data-act="new" aria-label="Novo lançamento">${ico('plus')}</button>${btn('cards','card','Cartões')}<button data-act="more" aria-expanded="${ui.more}">${ico('more')}Mais</button></div>${ui.more?`<div class="mobile-more">${['expenses','receipts','plan','global','goals','settings'].map(p=>`<button data-act="page" data-page="${p}">${PAGES[p][0]}</button>`).join('')}</div>`:''}`}
 const section=(title,body,extra='')=>`<section class="section"><div class="section-head"><h2>${title}</h2>${extra}</div>${body}</section>`;
 const empty=msg=>`<div class="empty">${esc(msg)}</div>`;
 function chart(periods){const highest=Math.max(1,...periods.flatMap(p=>[p.income,p.expenses]));return `<div class="legend"><span><b class="dot" style="background:#4392ae"></b>Receitas</span><span><b class="dot" style="background:#e3a165"></b>Saídas</span></div><div class="chart" role="img" aria-label="Gráfico de receitas e despesas projetadas"><${'div'} class="colbar" style="display:none"></${'div'}>${periods.map(p=>`<div class="colbar" title="${esc(monthLabel(p.key))}: ${money(p.income)} em receitas e ${money(p.expenses)} em despesas"><div class="incbar" style="height:${Math.max(2,p.income/highest*100)}%"></div><div class="outbar" style="height:${Math.max(2,p.expenses/highest*100)}%"></div></div>`).join('')}</div><div class="chartlabels">${periods.map(p=>`<span>${esc(monthLabel(p.key).split(' ')[0])}</span>`).join('')}</div>`}
@@ -407,6 +422,85 @@ function expenseRows(){
  });
  return rows;
 }
+
+function dueBillRecords(){
+ const output=[],seen=new Set(),add=r=>{if(seen.has(r.kind+':'+r.id))return;seen.add(r.kind+':'+r.id);output.push(r)};
+ for(const e of getEvents()){
+  if(e.type!=='despesa'||!parseISO(e.date))continue;
+  if(e.kind==='entry'){
+   if(e.source?.card)continue;
+   add({kind:'entry',id:e.source?.id||'',date:e.date,description:e.description,cents:safeN(e.cents),category:e.category||'Outros',status:'previsto',virtual:!!e.source?.virtual,estimated:e.estimated,source:e.source});
+  }else if(e.kind==='invoice'){
+   add({kind:'invoice',id:e.source.id,date:e.date,description:e.description,cents:safeN(e.cents),category:'Faturas de cartão',status:'previsto',card:e.card,estimated:e.estimated,source:e.source});
+  }else if(e.kind==='cardproject'){
+   add({kind:'forecast',id:e.id,date:e.date,description:e.description,cents:safeN(e.cents),category:'Faturas futuras sem total bancário',status:'previsto',estimated:true,card:e.card,source:e});
+  }
+ }
+ for(const e of data.entries){
+  if(e.type!=='despesa'||e.card||!isPastPaid(e)||e.deleted)continue;
+  const due=dueDateEntry(e);if(!parseISO(due.date))continue;
+  add({kind:'entry',id:e.id,date:due.date,description:e.description,cents:safeN(e.cents),category:e.category||'Outros',status:'pago',paidAt:e.paidAt||due.date,estimated:false,source:e});
+ }
+ for(const i of data.invoices){
+  if(i.deleted||!i.paid)continue;
+  add({kind:'invoice',id:i.id,date:invoiceDate(i),description:'Fatura '+i.card,cents:invoiceAmt(i),category:'Faturas de cartão',status:'pago',paidAt:i.paidAt||data.ledger.find(l=>l.id===`vnext-invoice-${i.id}`)?.date||invoiceDate(i),card:i.card,estimated:false,source:i});
+ }
+ return output.sort((a,b)=>a.date.localeCompare(b.date)||a.description.localeCompare(b.description,'pt-BR'));
+}
+function billMonthRange(){
+ const month=ui.billMonth||monthOf(nowDate());
+ return ui.billMode==='cycle'?{start:dateAt(month,20),end:dateAt(shift(month,1),19)}:{start:dateAt(month,1),end:dateAt(month,dayCount(month))};
+}
+function billedInMonth(){
+ const range=billMonthRange();
+ return dueBillRecords().filter(r=>r.date>=range.start&&r.date<=range.end);
+}
+function billAction(r){
+ if(r.status==='pago')return `<span class="bill-paid-pill">Pago ${r.paidAt?fullDate(r.paidAt):''}</span>`;
+ if(r.kind==='forecast'||r.virtual)return '<span class="bill-forecast-tag">Previsão a confirmar</span>';
+ return `<button type="button" class="btn sm primary" data-act="pay-bill" data-kind="${r.kind}" data-id="${esc(r.id)}">Marcar pago</button>`;
+}
+function billRow(r,bulk=false){
+ const payable=r.status!=='pago'&&!r.virtual&&(r.kind==='entry'||r.kind==='invoice');
+ const overdue=r.date<nowDate()&&r.status!=='pago';
+ const selected=ui.billSelected.includes(r.kind+':'+r.id);
+ return `<div class="bill-item ${overdue?'overdue':''}">
+ <div class="bill-item-main">
+ ${bulk&&payable?`<label class="bill-select"><input type="checkbox" data-change="bill-select" data-bill-key="${esc(r.kind+':'+r.id)}" ${selected?'checked':''} aria-label="Selecionar ${esc(r.description)}"></label>`:''}
+ <div class="bill-item-copy"><strong>${esc(r.description)}</strong><span>${overdue?'Vencida em ':''}${fullDate(r.date)} · ${esc(r.card||r.category)}${r.estimated?' · estimativa':''}</span></div>
+ <div class="bill-item-value"><strong>${money(r.cents)}</strong><small class="${r.status==='pago'?'positive':overdue?'negative':''}">${r.status==='pago'?'Pago':overdue?'Vencida':'A pagar'}</small></div>
+ </div>
+ <div class="bill-item-actions">${billAction(r)}
+ ${r.kind==='entry'&&!r.virtual?`<button class="btn sm secondary" data-act="edit-entry" data-id="${esc(r.id)}">Editar</button>`:''}
+ ${r.kind==='invoice'?`<button class="btn sm secondary" data-act="edit-invoice" data-id="${esc(r.id)}">Editar fatura</button>`:''}
+ ${r.kind==='forecast'?`<button class="btn sm secondary" data-act="page" data-page="cards">Ver cartão</button>`:''}
+ </div></div>`;
+}
+function bills(){
+ const rows=billedInMonth(),pending=rows.filter(r=>r.status!=='pago'),paid=rows.filter(r=>r.status==='pago'),
+ filtered=ui.billFilter==='all'?rows:ui.billFilter==='paid'?paid:pending;
+ const outstanding=pending.reduce((n,r)=>n+r.cents,0),paidAmount=paid.reduce((n,r)=>n+r.cents,0),
+ payable=filtered.filter(r=>r.status!=='pago'&&(r.kind==='invoice'||r.kind==='entry')&&!r.virtual),range=billMonthRange();
+ const overdue=dueBillRecords().filter(r=>r.status!=='pago'&&r.date<range.start&&r.date<nowDate()&&r.kind!=='forecast'&&!r.virtual);
+ const revenues=getEvents().filter(r=>r.type==='receita'&&r.date>=range.start&&r.date<=range.end);
+ const income=revenues.reduce((n,r)=>n+safeN(r.cents),0);
+ return `<div class="card pad bills-head">
+ <div><h2 style="margin:0 0 5px">Conferir contas</h2><p class="small" style="margin:0">Boletos, compromissos e faturas em um único lugar. Confirmar um pagamento atualiza automaticamente o caixa e todas as projeções.</p></div>
+ <div class="bill-filters"><div class="field"><label>Referência</label><input type="month" class="input" value="${esc(ui.billMonth)}" data-change="bill-month"></div><div class="field"><label>Visualizar</label><select data-change="bill-mode"><option value="calendar" ${ui.billMode==='calendar'?'selected':''}>Mês calendário</option><option value="cycle" ${ui.billMode==='cycle'?'selected':''}>Ciclo 20–19</option></select></div></div>
+ <div class="small">De ${fullDate(range.start)} a ${fullDate(range.end)}. Vencimentos previstos respeitam os dias úteis bancários.</div>
+ </div>
+ <div class="grid g3 section"><div class="card kpi"><div class="kpi-label">A pagar no período</div><div class="kpi-val">${money(outstanding)}</div><div class="kpi-foot">${pending.length} contas ou previsões</div></div>
+ <div class="card kpi"><div class="kpi-label">Pagamentos registrados</div><div class="kpi-val positive">${money(paidAmount)}</div><div class="kpi-foot">${paid.length} itens</div></div>
+ <div class="card kpi"><div class="kpi-label">Entradas ainda previstas</div><div class="kpi-val">${money(income)}</div><div class="kpi-foot">Visualização informativa</div></div></div>
+ ${overdue.length&&ui.billMonth===monthOf(nowDate())?`<div class="notice red section"><strong>${overdue.length} pendência(s) de referências anteriores.</strong> Confira a situação antes de considerar essas despesas quitadas. <button type="button" class="small-link" data-act="bill-show-overdue">Consultar pendências</button></div>`:''}
+ <div class="card pad section"><div class="bill-list-title"><div><h2 style="margin:0 0 4px">Contas desta referência</h2><div class="small">${rows.length} itens · informações atualizadas pelos lançamentos e faturas</div></div><button class="btn sm" data-act="bill-new" type="button">+ Nova conta</button></div>
+ <div class="seg bill-status-tabs"><button type="button" data-act="bill-filter" data-filter="pending" class="${ui.billFilter==='pending'?'selected':''}">Pendentes (${pending.length})</button><button type="button" data-act="bill-filter" data-filter="paid" class="${ui.billFilter==='paid'?'selected':''}">Pagas (${paid.length})</button><button type="button" data-act="bill-filter" data-filter="all" class="${ui.billFilter==='all'?'selected':''}">Todas (${rows.length})</button></div>
+ ${filtered.length?filtered.map(r=>billRow(r,true)).join(''):empty('Não há contas com este filtro.')}
+ ${payable.length?`<div class="bill-bulk-bar"><span id="bill-bulk-count">${ui.billSelected.filter(k=>payable.some(r=>r.kind+':'+r.id===k)).length} selecionadas</span><button type="button" class="btn sm secondary" data-act="bill-bulk">Confirmar selecionadas</button></div>`:''}
+ <p class="small" style="margin:12px 0 0">Compras no cartão não são cobradas novamente: somente o pagamento da fatura reduz o caixa. Previsões sem fatura bancária precisam ser conferidas antes de marcar como pagas.</p>
+ </div>`;
+}
+
 function expenses(){
  const rows=expenseRows(),shown=rows.slice(0,ui.expenseLimit),
  total=rows.filter(e=>e.status!=='nao_realizado'&&e.status!=='cancelado').reduce((n,e)=>n+safeN(e.cents),0);
@@ -673,7 +767,7 @@ function settings(){const savedAt=data.appVNext.modifiedAt;return `<div class="s
  <div class="card pad"><h2>Dados importados</h2><div class="grid g4"><div><strong>${data.entries.length}</strong><div class="small">Lançamentos</div></div><div><strong>${data.invoices.length}</strong><div class="small">Faturas</div></div><div><strong>${data.movements.length}</strong><div class="small">Compras de cartão</div></div><div><strong>${data.receivables.length}</strong><div class="small">Recebíveis</div></div></div><div class="hr"></div><div class="small">Estrutura original: ${esc(data.schema)}. A versão de testes usa armazenamento separado do aplicativo anterior. Vencimentos previstos passam ao próximo dia útil (tributos são antecipados), incluindo feriados bancários nacionais e o feriado local de 30/11 no DF. Datas de pagamentos realizados permanecem inalteradas.</div></div>
  <div class="notice red">Atenção: apagar dados do navegador, usar modo privado ou mudar de dispositivo pode eliminar o conteúdo salvo localmente. Faça um backup protegido.</div></div>`}
 function firstRun(){return `<main class="loadpage"><div class="brand" style="color:var(--navy);padding:0"><div class="brand-mark" style="background:var(--navy);color:white">mf</div><div><strong style="color:var(--navy)">Meu Financeiro</strong><span style="color:var(--muted)">Nova versão · ambiente de testes</span></div></div><div style="margin-top:29px"><div class="eyebrow">COMECE COM SEGURANÇA</div><h1>Seu dinheiro. Tudo sob controle.</h1><p class="muted">Importe o backup do Meu Financeiro para explorar a nova experiência. O arquivo original não será modificado, e esta versão usa armazenamento separado do aplicativo anterior.</p></div><div class="card pad" style="margin-top:20px"><h2>Escolha como começar</h2><div class="filezone"><div class="strong">Importar backup JSON ou protegido por senha</div><p class="small">O arquivo é lido apenas pelo navegador e não é enviado para servidor.</p><button class="btn primary" data-act="import">${ico('upload')} Selecionar arquivo</button></div><div class="hr"></div><button class="btn" data-act="empty">Começar sem dados</button><p class="small" style="margin:10px 0 0">Para usar os dados já cadastrados, importe o arquivo JSON que você salvou.</p></div><div class="notice blue" style="margin-top:18px">Versão de teste. Não substitua seu sistema atual nem apague backups até verificar as faturas, o caixa e as previsões.</div></main>`}
-function render(){const root=$('#root');if(!data){root.innerHTML=firstRun();return}ui.selectedCard=ui.selectedCard||allCards()[0]||'';const content={home,expenses,receipts,cards,plan,global,goals,settings}[page]();root.innerHTML=`<div class="app">${nav()}<main class="shell"><div class="top"><div><div class="eyebrow">MEU FINANCEIRO · NOVA VERSÃO</div><h1>${PAGES[page][0]}</h1><p>${PAGES[page][1]}</p></div><div class="top-actions"><button class="btn desktop-only" data-act="export-encrypted" title="Backup protegido">${ico('download')} Backup</button><button class="btn primary desktop-only" data-act="new">${ico('plus')} Novo lançamento</button><button class="btn icon" data-act="page" data-page="settings" title="Configurações">${ico('settings')}</button></div></div>${content}<div class="footer-note">Meu Financeiro · Protótipo local isolado · Não sincroniza com bancos · Dados privados</div></main>${mobileNav()}</div>`}
+function render(){const root=$('#root');if(!data){root.innerHTML=firstRun();return}ui.selectedCard=ui.selectedCard||allCards()[0]||'';const content={home,bills,expenses,receipts,cards,plan,global,goals,settings}[page]();root.innerHTML=`<div class="app">${nav()}<main class="shell"><div class="top"><div><div class="eyebrow">MEU FINANCEIRO · NOVA VERSÃO</div><h1>${PAGES[page][0]}</h1><p>${PAGES[page][1]}</p></div><div class="top-actions"><button class="btn desktop-only" data-act="export-encrypted" title="Backup protegido">${ico('download')} Backup</button><button class="btn primary desktop-only" data-act="new">${ico('plus')} Novo lançamento</button><button class="btn icon" data-act="page" data-page="settings" title="Configurações">${ico('settings')}</button></div></div>${content}<div class="footer-note">Meu Financeiro · Protótipo local isolado · Não sincroniza com bancos · Dados privados</div></main>${mobileNav()}</div>`}
 function openModal(title,body,buttons='<button class="btn" type="button" data-act="close-modal">Cancelar</button><button class="btn primary" type="submit" form="modal-form">Salvar</button>'){
  document.querySelector('.modal')?.remove();const d=document.createElement('dialog');d.className='modal';d.innerHTML=`<header><h2>${title}</h2><button class="btn sm icon" aria-label="Fechar" data-act="close-modal">×</button></header><div class="modal-body">${body}</div><footer>${buttons}</footer>`;document.body.append(d);d.showModal();d.addEventListener('close',()=>d.remove());d.querySelector('input:not([type="hidden"]),select')?.focus();return d;}
 function closeModal(){$('.modal')?.close()}
