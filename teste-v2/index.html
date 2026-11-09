@@ -104,6 +104,11 @@
 .home-installment-row>div:last-child{text-align:right}.home-installment-row strong{display:block;font-size:13px;font-variant-numeric:tabular-nums}
 .home-installment-row small{display:block;color:var(--sub);font-size:11px;margin-top:4px}
 
+
+.plan-end-alert{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-top:13px;border:1px solid #d8e7ee;background:#f2f8fb;border-radius:11px;padding:13px}
+.plan-end-alert>div{display:flex;flex-direction:column;gap:5px;min-width:0}.plan-end-alert>div:last-child{text-align:right}.plan-end-alert strong{font-size:12px}.plan-end-alert span{color:var(--sub);font-size:11px;line-height:1.45}
+@media(max-width:530px){.plan-end-alert{flex-direction:column}.plan-end-alert>div:last-child{text-align:left}}
+
 </style></head><body><div id="root"></div><noscript>Ative JavaScript.</noscript><script>/* Meu Financeiro | Protótipo funcional VNext 1.0
    Interface pública sem dados; dados permanecem no navegador ou nos arquivos exportados.
    Importação não destrutiva da versão offline-v4. Valores sempre em centavos. */
@@ -477,7 +482,7 @@ function planEventRow(e){
 }
 function planMonthlyDetail(proj,month){
  const rows=proj.periods,idx=Math.max(0,rows.findIndex(p=>p.key===month)),p=rows[idx],opening=idx?rows[idx-1].closing:proj.starting,
- incomes=p.events.filter(e=>e.type==='receita'),expenses=p.events.filter(e=>e.type==='despesa'),groups=groupSpending(expenses,e=>e.category||'Outros'),delta=p.income-p.expenses,
+ incomes=p.events.filter(e=>e.type==='receita'),expenses=p.events.filter(e=>e.type==='despesa'),groups=groupSpending(expenses,e=>e.category||'Outros'),delta=p.income-p.expenses,ending=installmentEndingGroups().find(g=>g.cycle===p.key),
  offset=Math.max(0,Math.min(idx-2,rows.length-6)),visible=rows.slice(offset,offset+6);
  return section('Entenda cada período',`<div class="card pad">
  <div class="plan-month-head"><div><strong>O que entra, sai e sobra</strong><span>${fullDate(periodStart(p.key))} a ${fullDate(periodEnd(p.key))}</span></div>
@@ -485,6 +490,7 @@ function planMonthlyDetail(proj,month){
  <div class="plan-mini-months">${visible.map(x=>`<button type="button" class="${x.key===p.key?'active':''}" data-act="plan-month-pick" data-month="${x.key}"><span>${esc(monthLabel(x.key))}</span><strong class="${x.closing<0?'negative':''}">${money(x.closing)}</strong></button>`).join('')}</div>
  <div class="plan-month-metrics"><div><span>Resultado do período</span><strong class="${delta<0?'negative':'positive'}">${money(delta)}</strong></div><div><span>Caixa ao final</span><strong class="${p.closing<0?'negative':''}">${money(p.closing)}</strong></div></div>
  <div class="plan-cash-bridge">Saldo inicial ${money(opening)} + entradas ${money(p.income)} − contas ${money(p.expenses)} = <strong>${money(p.closing)}</strong></div>
+ ${ending?`<div class="plan-end-alert"><div><strong>${ending.items.length} ${ending.items.length===1?'parcelamento termina':'parcelamentos terminam'} nesta referência</strong><span>${ending.confirmed} com calendário completo${ending.partial?' · '+ending.partial+' a conferir':''}</span></div><div><strong>${money(ending.release)}/mês</strong><span>Redução mensal identificada após o término</span></div></div>`:''}
  <div class="plan-month-breakdown"><details><summary><span>Entradas previstas <small>${incomes.length} registros</small></span><strong>${money(p.income)}</strong></summary><div class="plan-event-list">${incomes.map(planEventRow).join('')||empty('Sem entradas previstas neste período.')}</div></details>
  <details><summary><span>Compromissos previstos <small>${expenses.length} registros</small></span><strong>${money(p.expenses)}</strong></summary><div class="plan-event-list">${groups.map(g=>`<details class="plan-category-detail"><summary><span>${esc(g.name)} <small>${g.rows.length} registros</small></span><strong>${money(g.total)}</strong></summary><div class="plan-event-list">${g.rows.map(planEventRow).join('')}</div></details>`).join('')||empty('Sem contas previstas neste período.')}</div></details></div>
  <p class="small" style="margin:12px 0 0">Os valores são projeções a partir do saldo atual, não pagamentos já confirmados. Faturas entram pelo total uma vez; suas compras detalhadas não são cobradas novamente.</p>
