@@ -267,7 +267,7 @@ function invoiceByRef(card,ref){return data.invoices.find(i=>!i.deleted&&i.card=
 function spendingRecords(){
  const list=[];
  for(const e of canonicalEntries()){
-  if(e.type!=='despesa'||!activeEntry(e)||e.deleted||e.category==='Faturas de cartão'||String(e.id||'').startsWith('fatura-')||safeN(e.cents)<=0)continue;
+  if(e.type!=='despesa'||( !activeEntry(e)&&!isPastPaid(e))||e.deleted||e.category==='Faturas de cartão'||String(e.id||'').startsWith('fatura-')||safeN(e.cents)<=0)continue;
   if(e.card&&invoiceByRef(e.card,e.month)&&e.financialKind!=='loan')continue;
   const d=dueDateEntry(e),date=parseISO(e.date)?e.date:d.date;if(!parseISO(date))continue;
   list.push({kind:'entry',id:e.id,ref:e.month||cycleOf(date),date,category:e.category||'Outros / a classificar',merchant:purchaseMerchant(e),description:e.description||'',card:e.card||'',cents:safeN(e.cents),installment:e.installment||'',estimated:d.estimated,status:e.status||'',source:e});
@@ -458,7 +458,7 @@ function installmentTimelinePanel(limit=24){
  return section('Quando as parcelas terminam',`<div class="card pad">
  <div class="installments-top"><div><strong>${count} sequências</strong><span>${groups.length} meses de término identificados</span></div><div><strong>${complete} completas</strong><span>${partial} dependem de conferência</span></div></div>
  <p class="small">Consulte quando terminam os parcelamentos conhecidos. Somente sequências com todas as parcelas restantes cadastradas entram na previsão de redução mensal. Os valores já compõem despesas e faturas; não são deduzidos novamente.</p>
- ${groups.map(g=>`<details class="installment-month"><summary><span><strong>${esc(monthLabel(g.cycle))}</strong><small>${g.items.length} ${g.items.length===1?'parcelamento termina':'parcelamentos terminam'}</small></span><span class="installment-month-total"><strong>${g.release?money(g.release)+'/mês':'A conferir'}</strong><small>${g.release?'Redução mensal comprovada':'Sem redução comprovada'}</small></span></summary>
+ ${groups.map(g=>`<details class="installment-month"><summary><span><strong>${esc(monthLabel(g.cycle))}</strong><small>${g.items.length} ${g.items.length===1?'parcelamento termina':'parcelamentos terminam'}</small></span><span class="installment-month-total"><strong>${g.release?money(g.release)+'/mês':'A conferir'}</strong><small>${g.release?'Estimativa com calendário completo':'Calendário parcial · conferir'}</small></span></summary>
  <div class="installment-month-content">
  <div class="installment-month-note">Últimas parcelas conhecidas: <strong>${money(g.lastAmounts)}</strong>. Redução mensal após esta referência: <strong>${money(g.release)}</strong> (${g.confirmed} sequência(s) completas). ${g.partial?'Há '+g.partial+' sequência(s) parciais.':''}</div>
  ${g.items.map(t=>`<details class="installment-sequence"><summary><span><strong>${esc((t.card?t.card+' · ':'')+t.name)}</strong><small>${t.rows.length} parcela(s) cadastrada(s) · ${t.complete?'calendário completo':'calendário parcial'}</small></span><strong>${t.complete?money(t.release)+'/mês':'Conferir'}</strong></summary>
