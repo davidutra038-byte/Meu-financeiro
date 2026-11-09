@@ -13,6 +13,26 @@
 @media(max-width:900px){.expense-toolbar{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.expense-filter-toggle{grid-column:1/-1}.expense-filters{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
 @media(max-width:760px){.expenses-desktop{display:none}.expenses-mobile{display:block}.expense-toolbar{grid-template-columns:1fr 1fr;gap:9px}.expense-toolbar>.field:first-child{grid-column:1/-1}.expense-toolbar>.field:nth-child(2){grid-column:1/-1}.expense-filter-toggle{grid-column:1/-1}.expense-filters{grid-template-columns:1fr 1fr!important}.expense-mobile-row{padding:15px 0;border-bottom:1px solid var(--line)}.expense-mobile-row:last-child{border-bottom:0}.expense-mobile-top{align-items:flex-start;gap:12px}.expense-mobile-heading{font-size:14px;font-weight:750;min-width:0;overflow-wrap:anywhere}.expense-mobile-amount{white-space:nowrap;font-variant-numeric:tabular-nums}.expense-mobile-detail{font-size:12px;color:var(--muted);line-height:1.5;margin-top:5px}.expense-mobile-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px}.expense-mobile-footer .btn{min-height:32px}}
 @media(max-width:420px){.expense-filters{grid-template-columns:1fr!important}}
+
+.global-columns{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:start}.global-columns>.global-chart-col,.global-columns>.global-categories-col{min-width:0}
+.global-compact{padding:19px!important}.global-category-summary{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.global-total{font-size:clamp(19px,2vw,25px);font-weight:800;letter-spacing:-.5px;font-variant-numeric:tabular-nums}.global-category-summary .small{margin-top:4px;line-height:1.45;font-size:11px}
+.global-info-button{font-size:11px;flex-shrink:0;color:var(--blue);border:none;background:transparent;padding:5px 0;font-weight:650}
+.global-category-explain{font-size:12px;line-height:1.55;color:var(--sub);margin:12px 0;padding:10px 12px;border-radius:9px;background:#f4f7fa}
+.global-category-item{padding:10px 0;border-bottom:1px solid var(--line)}.global-category-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-size:12px}.global-category-top strong{font-size:12px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.global-cat-name{display:flex;align-items:center;gap:8px;min-width:0;font-weight:650;line-height:1.4}.global-cat-rank{color:var(--muted);font-size:10px;background:#eff4f7;display:inline-grid;place-items:center;height:19px;width:19px;border-radius:6px;flex-shrink:0}
+.global-category-bottom{display:flex;gap:9px;align-items:center;margin-top:7px}.global-bar{background:#edf1f4;height:5px;border-radius:999px;overflow:hidden;flex:1}.global-bar span{display:block;background:#3c849f;height:100%;border-radius:999px}.global-pct{min-width:40px;text-align:right;color:var(--sub);font-size:11px;font-variant-numeric:tabular-nums}
+.global-others{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px;color:var(--sub);padding:12px 0}.global-others strong{color:var(--ink);white-space:nowrap}.global-show-all{border:0;background:#eef5f8;color:#235a78;width:100%;padding:11px;border-radius:10px;font-weight:700;font-size:12px;margin-top:6px;display:flex;justify-content:center;gap:8px}
+.global-chart-header{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap}.global-chart-subtitle{font-weight:700;font-size:13px}.global-chart-range{font-size:11px;color:var(--sub);margin-top:4px}.global-legend{display:flex;gap:11px;font-size:11px;color:var(--sub);align-items:center}.global-legend span{display:flex;align-items:center;gap:5px}.global-key{width:8px;height:8px;border-radius:3px;display:inline-block}.global-key.inc,.global-month-bar.inc{background:#438dab}.global-key.exp,.global-month-bar.exp{background:#e2a46b}
+.global-chart-nav{display:flex;align-items:center;justify-content:space-between;margin-top:13px;padding:5px 0;border-top:1px solid var(--line);gap:8px;font-size:11px;color:var(--sub)}.global-chart-nav button{background:#f2f6f8;border:1px solid var(--line);border-radius:8px;width:30px;height:29px;font-size:22px;line-height:20px;color:var(--ink)}.global-chart-nav button:disabled{opacity:.3}
+.global-bars{display:flex;align-items:stretch;gap:3px;margin:15px 0 0;border-bottom:1px solid var(--line);height:158px}
+.global-month{background:transparent;border:0;border-radius:8px 8px 0 0;padding:5px 3px 0;display:flex;flex-direction:column;justify-content:end;align-items:stretch;min-width:0;flex:1;gap:6px;color:var(--sub)}
+.global-month.is-selected{background:#edf5f9;color:var(--ink)}.global-month-bars{height:122px;display:flex;justify-content:center;align-items:flex-end;gap:3px;border-bottom:1px solid #cbd8e0}.global-month-bar{display:block;max-width:23px;flex:1;min-width:2px;border-radius:4px 4px 0 0;transition:height .18s}.global-month-label{text-align:center;font-size:11px;font-weight:650;display:flex;flex-direction:column;line-height:1.3}.global-month-label span{font-size:10px;font-weight:400}
+.global-selected-month{background:#f6f8fa;border:1px solid var(--line);border-radius:12px;padding:13px;margin-top:14px}.global-selected-title{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px;margin-bottom:12px}.global-selected-title strong{font-size:13px;text-transform:capitalize}.global-selected-title span{font-size:11px;color:var(--sub)}
+.global-selected-figures{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.global-selected-figures>div{display:flex;flex-direction:column;gap:4px;min-width:0}.global-selected-figures span{font-size:11px;color:var(--sub)}.global-selected-figures strong{font-size:14px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.global-small-note{color:var(--sub);font-size:11px;line-height:1.5;margin-top:12px}
+@media(max-width:1000px){.global-columns{grid-template-columns:1fr}.global-chart-col{order:-1}}
+@media(max-width:600px){.global-compact{padding:15px!important}.global-bars{height:155px}.global-month-bars{height:116px}.global-category-summary{align-items:flex-start}.global-total{font-size:21px}.global-category-summary .small{max-width:240px}.global-chart-header{gap:8px}.global-chart-subtitle{font-size:12px}.global-month{padding-left:2px;padding-right:2px}.global-month-bars{gap:2px}.global-month-label{font-size:10px}.global-legend{font-size:10px}}
 </style></head><body><div id="root"></div><noscript>Ative JavaScript.</noscript><script>/* Meu Financeiro | Protótipo funcional VNext 1.0
    Interface pública sem dados; dados permanecem no navegador ou nos arquivos exportados.
    Importação não destrutiva da versão offline-v4. Valores sempre em centavos. */
@@ -53,7 +73,7 @@ const id=()=>`novo-${Date.now().toString(36)}-${Math.random().toString(36).slice
 const cycleKey=()=>modeKey(nowDate());
 const bStatus={previsto:'Previsto',pago:'Pago / recebido',recebido:'Recebido',nao_realizado:'Não realizado',cancelado:'Cancelado',registrado:'Compra registrada'};
 const categoryChoices=['Alimentação e lazer','Habitação','Transporte','Saúde e bem-estar','Comunicação','Vestuário','Serviços e assinaturas','Empréstimos','Encargos financeiros','Impostos e tributos','Viagem e eventos','Educação','Receitas','Outros / a classificar'];
-let data=null;let page='home';let modalMode='';let ui={mode:'cycle',selectedCard:'',cardMonth:monthOf(nowDate()),expenseQ:'',expensePeriod:'all',expenseStatus:'all',expenseMethod:'all',expenseCategory:'all',expenseCard:'all',expenseSort:'activity',expenseFiltersOpen:false,expenseLimit:40,receiptQ:'',globalMonth:monthOf(nowDate()),horizon:12,globalStart:'',globalHorizon:1,more:false,simAmount:'2400',simParts:6,simMethod:'credit',simCard:'',simFirst:''};
+let data=null;let page='home';let modalMode='';let ui={mode:'cycle',selectedCard:'',cardMonth:monthOf(nowDate()),expenseQ:'',expensePeriod:'all',expenseStatus:'all',expenseMethod:'all',expenseCategory:'all',expenseCard:'all',expenseSort:'activity',expenseFiltersOpen:false,expenseLimit:40,receiptQ:'',globalMonth:monthOf(nowDate()),horizon:12,globalStart:'',globalHorizon:1,globalCategoriesExpanded:false,globalCategoriesInfo:false,globalChartPage:0,globalSelected:0,more:false,simAmount:'2400',simParts:6,simMethod:'credit',simCard:'',simFirst:''};
 const defaultApp=()=>({version:1,createdAt:new Date().toISOString(),modifiedAt:new Date().toISOString(),mode:'cycle',cardLimits:{},recurrences:[],cashLog:[],invoicePaidAt:{},newImports:0});
 const fresh=()=>({schema:'meu-financeiro-offline-v4',version:4,name:'Meu Financeiro',openedAt:nowDate(),openingCents:0,salaryNetCents:0,referenceCycle:cycleOf(nowDate()),entries:[],invoices:[],movements:[],receivables:[],ledger:[],vault:{goalCents:5000000,targetCycle:'2028-03',monthlyPlannedCents:0,movements:[]},settings:{includeTravel:false,entrySchedules:{}},cardClosings:{},cardDueRules:{},appVNext:defaultApp()});
 const validate=raw=>{if(!raw||!Array.isArray(raw.entries)||!Array.isArray(raw.invoices)||!Array.isArray(raw.movements))throw Error('O arquivo não tem a estrutura de um backup do Meu Financeiro.');const x=structuredClone(raw);x.entries=x.entries||[];x.invoices=x.invoices||[];x.movements=x.movements||[];x.ledger=x.ledger||[];x.receivables=x.receivables||[];x.vault=x.vault||{goalCents:5000000,movements:[]};x.vault.movements=x.vault.movements||[];x.settings=x.settings||{};x.cardClosings=x.cardClosings||{};x.cardDueRules=x.cardDueRules||{};x.appVNext={...defaultApp(),...(x.appVNext||{})};x.appVNext.recurrences=x.appVNext.recurrences||[];x.appVNext.cardLimits=x.appVNext.cardLimits||{};x.appVNext.cashLog=x.appVNext.cashLog||[];if(new Set(x.entries.map(e=>e.id)).size!==x.entries.length)throw Error('O backup contém IDs de lançamentos duplicados; importação interrompida.');return x};
@@ -281,7 +301,51 @@ function selectedGlobal(){
   income:periods.reduce((a,p)=>a+p.income,0),expenses:periods.reduce((a,p)=>a+p.expenses,0),
   cats:[...cats].sort((a,b)=>b[1]-a[1]),negativePeriods:periods.filter(p=>p.closing<0)};
 }
-function global(){const g=selectedGlobal(),max=g.cats[0]?.[1]||1,
+
+function globalCategoryPanel(g){
+ const total=g.cats.reduce((n,[,v])=>n+v,0), n=g.cats.length, shown=ui.globalCategoriesExpanded?g.cats:g.cats.slice(0,4), rest=g.cats.slice(4);
+ const row=([name,sum],i)=>{
+  const pct=total?sum/total*100:0;
+  return `<div class="global-category-item"><div class="global-category-top"><div class="global-cat-name"><span class="global-cat-rank">${i+1}</span><span>${esc(name)}</span></div><strong>${money(sum)}</strong></div><div class="global-category-bottom"><div class="global-bar"><span style="width:${Math.min(100,pct).toFixed(2)}%"></span></div><span class="global-pct">${pct.toFixed(1).replace('.',',')}%</span></div></div>`;
+ };
+ return section('Onde estão os gastos',`<div class="card pad global-compact">
+ <div class="global-category-summary"><div><div class="global-total">${money(total)}</div><div class="small">${n} categorias classificadas · ${fullDate(g.startDate)} a ${fullDate(g.endDate)}</div></div>
+ <button type="button" class="global-info-button" data-act="global-category-info" aria-expanded="${ui.globalCategoriesInfo}">${ui.globalCategoriesInfo?'Ocultar explicação':'Sobre os valores'}</button></div>
+ ${ui.globalCategoriesInfo?'<div class="global-category-explain">Os valores reúnem gastos classificados e compras registradas no cartão, inclusive históricos do intervalo. São diferentes das saídas projetadas de caixa, que consideram as faturas no vencimento.</div>':''}
+ ${n?shown.map(row).join(''):empty('Nenhuma categoria com gasto no intervalo.')}
+ ${!ui.globalCategoriesExpanded&&rest.length?`<div class="global-others"><span>Outras ${rest.length} categorias</span><strong>${money(rest.reduce((n,[,v])=>n+v,0))}</strong></div>`:''}
+ ${n>4?`<button type="button" class="global-show-all" data-act="global-categories-toggle">${ui.globalCategoriesExpanded?'Mostrar principais categorias':'Ver todas as '+n+' categorias'} <span aria-hidden="true">${ui.globalCategoriesExpanded?'⌃':'⌄'}</span></button>`:''}
+ </div>`);
+}
+function globalChartPanel(g,shown){
+ const pageCount=Math.max(1,Math.ceil(g.periods.length/6)),page=Math.max(0,Math.min(Number(ui.globalChartPage)||0,pageCount-1));
+ const start=page*6,visible=g.periods.slice(start,start+6);
+ const selected=Math.min(Math.max(start,Number(ui.globalSelected)||0),start+visible.length-1);
+ const p=g.periods[selected]||visible[0];
+ const max=Math.max(1,...g.periods.flatMap(p=>[p.income,p.expenses]));
+ const bars=visible.map((q,i)=>{
+  const index=start+i,active=index===selected;
+  const inc=Math.max(q.income?3:0,q.income/max*100),out=Math.max(q.expenses?3:0,q.expenses/max*100);
+  const month=monthLabel(q.key).split(' ')[0].replace('.','');
+  return `<button type="button" class="global-month ${active?'is-selected':''}" data-act="global-month" data-index="${index}" aria-pressed="${active}" aria-label="${esc(monthLabel(q.key))}: receitas ${money(q.income)}, despesas ${money(q.expenses)}">
+  <span class="global-month-bars"><span class="global-month-bar inc" style="height:${inc.toFixed(2)}%"></span><span class="global-month-bar exp" style="height:${out.toFixed(2)}%"></span></span>
+  <span class="global-month-label">${esc(month)}<span>${q.key.slice(2,4)}</span></span></button>`;
+ }).join('');
+ return section('Evolução do caixa',`<div class="card pad global-compact">
+ <div class="global-chart-header"><div><div class="global-chart-subtitle">Entradas e saídas por ${shown}</div><div class="global-chart-range">${fullDate(g.startDate)} a ${fullDate(g.endDate)}</div></div><div class="global-legend"><span><i class="global-key inc"></i>Receitas</span><span><i class="global-key exp"></i>Saídas</span></div></div>
+ ${pageCount>1?`<div class="global-chart-nav"><button type="button" data-act="global-chart-prev" ${page===0?'disabled':''} aria-label="Mostrar meses anteriores">‹</button><span>${start+1}–${Math.min(start+6,g.n)} de ${g.n} períodos</span><button type="button" data-act="global-chart-next" ${page===pageCount-1?'disabled':''} aria-label="Mostrar próximos meses">›</button></div>`:''}
+ <div class="global-bars" role="group" aria-label="Selecione um período para ver os valores">${bars}</div>
+ ${p?`<div class="global-selected-month"><div class="global-selected-title"><strong>${esc(monthLabel(p.key))}</strong><span>${fullDate(periodStart(p.key))} a ${fullDate(periodEnd(p.key))}</span></div>
+ <div class="global-selected-figures">
+ <div><span>Receitas</span><strong>${money(p.income)}</strong></div>
+ <div><span>Saídas</span><strong>${money(p.expenses)}</strong></div>
+ <div><span>Resultado do período</span><strong class="${p.income-p.expenses<0?'negative':''}">${money(p.income-p.expenses)}</strong></div>
+ <div><span>Caixa ao final</span><strong class="${p.closing<0?'negative':''}">${money(p.closing)}</strong></div>
+ </div></div>`:''}
+ <div class="global-small-note">Toque em um mês para consultar seus valores. As projeções usam os vencimentos cadastrados e podem conter estimativas.</div>
+ </div>`);
+}
+function global(){const g=selectedGlobal(),
  estimated=g.periods.flatMap(p=>p.events).filter(e=>e.estimated).length,
  shown=ui.mode==='cycle'?'ciclo de 20 a 19':'mês calendário',
  rangeText=fullDate(g.startDate)+' a '+fullDate(g.endDate),
@@ -301,9 +365,8 @@ function global(){const g=selectedGlobal(),max=g.cats[0]?.[1]||1,
  <div class="hr"></div><div class="statrow"><span class="small">Saldo de referência da projeção</span><strong>${money(g.starting)}</strong></div>
  <div class="statrow"><span class="small">Receitas ÷ despesas previstas</span><strong>${g.expenses>0?(g.income/g.expenses*100).toFixed(0)+'%':'—'}</strong></div>
  <div class="statrow"><span class="small">Fechamentos negativos</span><strong>${g.negativePeriods.length} de ${g.n}</strong></div></div>`)}
- <div class="split section"><div>${section('Categorias · '+rangeText,`<div class="card pad"><p class="small">Compras e despesas categorizadas no intervalo selecionado, inclusive registros já realizados e itens de cartão. O quadro inclui o histórico do período em andamento; não equivale às saídas futuras de caixa, que consideram o pagamento das faturas.</p>
- ${g.cats.length?g.cats.slice(0,14).map(([name,sum])=>`<div class="catrow"><div class="flex between"><span class="strong">${esc(name)}</span><strong class="num">${money(sum)}</strong></div><div class="progressline"><span style="width:${Math.max(1,sum/max*100).toFixed(1)}%"></span></div></div>`).join(''):empty('Não há categorias neste intervalo.')}</div>`)}</div>
- <div>${section('Receitas × despesas · '+rangeText,`<div class="card pad"><p class="small">Valores projetados em cada ${shown} do intervalo.</p><div class="chart-scroll"><div style="min-width:${g.periods.length>7?g.periods.length*54:0}px">${chart(g.periods)}</div></div></div>`)}
+ <div class="global-columns section"><div class="global-categories-col">${globalCategoryPanel(g)}</div>
+ <div class="global-chart-col">${globalChartPanel(g,shown)}
  ${section('Próximas ações',`<div class="card pad"><div class="row">Conferir vencimentos estimados das faturas e boletos.</div><div class="row">Confirmar entradas extraordinárias antes de considerá-las disponíveis.</div><div class="row">Verificar o menor saldo, não apenas o fechamento do período.</div><div class="row">Simular novas compras antes de comprometer o caixa.</div></div>`)}</div></div>`;
 }
 function goals(){const goal=safeN(data.vault?.goalCents),saved=goalsAmount(),pct=goal?Math.max(0,Math.min(100,saved/goal*100)):0,ms=data.vault?.movements||[];return `<div class="grid g2"><div class="hero"><div class="hero-title">Cofre do apartamento</div><div class="hero-big">${money(saved)}</div><div class="small">Objetivo: ${money(goal)} · até ${monthLabel(data.vault.targetCycle)}</div><div class="hero-bottom"><div><span class="small">Progresso</span><strong>${pct.toFixed(1).replace('.',',')}%</strong></div><div><span class="small">Ainda falta</span><strong>${money(Math.max(0,goal-saved))}</strong></div></div></div><div class="card pad"><div class="flex between"><h2 style="margin:0">Evolução da meta</h2><button class="btn sm" data-act="edit-goal">Editar meta</button></div><div class="goalbar" style="margin-top:26px;height:13px"><span style="width:${pct}%"></span></div><div class="small">Aportes registrados separadamente do caixa disponível.</div><div class="hr"></div><button class="btn primary" data-act="vault-move" data-kind="aporte">${ico('plus')} Fazer aporte</button> <button class="btn" data-act="vault-move" data-kind="retirada">Retirar</button></div></div>
@@ -395,7 +458,13 @@ document.addEventListener('click',async ev=>{const b=ev.target.closest('[data-ac
  if(act==='edit-receivable'){receivableModal(b.dataset.id);return}
  if(act==='new-recurrence'){recurrenceModal();return}if(act==='edit-recurrence'){recurrenceModal(b.dataset.id);return}
  if(act==='edit-goal'){goalModal();return}if(act==='vault-move'){vaultModal(b.dataset.kind);return}if(act==='reconcile'){reconcileModal();return}
- if(act==='mode'){ui.mode=b.dataset.mode;ui.globalStart=cycleKey();data.appVNext.mode=ui.mode;save();render();return}
+ if(act==='mode'){ui.mode=b.dataset.mode;ui.globalStart=cycleKey();ui.globalChartPage=0;ui.globalSelected=0;data.appVNext.mode=ui.mode;save();render();return}
+ if(act==='global-categories-toggle'){ui.globalCategoriesExpanded=!ui.globalCategoriesExpanded;render();return}
+ if(act==='global-category-info'){ui.globalCategoriesInfo=!ui.globalCategoriesInfo;render();return}
+ if(act==='global-chart-prev'||act==='global-chart-next'){
+  const g=selectedGlobal(),n=Math.ceil(g.n/6),offset=act==='global-chart-next'?1:-1;
+  ui.globalChartPage=Math.max(0,Math.min(n-1,ui.globalChartPage+offset));ui.globalSelected=ui.globalChartPage*6;render();return}
+ if(act==='global-month'){const idx=Number(b.dataset.index),g=selectedGlobal();if(Number.isInteger(idx)&&idx>=0&&idx<g.n){ui.globalSelected=idx;render()}return}
  if(act==='expense-filters'){ui.expenseFiltersOpen=!ui.expenseFiltersOpen;render();return}
  if(act==='expense-reset'){Object.assign(ui,{expenseQ:'',expensePeriod:'all',expenseStatus:'all',expenseMethod:'all',expenseCategory:'all',expenseCard:'all',expenseSort:'activity',expenseLimit:40});render();return}
  if(act==='expenses-more'){ui.expenseLimit+=40;render();return}
@@ -404,7 +473,7 @@ document.addEventListener('click',async ev=>{const b=ev.target.closest('[data-ac
 document.addEventListener('submit',ev=>{const form=ev.target.closest('form[data-form]');if(!form)return;ev.preventDefault();const fd=new FormData(form),kind=form.dataset.form;try{if(kind==='entry')handleEntry(fd);else if(kind==='movement')handleMovement(fd);else if(kind==='invoice')handleInvoice(fd);else if(kind==='card')handleCard(fd);else if(kind==='receivable')handleReceivable(fd);else if(kind==='recurrence')handleRecurrence(fd);else if(kind==='goal')handleGoal(fd);else if(kind==='vault')handleVault(fd);else if(kind==='reconcile')handleReconcile(fd);}catch(err){console.error(err);alert('Falha ao salvar: '+err.message)}});
 document.addEventListener('change',ev=>{const f=ev.target,what=f?.dataset?.change;if(!what)return;
  if(what==='method'){$('#card-form-fields')?.classList.toggle('hide',f.value!=='card');return}
- if(what==='global-start')ui.globalStart=f.value;else if(what==='global-horizon')ui.globalHorizon=Number(f.value);
+ if(what==='global-start'){ui.globalStart=f.value;ui.globalChartPage=0;ui.globalSelected=0;}else if(what==='global-horizon'){ui.globalHorizon=Number(f.value);ui.globalChartPage=0;ui.globalSelected=0;}
  else if(what==='filter-q')ui.expenseQ=f.value;else if(what==='expense-period')ui.expensePeriod=f.value;else if(what==='expense-status')ui.expenseStatus=f.value;else if(what==='expense-method')ui.expenseMethod=f.value;else if(what==='expense-category')ui.expenseCategory=f.value;else if(what==='expense-card')ui.expenseCard=f.value;else if(what==='expense-sort')ui.expenseSort=f.value;
  if(what.startsWith('expense-')||what==='filter-q')ui.expenseLimit=40;
  else if(what==='card-month')ui.cardMonth=f.value;else if(what==='sim-amount')ui.simAmount=f.value;else if(what==='sim-method')ui.simMethod=f.value;else if(what==='sim-parts')ui.simParts=Number(f.value);else if(what==='sim-first')ui.simFirst=f.value;else if(what==='sim-card')ui.simCard=f.value;
